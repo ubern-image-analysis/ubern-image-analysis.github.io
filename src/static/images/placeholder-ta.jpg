@@ -1,0 +1,9 @@
+<!-- Placeholder for TA image -->
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
+  <rect width="150" height="150" fill="#d0d0d0"/>
+  <circle cx="75" cy="55" r="25" fill="#8e8e8e"/>
+  <path d="M 30,120 Q 75,90 120,120 L 120,150 L 30,150 Z" fill="#8e8e8e"/>
+  <text x="75" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="#555">
+    Add Photo
+  </text>
+</svg>

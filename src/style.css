@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+*,
+body,
+html {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.5rem;
+}
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1.4;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Open Sans', serif;
+    font-weight: 400;
+}
+
+h1,
+h2 {
+    font-weight: 500;
+}
+
+h2 {
+    border-left: 4px solid #DC6027;
+    font-size: 1.5rem;
+    margin: 1.5rem 0 0.3rem;
+    padding: 0 0 0.3rem 0.8rem;
+}
+
+h3 {
+    font-size: 1.15em;
+    font-weight: 500;
+    padding-left: 0.8rem;
+    border-left: 2px solid #DC6027;
+}
+
+a {
+    color: #DC6027;
+}
+
+a:hover {
+    color: #B04518;
+}
+
+a:visited {
+    color: #5a428c;
+}
+
+figure img,
+.markdown-content img {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+pre {
+    border-radius: 4px;
+    border: 1px solid #bcbec0;
+    background: #f1f3f5;
+    padding: 10px;
+    overflow-x: auto;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background: #f1f3f5;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+blockquote {
+    border-left: 4px solid #ccc;
+    margin: 20px 0;
+    padding-left: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+ul,
+ol {
+    padding-left: 30px;
+    margin: 15px 0;
+}
+
+li {
+    margin: 8px 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 30px 0;
+}

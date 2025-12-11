@@ -1,0 +1,148 @@
+# Course Configuration for Image Analysis
+# University of Bern - Graduate Course for Biomedical Engineering Masters Students
+
+# Course start date (YYYY/MM/DD format) - Spring 2026
+start_date: 2026/02/16
+
+# Days of the week when classes are held
+class_days:
+  - Monday
+
+# Default assignment due time (24-hour format)
+assignment_due_time: "23:59"
+
+# Course instructors and teaching assistants
+instructors:
+  - name: "Your Name Here"
+    role: "Instructor"
+    email: "your.email@unibe.ch"
+    image: "/images/placeholder-instructor.jpg"
+    officeHours:
+      - when: "Tuesdays 2-4 PM"
+        where: "Office Location TBD"
+        url: ""
+  - name: "Teaching Assistant Name"
+    role: "Teaching Assistant"
+    email: "ta.email@unibe.ch"
+    image: "/images/placeholder-ta.jpg"
+    officeHours:
+      - when: "Thursdays 3-5 PM"
+        where: "Office Location TBD"
+        url: ""
+
+# Course lectures
+lectures:
+  # Week 1
+  - topic: "Course Overview & Python for Image Analysis"
+    materials:
+      #       slides: "/slides/lecture1.pdf"
+      #       notes: "/notes/lecture1.pdf"
+    assignments: [0]
+    
+  # Week 2
+  - topic: "Digital Image Formation & Representation"
+    materials:
+      #       slides: "/slides/lecture2.pdf"
+    assignments: [1]
+
+  # Week 3
+  - topic: "Sampling, Quantization, Resolution"
+    materials:
+      #       slides: "/slides/lecture3.pdf"
+    assignments: []
+
+  # Week 4
+  - topic: "Point Operations & Filtering"
+    materials:
+      #       slides: "/slides/lecture4.pdf"
+    assignments: []
+
+  # Week 5
+  - topic: "Edge Detection & Morphological Operations"
+    materials:
+      #       slides: "/slides/lecture5.pdf"
+    assignments: []
+
+  # Week 6
+  - topic: "Image Segmentation"
+    materials:
+      #       slides: "/slides/lecture6.pdf"
+    assignments: []
+
+  # Week 7
+  - topic: "Mid-term Exam (covers lectures 1-6)"
+    materials: {}
+    assignments: []
+
+  # Week 8
+  - topic: "Feature Extraction"
+    materials:
+      #       slides: "/slides/lecture8.pdf"
+    assignments: [2]
+
+  # Week 9
+  - topic: "Image Registration & 2D vs. 3D Analysis"
+    materials:
+      #       slides: "/slides/lecture9.pdf"
+    assignments: []
+
+  # Week 10
+  - topic: "Introduction to Deep Learning for Image Analysis"
+    materials:
+      #       slides: "/slides/lecture10.pdf"
+    assignments: [3]
+
+  # Week 11
+  - topic: "Flash Presentations of Demos (Assignment 2)"
+    materials: {}
+    assignments: []
+
+  # Week 12
+  - topic: "Transfer Learning, Interpretability, Generative Models"
+    materials:
+      #       slides: "/slides/lecture12.pdf"
+    assignments: []
+
+  # Week 13
+  - topic: "Multimodal Learning & Medical Applications"
+    materials:
+      #       slides: "/slides/lecture13.pdf"
+    assignments: []
+
+  # Week 14
+  - topic: "Final Exam"
+    materials: {}
+    assignments: []
+
+# Course assignments
+assignments:
+  - name: "Assignment 0: Introduction to Programming and Python"
+    due: "2026/02/23"
+    points: 5
+    materials:
+      handout: "/assignments/assign0/handout.pdf"
+      github: "https://classroom.github.com/"
+      
+  - name: "Assignment 1: Convolution, Interpolation, and Resizing"
+    due: "2026/03/23"
+    points: 10
+    materials:
+      handout: "/assignments/assign1/handout.pdf"
+      github: "https://classroom.github.com/"
+    details: "Implement 2D convolution, separable convolution, and interpolation methods (nearest neighbor, bilinear, bicubic) from scratch. Compare your implementations with library functions for correctness and performance."
+      
+  - name: "Assignment 2: Streamlit/HuggingFace Demo & Peer Review"
+    due: "2026/04/27"
+    points: 10
+    materials:
+      handout: "/assignments/assign2/handout.pdf"
+      github: "https://classroom.github.com/"
+    details: "Create an interactive educational demo explaining an image processing pipeline. Deploy as a web application and present to the class. Participate in peer review."
+      
+  - name: "Assignment 3: Deep Learning vs. Classical Methods"
+    due: "2026/05/11"
+    points: 15
+    materials:
+      handout: "/assignments/assign3/handout.pdf"
+      github: "https://classroom.github.com/"
+    details: "Compare deep learning and classical methods for image classification. Implement both approaches, train models, evaluate performance, and analyze tradeoffs in interpretability and computational requirements."
