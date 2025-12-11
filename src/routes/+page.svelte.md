@@ -71,6 +71,8 @@ Students should have:
 ### Grading
 
 - **Assignments (40%)**: Four programming assignments (5%, 10%, 10%, 15%)
+  - All assignments are distributed and submitted via **GitHub Classroom**
+  - Assignment 0 includes Python environment setup and basic programming exercises
 - **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1-6)
 - **Final Exam (30%)**: Comprehensive exam covering all topics
 - **Note**: Higher final exam score can replace mid-term grade

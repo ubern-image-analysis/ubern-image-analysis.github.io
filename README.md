@@ -2,6 +2,9 @@
 
 This is the course website for **Introduction to Image Analysis** at the University of Bern, a graduate course for Masters students in Biomedical Engineering (Spring 2026).
 
+📅 **Schedule**: Wednesdays 13:15-15:00 CET (18 Feb - 27 May 2026)  
+🔗 **Platform**: GitHub Classroom for assignments, Slack for discussions
+
 ## 🚀 Quick Start
 
 ```bash
@@ -12,9 +15,10 @@ make install
 make dev
 ```
 
-Visit http://localhost:5173 to see your site.
+Visit http://localhost:5174 to see your site.
 
-For detailed instructions, see [docs/START_HERE.md](docs/START_HERE.md)
+For detailed instructions, see [docs/START_HERE.md](docs/START_HERE.md)  
+For deployment to GitHub Pages, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
 ## Overview
 
@@ -91,10 +95,11 @@ instructors:
 Edit this file to set your actual course platform URLs:
 
 ```javascript
-const gradescope = 'https://www.gradescope.com/courses/YOUR_COURSE_ID';
-const canvas = 'https://canvas.unibe.ch/courses/YOUR_COURSE_ID';
-const forum = 'https://forum.example.com/YOUR_COURSE';
+export const slack = 'https://your-workspace.slack.com/';
+export const github = 'https://classroom.github.com/classrooms/YOUR_CLASSROOM_ID';
 ```
+
+**Note**: Assignment 0 is based on the `00-python-basics` repository and will be distributed through GitHub Classroom.
 
 ### 3. Add Course Materials
 
@@ -208,17 +213,19 @@ Each assignment can have its own page with:
 
 ## Deployment
 
-### GitHub Pages
+### GitHub Pages (Recommended)
 
-1. Update `svelte.config.js` if needed for your repository name:
+This repository is configured for **automatic deployment** to GitHub Pages using GitHub Actions.
 
-```javascript
-paths: {
-  base: process.env.BASE_PATH ?? '/your-repo-name'
-}
-```
+**Setup (one-time):**
 
-2. Build and deploy:
+1. Go to repository **Settings** > **Pages**
+2. Under **Source**, select **GitHub Actions**
+3. Push to the `main` branch
+
+The site will automatically build and deploy on every push. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions.
+
+**Manual deployment:**
 
 ```bash
 npm run build
@@ -265,11 +272,27 @@ Feel free to modify and adapt this template for your needs. If you make improvem
 
 This template is provided as-is for educational use. Original design inspired by Stanford CS45 course website.
 
-## Credits
+## Course Information
 
-- Design inspiration: [Stanford CS45](https://github.com/stanford-cs45/stanford-cs45.github.io)
-- Built with: [SvelteKit](https://kit.svelte.dev/), [MDsveX](https://mdsvex.pngwn.io/), [Prism](https://prismjs.com/)
-- Icons and styling: Various open-source libraries
+- **Institution**: University of Bern
+- **Program**: Masters in Biomedical Engineering
+- **Semester**: Spring 2026 (FS2026)
+- **Schedule**: Wednesdays 13:15-15:00 CET
+- **Duration**: 14 weeks (18 Feb - 27 May 2026)
+- **Assignments**: 4 programming assignments via GitHub Classroom
+- **Exams**: Mid-term (Week 7) + Final (Week 14)
+
+## Credits & Acknowledgments
+
+This website design and structure is based on:
+- **[Stanford CS45](https://github.com/stanford-cs45/stanford-cs45.github.io)** - Primary design inspiration
+- **[MIT Missing Semester](https://missing.csail.mit.edu/)** - Course structure concepts
+- **[Stanford CS110/CS111](https://web.stanford.edu/class/cs110/)** - Additional design elements
+
+Built with:
+- [SvelteKit](https://kit.svelte.dev/) - Web framework
+- [MDsveX](https://mdsvex.pngwn.io/) - Markdown processing
+- [Prism](https://prismjs.com/) - Syntax highlighting
 
 ## Support
 

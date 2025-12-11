@@ -80,14 +80,22 @@ Installation instructions will be provided in the first week of class.
 
 | Component | Weight |
 |-----------|--------|
-| Assignments (6) | 70% |
-| Final Project | 30% |
+| Assignments (4) | 40% |
+| Mid-term Exam | 30% |
+| Final Exam | 30% |
 
 ### Assignments
 
-- 6 programming assignments throughout the semester
-- Each assignment builds on previous concepts
-- Collaboration permitted but must acknowledge partners
+All assignments are distributed and submitted through **GitHub Classroom**:
+
+- **Assignment 0 (5%)**: Introduction to Python programming and environment setup
+  - Source repository: Based on `00-python-basics` starter code
+  - Ensures all students have the necessary programming foundation
+- **Assignment 1 (10%)**: Convolution, Interpolation, and Resizing
+- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo & Peer Review
+- **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
+
+Collaboration is permitted, but you must write your own code and acknowledge all collaborators.
 - Submissions via Gradescope by {class_data.assignment_due_time}
 
 ### Final Project
