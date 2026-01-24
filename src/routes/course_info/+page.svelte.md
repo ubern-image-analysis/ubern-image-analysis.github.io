@@ -3,7 +3,7 @@ title: 'Image Analysis: Course Info'
 ---
 
 <script>
-  import { base, slack, github } from '$lib/constants';
+  import { base, ilias, github } from '$lib/constants';
   import { class_data } from '$lib/classData';
   import Callout from '$lib/Callout.svelte';
 </script>
@@ -25,12 +25,12 @@ title: 'Image Analysis: Course Info'
 
 ## Course Links
 
-- **Discussion & Communication:** <a href={slack} target="_blank">Slack Workspace</a>
+- **Discussion & Communication:** <a href={ilias} target="_blank">ILIAS Message Board</a>
 - **Assignments & Grading:** <a href={github} target="_blank">GitHub Classroom</a>
 
 <Callout warning>
 
-Please update the links above with your actual Slack workspace and GitHub Classroom URLs once available.
+The ILIAS Message Board link will be provided once confirmed. Please check back soon.
 
 </Callout>
 
@@ -92,18 +92,11 @@ All assignments are distributed and submitted through **GitHub Classroom**:
   - Source repository: Based on `00-python-basics` starter code
   - Ensures all students have the necessary programming foundation
 - **Assignment 1 (10%)**: Convolution, Interpolation, and Resizing
-- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo & Peer Review
+- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (group of 3)
 - **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
 
 Collaboration is permitted, but you must write your own code and acknowledge all collaborators.
-- Submissions via Gradescope by {class_data.assignment_due_time}
-
-### Final Project
-
-- Independent or small group project (2-3 students)
-- Apply course concepts to a real-world image analysis problem
-- Project proposal due mid-semester
-- Final presentation and report due at end of semester
+- Submissions via GitHub Classroom by {class_data.assignment_due_time}
 
 ## Late Policy
 

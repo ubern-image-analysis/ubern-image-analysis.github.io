@@ -24,10 +24,11 @@ This graduate-level course provides a comprehensive introduction to image analys
 - Image enhancement and filtering
 - Frequency domain processing
 - Image segmentation and feature extraction
+- Image registration and motion analysis
 - Object recognition and classification
 - Machine learning and deep learning for image analysis
 - Medical image processing and 3D imaging
-- Image registration and motion analysis
+
 
 ## Course Information
 
@@ -36,7 +37,7 @@ This graduate-level course provides a comprehensive introduction to image analys
 <p>
 <strong>Lectures:</strong> {class_data.class_days.join(" and ")}s<br/>
 <strong>Assignment Due Time:</strong> {class_data.assignment_due_time}<br/>
-<strong>Course Links:</strong> <a href="https://ubern-image-analysis.slack.com" target="_blank" rel="noopener">Slack</a> | <a href="https://classroom.github.com/classrooms/" target="_blank" rel="noopener">GitHub Classroom</a>
+<strong>Course Links:</strong> <a href="https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026" target="_blank" rel="noopener">GitHub Classroom</a> | <a href="TBD" target="_blank" rel="noopener">ILIAS Message Board</a>
 </p>
 
 </Callout>
@@ -85,12 +86,12 @@ All work submitted must be your own. Collaboration on assignments is permitted, 
 
 1. Review the [course information page]({base}/course_info)
 2. Check the schedule above for upcoming lectures and assignments
-3. Join our [Slack workspace](https://ubern-image-analysis.slack.com) for announcements and questions
+3. Reach out to us on [ILIAS Message Board](TBD) for announcements and questions
 4. Set up your development environment with Python, NumPy, OpenCV, and scikit-image
 
 ## Contact
 
-For course-related questions, please use Slack. For private matters, contact the instructors via email.
+For course-related questions, please use ILIAS. For private matters, contact the instructors via email.
 
 ---
 
