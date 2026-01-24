@@ -8,6 +8,7 @@ title: 'Image Analysis - University of Bern'
   import { class_data, fixupLink } from '$lib/classData';
   import Instructor from '$lib/Instructor.svelte';
   import Callout from '$lib/Callout.svelte';
+  import { ilias, github } from '$lib/constants';
 </script>
 
 # Introduction to Image Analysis
@@ -37,7 +38,7 @@ This graduate-level course provides a comprehensive introduction to image analys
 <p>
 <strong>Lectures:</strong> {class_data.class_days.join(" and ")}s<br/>
 <strong>Assignment Due Time:</strong> {class_data.assignment_due_time}<br/>
-<strong>Course Links:</strong> <a href="https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026" target="_blank" rel="noopener">GitHub Classroom</a> | <a href="TBD" target="_blank" rel="noopener">ILIAS Message Board</a>
+<strong>Course Links:</strong> <a href={github} target="_blank" rel="noopener">GitHub Classroom</a> {#if ilias !== "TBD"}| <a href={ilias} target="_blank" rel="noopener">ILIAS Message Board</a>{/if}
 </p>
 
 </Callout>
@@ -86,7 +87,7 @@ All work submitted must be your own. Collaboration on assignments is permitted, 
 
 1. Review the [course information page]({base}/course_info)
 2. Check the schedule above for upcoming lectures and assignments
-3. Reach out to us on [ILIAS Message Board](TBD) for announcements and questions
+3. {#if ilias !== "TBD"}Reach out to us on [ILIAS Message Board]({ilias}) for announcements and questions{:else}Check back soon for the ILIAS Message Board link for announcements and questions{/if}
 4. Set up your development environment with Python, NumPy, OpenCV, and scikit-image
 
 ## Contact

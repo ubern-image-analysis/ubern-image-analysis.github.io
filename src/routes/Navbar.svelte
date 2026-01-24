@@ -14,7 +14,9 @@
     <NavListItem href="{base}/lectures">Lectures</NavListItem>
     <NavListItem href="{base}/assignments">Assignments</NavListItem>
     <NavListItem href="{base}/course_info">Course Info</NavListItem>
-    <NavListItem href={ilias} external>ILIAS Message Board</NavListItem>
+    {#if ilias !== "TBD"}
+      <NavListItem href={ilias} external>ILIAS Message Board</NavListItem>
+    {/if}
     <NavListItem href={github} external>GitHub Classroom</NavListItem>
   </NavList>
 </NavbarBase>
