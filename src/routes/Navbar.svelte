@@ -1,6 +1,6 @@
 <!-- NavBar shown at the top of all pages -->
 <script>
-  import { base, ilias, github } from "$lib/constants";
+  import { base } from "$lib/constants";
   import NavbarBase from "$lib/Navbar/NavbarBase.svelte";
   import NavList from "$lib/Navbar/NavList.svelte";
   import NavListItem from "$lib/Navbar/NavListItem.svelte";
@@ -14,9 +14,5 @@
     <NavListItem href="{base}/lectures">Lectures</NavListItem>
     <NavListItem href="{base}/assignments">Assignments</NavListItem>
     <NavListItem href="{base}/course_info">Course Info</NavListItem>
-    {#if ilias !== "TBD"}
-      <NavListItem href={ilias} external>ILIAS Message Board</NavListItem>
-    {/if}
-    <NavListItem href={github} external>GitHub Classroom</NavListItem>
   </NavList>
 </NavbarBase>

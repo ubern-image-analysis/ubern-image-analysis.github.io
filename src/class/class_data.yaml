@@ -65,6 +65,7 @@ lectures:
   # Week 1 - 18/02/2026
   - topic: "Course Overview & Python for Image Analysis"
     date: "2026/02/18"
+    instructor: "Amith Kamath"
     materials:
       #       slides: "/slides/lecture1.pdf"
       #       notes: "/notes/lecture1.pdf"
@@ -73,6 +74,7 @@ lectures:
   # Week 2 - 25/02/2026
   - topic: "Digital Image Formation & Representation"
     date: "2026/02/25"
+    instructor: "Amith Kamath"
     materials:
       #       slides: "/slides/lecture2.pdf"
     assignments: []
@@ -80,6 +82,7 @@ lectures:
   # Week 3 - 04/03/2026
   - topic: "Sampling, Quantization, Resolution"
     date: "2026/03/04"
+    instructor: "Dr. Hugo Guillen Ramirez"
     materials:
       #       slides: "/slides/lecture3.pdf"
     assignments: []
@@ -87,6 +90,7 @@ lectures:
   # Week 4 - 11/03/2026
   - topic: "Point Operations & Filtering"
     date: "2026/03/11"
+    instructor: "Dr. Hugo Guillen Ramirez"
     materials:
       #       slides: "/slides/lecture4.pdf"
     assignments: [1]
@@ -94,6 +98,7 @@ lectures:
   # Week 5 - 18/03/2026
   - topic: "Edge Detection & Morphological Operations"
     date: "2026/03/18"
+    instructor: "Dr. Hugo Guillen Ramirez"
     materials:
       #       slides: "/slides/lecture5.pdf"
     assignments: []
@@ -101,6 +106,7 @@ lectures:
   # Week 6 - 25/03/2026
   - topic: "Image Segmentation"
     date: "2026/03/25"
+    instructor: "Prof. Dr. Mauricio Reyes"
     materials:
       #       slides: "/slides/lecture6.pdf"
     assignments: []
@@ -108,12 +114,14 @@ lectures:
   # Week 7 - 01/04/2026
   - topic: "Mid-term Exam (covers lectures 1-6)"
     date: "2026/04/01"
+    instructor: "Prof. Dr. Mauricio Reyes"
     materials: {}
     assignments: []
 
   # Week 8 - 15/04/2026 (note: gap due to Easter holidays 08/04)
   - topic: "Feature Extraction"
     date: "2026/04/15"
+    instructor: "Prof. Dr. Mauricio Reyes"
     materials:
       #       slides: "/slides/lecture8.pdf"
     assignments: [2]
@@ -121,6 +129,7 @@ lectures:
   # Week 9 - 22/04/2026
   - topic: "Image Registration & 2D vs. 3D Analysis"
     date: "2026/04/22"
+    instructor: "Prof. Dr. Mauricio Reyes"
     materials:
       #       slides: "/slides/lecture9.pdf"
     assignments: []
@@ -128,6 +137,7 @@ lectures:
   # Week 10 - 29/04/2026
   - topic: "Introduction to Deep Learning for Image Analysis"
     date: "2026/04/29"
+    instructor: "Dr. Pablo Marquez Neila"
     materials:
       #       slides: "/slides/lecture10.pdf"
     assignments: [3]
@@ -135,6 +145,7 @@ lectures:
   # Week 11 - 06/05/2026
   - topic: "Generative Models & Advanced Architectures"
     date: "2026/05/06"
+    instructor: "Dr. Pablo Marquez Neila"
     materials:
       #       slides: "/slides/lecture12.pdf"
     assignments: []
@@ -142,6 +153,7 @@ lectures:
   # Week 12 - 13/05/2026
   - topic: "Best Practices, Reproducibility, and Medical Applications"
     date: "2026/05/13"
+    instructor: "Amith Kamath"
     materials:
       #       slides: "/slides/lecture12.pdf"
     assignments: []
@@ -149,6 +161,7 @@ lectures:
   # Week 13 - 20/05/2026
   - topic: "Flash Presentations of Demos (Assignment 2)"
     date: "2026/05/20"
+    instructor: "Amith Kamath"
     materials: {}
     assignments: []
 
@@ -159,14 +172,14 @@ assignments:
     points: 5
     materials:
       handout: "/assignments/assign0/handout.pdf"
-      github: "https://classroom.github.com/"
+      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-0"
 
   - name: "Assignment 1: Convolution, Interpolation, and Resizing"
     due: "2026/04/01"
     points: 10
     materials:
       handout: "/assignments/assign1/handout.pdf"
-      github: "https://classroom.github.com/"
+      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-1"
     details: "Implement 2D convolution, separable convolution, and interpolation methods (nearest neighbor, bilinear, bicubic) from scratch. Compare your implementations with library functions for correctness and performance."
 
   - name: "Assignment 2: Streamlit/HuggingFace Demo & Peer Review"
@@ -174,7 +187,7 @@ assignments:
     points: 10
     materials:
       handout: "/assignments/assign2/handout.pdf"
-      github: "https://classroom.github.com/"
+      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-2"
     details: "Create an interactive educational demo explaining an image processing pipeline. Deploy as a web application and present to the class. Participate in peer review."
 
   - name: "Assignment 3: Deep Learning vs. Classical Methods"
@@ -182,5 +195,5 @@ assignments:
     points: 15
     materials:
       handout: "/assignments/assign3/handout.pdf"
-      github: "https://classroom.github.com/"
+      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-3"
     details: "Compare deep learning and classical methods for image classification. Implement both approaches, train models, evaluate performance, and analyze tradeoffs in interpretability and computational requirements."
