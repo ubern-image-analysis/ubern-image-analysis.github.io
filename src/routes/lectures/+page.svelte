@@ -11,6 +11,17 @@
 
 <h2>Lectures</h2>
 
+<h3>Course Logistics</h3>
+<p>
+  <strong>Location:</strong>
+  {class_data.location.name}<br />
+  <strong>Address:</strong>
+  {class_data.location.address}<br />
+  <strong>Time:</strong>
+  {class_data.location.time} (1 hour 45 minutes per lecture)<br />
+  <strong>Format:</strong> Two-block structure with interspersed hands-on exercises
+</p>
+
 <p>
   Lecture materials including slides, notes, and code examples will be posted
   here. Please review materials before class and bring questions to the

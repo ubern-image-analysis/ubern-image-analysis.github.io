@@ -35,6 +35,9 @@ This graduate-level course provides a comprehensive introduction to image analys
 
 <p>
 <strong>Lectures:</strong> {class_data.class_days.join(" and ")}s<br/>
+<strong>Time:</strong> {class_data.location.time}<br/>
+<strong>Location:</strong> {class_data.location.name}<br/>
+<strong>Address:</strong> {class_data.location.address}<br/>
 <strong>Assignment Due Time:</strong> {class_data.assignment_due_time}<br/>
 For course links and communication, see the <a href="{base}/course_info">Course Info</a> page.
 </p>

@@ -20,8 +20,9 @@ title: 'Image Analysis: Course Info'
 ## Meeting Times
 
 **Lectures:** {class_data.class_days.join(' and ')}s  
-**Time:** [Time TBD]  
-**Location:** [Location TBD]
+**Time:** {class_data.location.time}  
+**Location:** {class_data.location.name}  
+**Address:** {class_data.location.address}
 
 ## Course Links
 
