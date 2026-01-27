@@ -14,7 +14,7 @@ title: 'Image Analysis: Course Info'
 
 **Course Title:** Introduction to Image Analysis  
 **Institution:** University of Bern  
-**Level:** Graduate (Masters in Biomedical Engineering)  
+**Level:** Graduate (Masters in Biomedical Engineering and AI in Medicine)  
 **Semester:** Spring 2026
 
 ## Meeting Times
@@ -37,7 +37,7 @@ The ILIAS Message Board link will be provided once confirmed. Please check back 
 
 ## Course Description
 
-This course provides a comprehensive introduction to digital image analysis with applications in biomedical engineering. Students will learn fundamental concepts in image processing, feature extraction, segmentation, and machine learning approaches for automated image analysis. The course emphasizes practical applications through hands-on programming assignments using Python and modern image analysis libraries.
+This course will provide an introduction to algorithms for signal and image processing. A focus will be initially given to theoretical constructs of signal processing, the formation and foundation of images, and applications of use. Algorithmic approaches for the analysis of images will then be introduced for the purpose of image processing. Topics will include edge and corner detections, clustering, image registration, as well as others. Mandatory homework will provide practical experience with the development of these algorithms, including understanding when they work and when they do not.
 
 ## Learning Objectives
 
@@ -48,7 +48,7 @@ By the end of this course, students will be able to:
 3. Implement image segmentation and feature extraction algorithms
 4. Use machine learning and deep learning methods for image classification
 5. Analyze medical images and work with 3D imaging data
-6. Develop complete image analysis pipelines for biomedical applications
+6. Develop image analysis pipelines for biomedical applications
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ By the end of this course, students will be able to:
 ### Software
 
 All required software is free and open-source:
-- Python 3.8 or higher
+- Python 3.10 or higher
 - NumPy, SciPy, Matplotlib
 - OpenCV
 - scikit-image
@@ -73,9 +73,9 @@ Installation instructions will be provided in the first week of class.
 ### Textbooks
 
 **Recommended (not required):**
-- "Digital Image Processing" by Gonzalez and Woods
-- "Computer Vision: Algorithms and Applications" by Richard Szeliski (available free online)
-- "Deep Learning" by Goodfellow, Bengio, and Courville (available free online)
+- "[Digital Image Processing](https://www.imageprocessingplace.com/)" by Gonzalez and Woods
+- "[Computer Vision: Algorithms and Applications](https://szeliski.org/Book/)" by Richard Szeliski
+- "[Deep Learning](https://www.deeplearningbook.org/)" by Goodfellow, Bengio, and Courville
 
 ## Grading Policy
 
@@ -112,7 +112,6 @@ The University of Bern expects all students to uphold the highest standards of a
 - You may discuss assignments with classmates but must write your own code
 - Acknowledge all collaborators in your submission
 - Do not copy code from online sources without attribution
-- Plagiarism will result in a failing grade and reported to university administration
 
 ## Office Hours
 
@@ -127,13 +126,9 @@ The University of Bern expects all students to uphold the highest standards of a
 {/each}
 </div>
 
-## Accommodation for Students with Disabilities
-
-Students requiring accommodations should contact [Disability Services Office] as early as possible in the semester. We are committed to ensuring all students have equal access to course materials and activities.
-
 ## Course Communication
 
-- **Announcements:** Posted on Canvas and discussion forum
+- **Announcements:** Posted on ILIAS discussion forum
 - **Questions:** Use discussion forum for course content questions
 - **Private Matters:** Email instructors directly
 - **Response Time:** Expect responses within 24-48 hours on weekdays
@@ -142,19 +137,12 @@ Students requiring accommodations should contact [Disability Services Office] as
 
 The course is structured into several major units:
 
-1. **Foundations** (Weeks 1-2): Image fundamentals, representation, and basic operations
-2. **Enhancement** (Weeks 3-4): Filtering, frequency domain, and image restoration
-3. **Analysis** (Weeks 5-6): Morphology, segmentation, and feature extraction
-4. **Recognition** (Weeks 7-8): Machine learning, classification, and deep learning
-5. **Advanced Topics** (Weeks 9-10): Medical imaging, 3D processing, and registration
+1. **Foundations** (Weeks 1-3): Image fundamentals, representation, and basic operations
+2. **Enhancement** (Weeks 4-5): Filtering, frequency domain, and morphological processing
+3. **Analysis** (Weeks 6-9): Segmentation, feature extraction, and registration
+4. **Machine Learning** (Weeks 10-11): Machine learning, best practices
 
 See the [schedule]({base}/) for detailed weekly topics and assignment due dates.
-
-## Additional Resources
-
-- **Computing Resources:** [Information about available computing resources]
-- **Writing Center:** [Link to academic writing support]
-- **Mental Health:** [Link to student mental health resources]
 
 ## Questions?
 

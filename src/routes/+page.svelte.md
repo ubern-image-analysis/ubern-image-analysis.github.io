@@ -11,20 +11,19 @@ title: 'Image Analysis - University of Bern'
 
 # Introduction to Image Analysis
 
-**University of Bern - Graduate Course for Biomedical Engineering Masters Students**
+**Graduate Course at the University of Bern**
 
-Welcome to the course website for Introduction to Image Analysis! This course covers fundamental and advanced concepts in digital image processing and analysis, with a focus on applications in biomedical engineering.
+Welcome to the course website for Introduction to Image Analysis! This course covers concepts in digital image processing and analysis, with a focus on applications in biomedical engineering.
 
 ## Course Overview
 
-This graduate-level course provides a comprehensive introduction to image analysis techniques and their applications in biomedical engineering. Topics include:
+This graduate-level course provides a broad introduction to image analysis techniques and their applications in biomedical engineering. Topics include:
 
-- Image fundamentals and representation
+- Image formation and representation
 - Image enhancement and filtering
 - Frequency domain processing
 - Image segmentation and feature extraction
-- Image registration and motion analysis
-- Object recognition and classification
+- Image registration and transformations
 - Machine learning and deep learning for image analysis
 - Medical image processing and 3D imaging
 
@@ -96,9 +95,6 @@ For course-related questions, please use ILIAS. For private matters, contact the
 
 ## Acknowledgments
 
-This course website is based on the design and structure of [Stanford CS45: Software Tools Every Programmer Should Know](https://github.com/stanford-cs45/stanford-cs45.github.io) by Jonathan Kula, Akshay Srivatsan, and Ayelet Drazen. The CS45 website itself acknowledges:
-
-- [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/) (MIT CSAIL) by Anish Athalye, Jon Gjengset, and Jose Javier Gonzalez Ortiz
-- Stanford CS110 and CS111 websites by John Ousterhout and Jerry Cain
+This course website is based on the design and structure of [Stanford CS45: Software Tools Every Programmer Should Know](https://github.com/stanford-cs45/stanford-cs45.github.io), and [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/) (MIT CSAIL).
 
 We are grateful to these educators for making their course materials and website designs openly available. The course content for Introduction to Image Analysis is original and developed by the University of Bern faculty.

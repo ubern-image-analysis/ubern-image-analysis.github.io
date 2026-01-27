@@ -19,7 +19,6 @@
   {class_data.location.address}<br />
   <strong>Time:</strong>
   {class_data.location.time} (1 hour 45 minutes per lecture)<br />
-  <strong>Format:</strong> Two-block structure with interspersed hands-on exercises
 </p>
 
 <p>
