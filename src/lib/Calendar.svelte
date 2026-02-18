@@ -62,9 +62,14 @@
           {#if lecture.assignments}
             <Assignments>
               {#each lecture.assignments as assignment}
-                <a href={fixupLink(`/assignments/assign${assignment}`)}
-                  >Assignment {assignment}</a
-                >
+                {#if assignment === 0}
+                  <a
+                    href="https://classroom.github.com/a/uYEGH1wE"
+                    target="_blank">Assignment {assignment}</a
+                  >
+                {:else}
+                  <span>Assignment {assignment}</span>
+                {/if}
               {/each}
             </Assignments>
           {:else}

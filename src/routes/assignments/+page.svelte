@@ -1,7 +1,6 @@
 <script>
   import { class_data, fixupLink } from "$lib/classData";
   import { markdown } from "$lib/markdown";
-  import { github } from "$lib/constants";
   import MaterialsList from "$lib/MaterialsList.svelte";
   import UnitDetails from "$lib/UnitDetails.svelte";
   import moment from "moment";
@@ -15,9 +14,8 @@
 
 <p>
   All assignments are due at {class_data.assignment_due_time} on the specified date.
-  Please submit your work via
-  <a href={github} target="_blank">GitHub Classroom</a>. Late submissions will
-  be penalized unless you have prior approval from the instructor.
+  Assignment 0 is available on GitHub Classroom. Links for subsequent assignments
+  will be released closer to their due dates.
 </p>
 
 <!-- Generates assignment details from the yaml -->

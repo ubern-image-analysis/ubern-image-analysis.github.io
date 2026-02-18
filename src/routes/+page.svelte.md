@@ -7,6 +7,7 @@ title: 'Image Analysis - University of Bern'
   import Calendar from '$lib/Calendar.svelte';
   import { class_data, fixupLink } from '$lib/classData';
   import Callout from '$lib/Callout.svelte';
+  import { ilias } from '$lib/constants';
 </script>
 
 # Introduction to Image Analysis
@@ -70,8 +71,8 @@ Students should have:
 ### Grading
 
 - **Assignments (40%)**: Four programming assignments (5%, 10%, 10%, 15%)
-  - All assignments are distributed and submitted via **GitHub Classroom**
-  - Assignment 0 includes Python environment setup and basic programming exercises
+  - Assignment 0 is available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE). Assignment 0 includes Python environment setup and basic programming exercises
+  - Assignments 1, 2, and 3 will be released on their respective due dates
 - **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1-6)
 - **Final Exam (30%)**: Comprehensive exam covering all topics
 - **Note**: Higher final exam score can replace mid-term grade
@@ -85,11 +86,11 @@ All work submitted must be your own. Collaboration on assignments is permitted, 
 1. Review the [course information page]({base}/course_info)
 2. Check the schedule above for upcoming lectures and assignments
 3. Set up your development environment with Python, NumPy, OpenCV, and scikit-image
-4. See the assignments page to submit your work via GitHub Classroom
+4. See the [assignments page]({base}/assignments) for assignment details and submission links
 
 ## Contact
 
-For course-related questions, please use ILIAS. For private matters, contact the instructors via email.
+For course-related questions, navigate to the "Introduction to Image Analysis" course on <a href={ilias} target="_blank">ILIAS</a> and use the discussion board there. For private matters, contact the instructors via email.
 
 ---
 

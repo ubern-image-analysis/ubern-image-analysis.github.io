@@ -25,7 +25,7 @@ instructors:
     lectures: [0, 1, 11, 12]
     officeHours:
       - when: "By appointment"
-        where: "Office Location TBD"
+        where: "contact via email"
         url: ""
   - name: "Dr. Hugo Guillen Ramirez"
     role: "Instructor"
@@ -33,7 +33,7 @@ instructors:
     lectures: [2, 3, 4]
     officeHours:
       - when: "By appointment"
-        where: "Office Location TBD"
+        where: "contact via email"
         url: ""
   - name: "Prof. Dr. Mauricio Reyes"
     role: "Instructor"
@@ -41,7 +41,7 @@ instructors:
     lectures: [5, 6, 7, 8]
     officeHours:
       - when: "By appointment"
-        where: "Office Location TBD"
+        where: "contact via email"
         url: ""
   - name: "Dr. Pablo Marquez Neila"
     role: "Instructor"
@@ -49,7 +49,7 @@ instructors:
     lectures: [9, 10]
     officeHours:
       - when: "By appointment"
-        where: "Office Location TBD"
+        where: "contact via email"
         url: ""
   - name: "Davide Scandella"
     role: "Teaching Assistant"
@@ -73,8 +73,7 @@ lectures:
     date: "2026/02/18"
     instructor: "Amith Kamath"
     materials:
-      #       slides: "/slides/lecture1.pdf"
-      #       notes: "/notes/lecture1.pdf"
+      slides: "/slides/lecture1.pdf"
     assignments: [0]
 
   # Week 2 - 25/02/2026
@@ -177,32 +176,22 @@ lectures:
 # Course assignments
 assignments:
   - name: "Assignment 0: Introduction to Programming and Python"
-    due: "2026/02/25"
+    due: "2026/04/01"
     points: 5
     materials:
-      handout: "/assignments/assign0/handout.pdf"
-      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-0"
+      github: "https://classroom.github.com/a/uYEGH1wE"
 
   - name: "Assignment 1: Convolution, Interpolation, and Resizing"
-    due: "2026/03/18"
+    due: "2026/04/01"
     points: 10
-    materials:
-      handout: "/assignments/assign1/handout.pdf"
-      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-1"
     details: "Implement 2D convolution, separable convolution, and interpolation methods (nearest neighbor, bilinear, bicubic) from scratch. Compare your implementations with library functions for correctness and performance."
 
   - name: "Assignment 2: Streamlit/HuggingFace Demo & Peer Review"
-    due: "2026/04/29"
+    due: "2026/05/13"
     points: 10
-    materials:
-      handout: "/assignments/assign2/handout.pdf"
-      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-2"
     details: "Create an interactive educational demo explaining an image processing pipeline. Deploy as a web application and present to the class. Participate in peer review."
 
   - name: "Assignment 3: Deep Learning vs. Classical Methods"
-    due: "2026/05/06"
+    due: "2026/05/13"
     points: 15
-    materials:
-      handout: "/assignments/assign3/handout.pdf"
-      github: "https://classroom.github.com/classrooms/245376293-intro-image-analysis-2026-assignment-3"
     details: "Compare deep learning and classical methods for image classification. Implement both approaches, train models, evaluate performance, and analyze tradeoffs in interpretability and computational requirements."

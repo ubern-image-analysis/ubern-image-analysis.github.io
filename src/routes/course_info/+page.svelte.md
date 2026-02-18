@@ -3,9 +3,8 @@ title: 'Image Analysis: Course Info'
 ---
 
 <script>
-  import { base, ilias, github } from '$lib/constants';
+  import { base, ilias } from '$lib/constants';
   import { class_data } from '$lib/classData';
-  import Callout from '$lib/Callout.svelte';
 </script>
 
 # Course Information
@@ -26,14 +25,8 @@ title: 'Image Analysis: Course Info'
 
 ## Course Links
 
-- **Discussion & Communication:** <a href={ilias} target="_blank">ILIAS Message Board</a>
-- **Assignments & Grading:** <a href={github} target="_blank">GitHub Classroom</a>
+- **Discussion & Communication:** <a href={ilias} target="_blank">ILIAS</a> – navigate to the "Introduction to Image Analysis" course and use the discussion board there.
 
-<Callout warning>
-
-The ILIAS Message Board link will be provided once confirmed. Please check back soon.
-
-</Callout>
 
 ## Course Description
 
@@ -87,23 +80,13 @@ Installation instructions will be provided in the first week of class.
 
 ### Assignments
 
-All assignments are distributed and submitted through **GitHub Classroom**:
-
-- **Assignment 0 (5%)**: Introduction to Python programming and environment setup
-  - Source repository: Based on `00-python-basics` starter code
-  - Ensures all students have the necessary programming foundation
+- **Assignment 0 (5%)**: Introduction to Python programming and environment setup – available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE)
 - **Assignment 1 (10%)**: Convolution, Interpolation, and Resizing
 - **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (group of 3)
 - **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
 
 Collaboration is permitted, but you must write your own code and acknowledge all collaborators.
-- Submissions via GitHub Classroom by {class_data.assignment_due_time}
-
-## Late Policy
-
-- **Grace Period:** 24 hours late with no penalty (one-time use per student)
-- **Standard Late Penalty:** 10% per day up to 3 days
-- **Extensions:** Available for exceptional circumstances with advance notice
+All assignments are due by {class_data.assignment_due_time} on the specified date.
 
 ## Academic Integrity
 
@@ -129,7 +112,7 @@ The University of Bern expects all students to uphold the highest standards of a
 ## Course Communication
 
 - **Announcements:** Posted on ILIAS discussion forum
-- **Questions:** Use discussion forum for course content questions
+- **Questions:** Navigate to the "Introduction to Image Analysis" course on <a href={ilias} target="_blank">ILIAS</a> and use the discussion board there
 - **Private Matters:** Email instructors directly
 - **Response Time:** Expect responses within 24-48 hours on weekdays
 

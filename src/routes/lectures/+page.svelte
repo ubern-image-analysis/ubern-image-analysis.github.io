@@ -23,8 +23,7 @@
 
 <p>
   Lecture materials including slides, notes, and code examples will be posted
-  here. Please review materials before class and bring questions to the
-  discussion forum or office hours.
+  here.
 </p>
 
 <!-- Generates lecture details from the yaml -->
