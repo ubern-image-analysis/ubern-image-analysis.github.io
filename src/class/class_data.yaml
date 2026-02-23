@@ -22,7 +22,7 @@ instructors:
   - name: "Amith Kamath"
     role: "Instructor"
     email: "amith.kamath@unibe.ch"
-    lectures: [0, 1, 11, 12]
+    lectures: [0, 1, 12, 13]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -38,7 +38,7 @@ instructors:
   - name: "Prof. Dr. Mauricio Reyes"
     role: "Instructor"
     email: "mauricio.reyes@unibe.ch"
-    lectures: [5, 6, 7, 8]
+    lectures: [5, 6, 8, 9]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -46,7 +46,7 @@ instructors:
   - name: "Dr. Pablo Marquez Neila"
     role: "Instructor"
     email: "pablo.marquez@unibe.ch"
-    lectures: [9, 10]
+    lectures: [10, 11]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -117,7 +117,7 @@ lectures:
     assignments: []
 
   # Week 7 - 01/04/2026
-  - topic: "Mid-term Exam (covers lectures 1-6)"
+  - topic: "Mid-term Exam (covers lectures 1–6)"
     date: "2026/04/01"
     instructor: "Prof. Dr. Mauricio Reyes"
     materials: {}
@@ -125,6 +125,11 @@ lectures:
     holiday: true
 
   # Week 8 - 08/04/2026 - Easter holiday, no lecture
+  - topic: "Easter Holiday — No Lecture"
+    date: "2026/04/08"
+    holiday: true
+    materials: {}
+    assignments: []
 
   # Week 9 - 15/04/2026
   - topic: "Feature Extraction"
@@ -159,7 +164,7 @@ lectures:
     assignments: []
 
   # Week 13 - 13/05/2026
-  - topic: "Best Practices, Reproducibility, and Medical Applications"
+  - topic: "Best Practices, Reproducibility & Medical Applications"
     date: "2026/05/13"
     instructor: "Amith Kamath"
     materials:
@@ -167,8 +172,15 @@ lectures:
     assignments: []
 
   # Week 14 - 20/05/2026
-  - topic: "Flash Presentations of Demos (Assignment 2)"
+  - topic: "Flash Presentations of Demos — Part 1 (Individual Student Demos, 5 min each)"
     date: "2026/05/20"
+    instructor: "Amith Kamath"
+    materials: {}
+    assignments: []
+
+  # Week 15 - 27/05/2026
+  - topic: "Flash Presentations of Demos — Part 2 (Individual Student Demos, 5 min each)"
+    date: "2026/05/27"
     instructor: "Amith Kamath"
     materials: {}
     assignments: []
@@ -187,11 +199,11 @@ assignments:
     details: "Implement 2D convolution, separable convolution, and interpolation methods (nearest neighbor, bilinear, bicubic) from scratch. Compare your implementations with library functions for correctness and performance."
 
   - name: "Assignment 2: Streamlit/HuggingFace Demo & Peer Review"
-    due: "2026/05/13"
+    due: "2026/05/20"
     points: 10
-    details: "Create an interactive educational demo explaining an image processing pipeline. Deploy as a web application and present to the class. Participate in peer review."
+    details: "Create an interactive educational demo explaining an image processing pipeline. Deploy it as a web application. During Part 1 (20 May), groups give a brief overview of their demo to the class. During Part 2 (27 May), each student individually presents their application for 5 minutes. Participate in peer review."
 
   - name: "Assignment 3: Deep Learning vs. Classical Methods"
-    due: "2026/05/13"
+    due: "2026/05/20"
     points: 15
     details: "Compare deep learning and classical methods for image classification. Implement both approaches, train models, evaluate performance, and analyze tradeoffs in interpretability and computational requirements."

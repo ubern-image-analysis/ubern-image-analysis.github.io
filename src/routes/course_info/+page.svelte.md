@@ -82,11 +82,16 @@ Installation instructions will be provided in the first week of class.
 
 - **Assignment 0 (5%)**: Introduction to Python programming and environment setup – available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE)
 - **Assignment 1 (10%)**: Convolution, Interpolation, and Resizing
-- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (group of 3)
+- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (presented individually for less than 5 minutes each) — scheduled on two lecture days.
 - **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
 
 Collaboration is permitted, but you must write your own code and acknowledge all collaborators.
 All assignments are due by {class_data.assignment_due_time} on the specified date.
+
+### Examinations
+
+- **Mid-term Exam (30%)**: Covers lectures 1–6 (Foundations through Segmentation)
+- **Final Exam (30%)**: Covers lectures 7–11 (Feature Extraction, Registration, and Deep Learning content). **Final exam dates are not yet fixed.**
 
 ## Academic Integrity
 
@@ -120,10 +125,10 @@ The University of Bern expects all students to uphold the highest standards of a
 
 The course is structured into several major units:
 
-1. **Foundations** (Weeks 1-3): Image fundamentals, representation, and basic operations
-2. **Enhancement** (Weeks 4-5): Filtering, frequency domain, and morphological processing
-3. **Analysis** (Weeks 6-9): Segmentation, feature extraction, and registration
-4. **Machine Learning** (Weeks 10-11): Machine learning, best practices
+1. **Foundations** (Weeks 1–3): Image formation, representation, and basic operations
+2. **Classical Processing** (Weeks 4–5): Filtering, edge detection, and morphological operations
+3. **Feature Analysis & Registration** (Weeks 6, 8–9): Feature extraction and image registration, after the Easter and Spring break
+4. **Deep Learning** (Weeks 10–12): Deep neural networks and advanced architectures
 
 See the [schedule]({base}/) for detailed weekly topics and assignment due dates.
 

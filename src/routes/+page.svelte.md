@@ -73,9 +73,8 @@ Students should have:
 - **Assignments (40%)**: Four programming assignments (5%, 10%, 10%, 15%)
   - Assignment 0 is available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE). Assignment 0 includes Python environment setup and basic programming exercises
   - Assignments 1, 2, and 3 will be released on their respective due dates
-- **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1-6)
-- **Final Exam (30%)**: Comprehensive exam covering all topics
-- **Note**: Higher final exam score can replace mid-term grade
+- **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1–6)
+- **Final Exam (30%)**: Covers lectures 7–11 (Feature Extraction, Registration, and Deep Learning content). Lectures 1–6 are assessed in the mid-term only. **Exam dates are not yet fixed.**
 
 ### Academic Integrity
 
