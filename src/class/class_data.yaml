@@ -81,7 +81,7 @@ lectures:
     date: "2026/02/25"
     instructor: "Amith Kamath"
     materials:
-      #       slides: "/slides/lecture2.pdf"
+      slides: "/slides/lecture2.pdf"
     assignments: []
 
   # Week 3 - 04/03/2026
