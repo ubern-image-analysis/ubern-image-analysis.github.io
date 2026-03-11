@@ -100,7 +100,8 @@ lectures:
     date: "2026/03/11"
     instructor: "Dr. Hugo Guillen Ramirez"
     materials:
-      #       slides: "/slides/lecture4.pdf"
+      slides: "/slides/lecture4.pdf"
+      notebook: "/notebooks/lecture4_followalong.ipynb"
     assignments: [1]
 
   # Week 5 - 18/03/2026
