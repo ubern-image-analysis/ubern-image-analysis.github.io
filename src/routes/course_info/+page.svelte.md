@@ -81,7 +81,7 @@ Installation instructions will be provided in the first week of class.
 ### Assignments
 
 - **Assignment 0 (5%)**: Introduction to Python programming and environment setup – available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE)
-- **Assignment 1 (10%)**: Convolution, Interpolation, and Resizing
+- **Assignment 1 (10%)**: Colorspaces, Sampling and Filtering  – available on [GitHub Classroom](https://classroom.github.com/a/Ikojcd6a)
 - **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (presented individually for less than 5 minutes each) — scheduled on two lecture days.
 - **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
 

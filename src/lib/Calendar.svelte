@@ -67,6 +67,11 @@
                     href="https://classroom.github.com/a/uYEGH1wE"
                     target="_blank">Assignment {assignment}</a
                   >
+                {:else if assignment === 1}
+                  <a
+                    href="https://classroom.github.com/a/Ikojcd6a"
+                    target="_blank">Assignment {assignment}</a
+                  >
                 {:else}
                   <span>Assignment {assignment}</span>
                 {/if}
