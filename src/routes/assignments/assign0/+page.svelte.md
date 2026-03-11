@@ -64,7 +64,7 @@ Complete the following 6 functions in `python_basics.py`:
 ### 3. RGB to Grayscale Conversion
 `rgb_to_grayscale(image)` — Convert an RGB image to grayscale using the luminosity method:
 
-$$\text{Gray} = 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B$$
+Gray = 0.299 × R + 0.587 × G + 0.114 × B
 
 ### 4. Image Inversion
 `invert_image(image)` — Create a negative image by computing $255 - x$ for each pixel value $x$.
@@ -73,9 +73,9 @@ $$\text{Gray} = 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B$$
 `image_statistics(image)` — Calculate and return the mean, standard deviation, minimum, and maximum pixel values.
 
 ### 6. Image Normalisation
-`normalize_image(image)` — Normalise pixel values to the $[0, 1]$ range using:
+`normalize_image(image)` — Normalise pixel values to the [0, 1] range using:
 
-$$\\hat{x} = \\frac{x - \\min}{\\max - \\min}$$
+basis_pixel = (x - min) / (max - min)
 
 ## Grading
 

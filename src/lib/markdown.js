@@ -12,7 +12,6 @@ import remarkToc from 'remark-toc';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import remarkFootnotes from 'remark-footnotes';
-import rehypeRewrite from 'rehype-rewrite';
 
 const externalLinksConfig = {
     target: (el) => {
