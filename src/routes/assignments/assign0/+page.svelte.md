@@ -75,7 +75,7 @@ $$\text{Gray} = 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B$$
 ### 6. Image Normalisation
 `normalize_image(image)` — Normalise pixel values to the $[0, 1]$ range using:
 
-$$\hat{x} = \frac{x - \min}{\max - \min}$$
+$$\\hat{x} = \\frac{x - \\min}{\\max - \\min}$$
 
 ## Grading
 
