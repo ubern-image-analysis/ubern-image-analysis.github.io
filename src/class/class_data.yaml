@@ -196,11 +196,14 @@ assignments:
     points: 5
     materials:
       github: "https://classroom.github.com/a/uYEGH1wE"
+      details: "/assignments/assign0"
 
-  - name: "Assignment 1: Convolution, Interpolation, and Resizing"
+  - name: "Assignment 1: Colorspaces, Sampling and Filtering"
     due: "2026/04/01"
     points: 10
-    details: "Implement 2D convolution, separable convolution, and interpolation methods (nearest neighbor, bilinear, bicubic) from scratch. Compare your implementations with library functions for correctness and performance."
+    materials:
+      github: "https://classroom.github.com/a/Ikojcd6a"
+      details: "/assignments/assign1"
 
   - name: "Assignment 2: Streamlit/HuggingFace Demo & Peer Review"
     due: "2026/05/20"

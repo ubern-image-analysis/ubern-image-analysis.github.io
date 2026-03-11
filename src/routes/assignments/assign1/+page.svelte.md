@@ -11,132 +11,116 @@ assign: 1
 
 ## Overview
 
-This is a placeholder assignment page. Replace this content with your actual assignment details.
+This assignment tests your ability to implement core image processing algorithms **from scratch**. Each of the 6 problems requires you to implement one function covering topics from Lectures 2–4: camera models, colour spaces, interpolation, image pyramids, convolution, and template matching.
 
-This assignment will introduce you to basic image processing concepts and Python tools for image analysis.
-
-**Estimated Time:** 3-5 hours
+**Estimated Time:** 8–12 hours
 
 ## Learning Objectives
 
 By completing this assignment, you will:
-- Understand basic image representation in digital form
-- Learn to use NumPy and OpenCV for image manipulation
-- Implement simple image transformations
-- Gain experience with Python programming for image analysis
+- Project 3D world points to 2D image coordinates using the pinhole camera model (Lecture 2)
+- Convert between RGB and HSV colour spaces (Lecture 2)
+- Rotate images using inverse mapping and bilinear interpolation (Lecture 3)
+- Blend images seamlessly using Laplacian pyramid blending (Lecture 3)
+- Implement 2D convolution from scratch with boundary handling (Lecture 4)
+- Implement Normalised Cross-Correlation (NCC) for template matching (Lecture 4)
 
 ## Getting Started
 
-### Required Software
+### Prerequisites
 
-Make sure you have installed:
-- Python 3.8+
-- NumPy
-- OpenCV (cv2)
-- Matplotlib
-- Jupyter Notebook (optional but recommended)
+- Python 3.11 or higher
+- Git
+- `uv` (recommended) — fast Python package manager
 
-### Installation
+### Setup
 
 ```bash
-pip install numpy opencv-python matplotlib jupyter
+git clone <your-repo-url>
+cd 01-filtering-and-edges
+make setup   # creates virtual environment and installs dependencies
+make test    # run all tests
 ```
 
-## Part 1: Image Loading and Display (2 points)
+Accept the assignment on GitHub Classroom using the link above, then clone your personal repository.
 
-<Callout info>
+## Assignment Tasks
 
-For this part, you'll practice loading images and displaying them using different libraries.
+Each problem has **one function** for you to implement. Do not use the restricted libraries listed in the problem descriptions.
 
-</Callout>
+### Problem 1: 3D Point Projection (Lecture 2)
 
-1. Load the provided sample image using OpenCV
-2. Display the image using Matplotlib
-3. Print the image shape, data type, and min/max pixel values
+`problem_1_projection.py` — Project 3D world points onto a 2D image plane using the **pinhole camera model**.
 
-**Deliverable:** A Python script or Jupyter notebook with your code and output.
+**Function:** `project_points(points_3d, K, R, t)` → `(N, 2)` pixel coordinates
 
-## Part 2: Basic Image Transformations (3 points)
+### Problem 2: RGB to HSV Conversion (Lecture 2)
 
-Implement the following transformations:
+`problem_2_color_spaces.py` — Convert an RGB image to HSV colour space **from scratch**.
 
-1. Convert the image to grayscale
-2. Resize the image to 256x256 pixels
-3. Rotate the image by 45 degrees
-4. Flip the image horizontally
+**Function:** `rgb_to_hsv(image)` → `(H, W, 3)` array with Hue, Saturation, Value channels
 
-**Deliverable:** Your transformed images and code.
+### Problem 3: Image Rotation (Lecture 3)
 
-## Part 3: Pixel Manipulation (3 points)
+`problem_3_rotation.py` — Rotate a grayscale image using **inverse mapping and bilinear interpolation**.
 
-1. Create a function to invert an image (negative)
-2. Implement a function to adjust brightness
-3. Create a simple threshold function
+**Function:** `rotate_image(image, angle_degrees)` → rotated `(H, W)` image
 
-**Deliverable:** Functions with documentation and example outputs.
+### Problem 4: Laplacian Pyramid Blending (Lecture 3)
 
-## Part 4: Histograms (2 points)
+`problem_4_pyramid_blending.py` — Blend two images seamlessly using **Laplacian pyramid blending**. Helper functions for Gaussian blur, downsampling, and upsampling are provided.
 
-1. Compute and plot the histogram of the grayscale image
-2. Implement histogram equalization
-3. Display the original and equalized images side-by-side
+**Function:** `blend_images(image1, image2, mask, num_levels)` → blended `(H, W)` image
 
-**Deliverable:** Plots and analysis of the results.
+### Problem 5: 2D Convolution (Lecture 4)
 
-## Submission Guidelines
+`problem_5_convolution.py` — Implement **2D convolution from scratch** with boundary handling.
 
-Submit a single ZIP file to [Gradescope]({assign.materials.gradescope}) containing:
-
-1. `assignment1.py` or `assignment1.ipynb` - Your code
-2. `results/` folder - Output images
-3. `README.txt` - Brief description of your approach and any challenges
-
-### File Structure
-
-```
-assignment1_submission.zip
-├── assignment1.py (or .ipynb)
-├── results/
-│   ├── part1_output.png
-│   ├── part2_*.png
-│   ├── part3_*.png
-│   └── part4_*.png
-└── README.txt
-```
+**Function:** `convolve2d(image, kernel, boundary, mode)` → convolved image
 
 <Callout warning>
 
-**Due Date:** {class_data.assignments[1].due}  
-**Points:** {class_data.assignments[1].points}
-
-Make sure to test your code before submission and include all required files!
+Do **not** use `scipy.signal.convolve`, `numpy.convolve`, or `cv2.filter2D`.
 
 </Callout>
 
-## Grading Rubric
+### Problem 6: Normalised Cross-Correlation (Lecture 4)
 
-| Component | Points | Criteria |
-|-----------|--------|----------|
-| Part 1 | 2 | Correct loading and display with proper documentation |
-| Part 2 | 3 | All transformations implemented correctly |
-| Part 3 | 3 | Functions work correctly with edge cases handled |
-| Part 4 | 2 | Histograms and equalization implemented properly |
-| **Total** | **10** | |
+`problem_6_template_matching.py` — Implement **NCC template matching** from scratch.
 
-## Tips and Resources
+**Function:** `compute_ncc(image, template)` → NCC score map in $[-1, 1]$
 
-- Start early! Image processing can have unexpected challenges
-- Test your code with different images
-- Use the discussion forum if you get stuck
-- Useful resources:
-  - [OpenCV Python Tutorials](https://docs.opencv.org/master/d6/d00/tutorial_py_root.html)
-  - [NumPy Documentation](https://numpy.org/doc/)
-  - [Matplotlib Gallery](https://matplotlib.org/stable/gallery/index.html)
+<Callout warning>
+
+Do **not** use `scipy.signal.correlate`, `cv2.matchTemplate`, `skimage.feature.match_template`, or `numpy.lib.stride_tricks.sliding_window_view`.
+
+</Callout>
+
+## Grading
+
+30 unit tests are auto-graded via GitHub Actions. Each passed test contributes proportionally toward a maximum score of 100.
+
+| Problem | Topic | Tests | Lecture |
+|---------|-------|-------|---------|
+| 1. Projection | Pinhole camera 3D → 2D | 5 | 2 |
+| 2. Colour Spaces | RGB → HSV conversion | 5 | 2 |
+| 3. Rotation | Inverse mapping + bilinear interpolation | 5 | 3 |
+| 4. Pyramid Blending | Laplacian pyramid blending | 5 | 3 |
+| 5. Convolution | 2D convolution from scratch | 5 | 4 |
+| 6. Template Matching | Normalised Cross-Correlation | 5 | 4 |
+| **Total** | | **30** | |
+
+## Submission
+
+Push your completed code to GitHub. Tests run automatically on each push — check the **Actions** tab in your repository to see results.
+
+```bash
+git add .
+git commit -m "Complete Assignment 1"
+git push origin main
+```
 
 ## Academic Integrity
 
-You may discuss concepts with classmates but must write your own code. Acknowledge any collaborators in your README.txt file.
+Work on this assignment individually. You may consult documentation and tutorials. If you use AI tools (chatbots), acknowledge this in a comment in your code.
 
-## Questions?
-
-Post on the discussion forum or come to office hours!
