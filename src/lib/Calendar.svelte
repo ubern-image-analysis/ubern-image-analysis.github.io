@@ -72,6 +72,8 @@
                     href="https://classroom.github.com/a/Ikojcd6a"
                     target="_blank">Assignment {assignment}</a
                   >
+                {:else if assignment === 2}
+                  <a href={fixupLink('/assignments/assign2')}>Assignment {assignment}</a>
                 {:else}
                   <span>Assignment {assignment}</span>
                 {/if}

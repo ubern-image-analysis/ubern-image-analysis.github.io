@@ -208,7 +208,8 @@ assignments:
   - name: "Assignment 2: Streamlit/HuggingFace Demo & Peer Review"
     due: "2026/05/20"
     points: 10
-    details: "Create an interactive educational demo explaining an image processing pipeline. Deploy it as a web application. During Part 1 (20 May), groups give a brief overview of their demo to the class. During Part 2 (27 May), each student individually presents their application for 5 minutes. Participate in peer review."
+    materials:
+      details: "/assignments/assign2"
 
   - name: "Assignment 3: Deep Learning vs. Classical Methods"
     due: "2026/05/20"
