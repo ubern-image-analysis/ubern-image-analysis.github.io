@@ -46,6 +46,7 @@ By the end of this course, students will be able to:
 ## Prerequisites
 
 - **Programming:** Experience with Python programming
+- **Python Learning Resource:** If you need a refresher, use [Learn Python with Jupyter](https://www.learnpythonwithjupyter.com), created by Serena Bonaretti (former doctoral student, University of Bern)
 - **Mathematics:** Linear algebra, calculus, and basic statistics
 - **Signal Processing:** Basic understanding of signals and systems (helpful but not required)
 
@@ -82,7 +83,7 @@ Installation instructions will be provided in the first week of class.
 
 - **Assignment 0 (5%)**: Introduction to Python programming and environment setup – available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE)
 - **Assignment 1 (10%)**: Colorspaces, Sampling and Filtering  – available on [GitHub Classroom](https://classroom.github.com/a/Ikojcd6a)
-- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (presented individually for less than 5 minutes each) — scheduled on two lecture days.
+- **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (presented individually for less than 5 minutes each) — scheduled on two lecture days; details are available on the [Assignment 2 page]({base}/assignments/assign2)
 - **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
 
 Collaboration is permitted, but you must write your own code and acknowledge all collaborators.
@@ -100,25 +101,15 @@ The University of Bern expects all students to uphold the highest standards of a
 - You may discuss assignments with classmates but must write your own code
 - Acknowledge all collaborators in your submission
 - Do not copy code from online sources without attribution
-
-## Office Hours
-
-<div>
-{#each class_data.instructors as instructor}
-<p><strong>{instructor.name}</strong> ({instructor.role}):</p>
-<ul>
-{#each instructor.officeHours as oh}
-<li>{oh.when}, {oh.where}</li>
-{/each}
-</ul>
-{/each}
-</div>
+- Using coding agents is allowed, but you are fully responsible for the correctness of your submission
+- You must be able to explain and justify any part of your submitted work if asked
 
 ## Course Communication
 
 - **Announcements:** Posted on ILIAS discussion forum
 - **Questions:** Navigate to the "Introduction to Image Analysis" course on <a href={ilias} target="_blank">ILIAS</a> and use the discussion board there
 - **Private Matters:** Email instructors directly
+- **Meetings:** By appointment only
 - **Response Time:** Expect responses within 24-48 hours on weekdays
 
 ## Schedule Overview
@@ -134,4 +125,4 @@ See the [schedule]({base}/) for detailed weekly topics and assignment due dates.
 
 ## Questions?
 
-If you have questions not answered here, please post on the discussion forum or come to office hours. We're here to help you succeed!
+If you have questions not answered here, please post on the discussion forum or email the instructors to set up an appointment. We're here to help you succeed!

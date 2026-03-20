@@ -72,13 +72,15 @@ Students should have:
 
 - **Assignments (40%)**: Four programming assignments (5%, 10%, 10%, 15%)
   - Assignment 0 is available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE). Assignment 0 includes Python environment setup and basic programming exercises
-  - Assignments 1, 2, and 3 will be released on their respective due dates
+  - Assignment 1 is available on [GitHub Classroom](https://classroom.github.com/a/Ikojcd6a)
+  - Assignment 2 details are available on the [Assignment 2 page]({base}/assignments/assign2) (no GitHub Classroom link)
+  - Assignment 3 will be released closer to its due date
 - **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1–6)
 - **Final Exam (30%)**: Covers lectures 7–11 (Feature Extraction, Registration, and Deep Learning content). Lectures 1–6 are assessed in the mid-term only. **Exam dates are not yet fixed.**
 
 ### Academic Integrity
 
-All work submitted must be your own. Collaboration on assignments is permitted, but you must write your own code and acknowledge all collaborators. Plagiarism will not be tolerated.
+All work submitted must be your own. Collaboration on assignments is permitted, but you must write your own code and acknowledge all collaborators. Using coding agents is allowed, but you are fully responsible for the correctness of your submission and must be able to explain any part of your work if asked. Plagiarism will not be tolerated.
 
 ## Getting Started
 
