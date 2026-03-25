@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Segmentation Lab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+  --bg: #0c0c0f;
+  --surface: #16161a;
+  --surface2: #1e1e24;
+  --border: #2a2a32;
+  --text: #e8e6e3;
+  --text-dim: #8a8a8e;
+  --accent: #f0c040;
+  --accent2: #40c0f0;
+  --accent3: #f06040;
+  --accent4: #60f0a0;
+  --radius: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+header {
+  padding: 28px 40px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+header .subtitle {
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+nav {
+  display: flex;
+  gap: 0;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+nav button {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s;
+}
+
+nav button:hover { color: var(--text); }
+nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+main {
+  padding: 28px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.panel { display: none; animation: fadeIn 0.3s ease; }
+.panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.card h3 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: 17px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.card h3 .tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+canvas { display: block; border-radius: 5px; cursor: crosshair; }
+
+.canvas-wrap {
+  background: #000;
+  border-radius: 5px;
+  overflow: hidden;
+  display: inline-block;
+  position: relative;
+}
+
+.controls {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls label {
+  color: var(--text-dim);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 110px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+select, button.btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+select:hover, button.btn:hover { border-color: var(--accent); }
+
+button.btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+.value-badge {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 1px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--accent);
+  min-width: 38px;
+  text-align: center;
+}
+
+.info-box {
+  background: var(--surface2);
+  border-left: 3px solid var(--accent);
+  padding: 10px 14px;
+  margin-top: 12px;
+  border-radius: 0 5px 5px 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.info-box code { color: var(--accent2); }
+
+.stats-row { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+
+.stat {
+  background: var(--surface2);
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+}
+
+.stat .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.stat .stat-value { font-size: 15px; color: var(--accent); margin-top: 1px; }
+
+.legend { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-dim); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.section-desc {
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+  max-width: 820px;
+}
+
+.formula { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent2); font-size: 14px; }
+
+.image-select { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+
+.image-select button {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.image-select button:hover { border-color: var(--text-dim); }
+.image-select button.active { border-color: var(--accent); color: var(--accent); }
+
+.lw-status {
+  color: var(--accent4);
+  font-size: 11px;
+  margin-top: 6px;
+  min-height: 16px;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12,12,15,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 12px;
+  border-radius: 5px;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  header, nav, main { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Image Segmentation Lab</h1>
+  <span class="subtitle">Interactive Demo &mdash; Otsu &middot; Region Growing &middot; Live-Wire</span>
+</header>
+
+<nav>
+  <button class="active" onclick="switchTab('otsu', this)">01 Otsu</button>
+  <button onclick="switchTab('region', this)">02 Region Growing</button>
+  <button onclick="switchTab('livewire', this)">03 Live-Wire</button>
+  <button onclick="switchTab('evaluation', this)">04 Evaluation</button>
+</nav>
+
+<main>
+
+<!-- ===== OTSU ===== -->
+<div id="otsu" class="panel active">
+  <p class="section-desc">
+    Otsu's method (1979) finds the threshold <span class="formula">t*</span> maximizing between-class variance
+    <span class="formula">σ²<sub>B</sub>(t) = ω₀ω₁(μ₀−μ₁)²</span>.
+    Drag the slider or press <strong>Auto Otsu</strong>.
+  </p>
+  <div class="image-select" id="otsu-images">
+    <button class="active" onclick="loadOtsuImg('cameraman',this)">Cameraman</button>
+    <button onclick="loadOtsuImg('coins',this)">Coins</button>
+    <button onclick="loadOtsuImg('phantom',this)">Shepp-Logan</button>
+    <button onclick="loadOtsuImg('retina',this)">Retinal Fundus</button>
+    <button onclick="loadOtsuImg('xray',this)">Hand X-ray</button>
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-left:8px;color:var(--text-dim);font-size:11px">
+      Noise σ <span class="value-badge" id="otsu-noise-val">0</span>
+      <input type="range" id="otsu-noise" min="0" max="80" value="0" oninput="onOtsuNoise()">
+    </span>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Original &amp; Histogram</h3>
+      <div class="canvas-wrap"><canvas id="c-otsu-orig" width="320" height="256"></canvas></div>
+      <div style="margin-top:10px"><div class="canvas-wrap"><canvas id="c-otsu-hist" width="320" height="120"></canvas></div></div>
+    </div>
+    <div class="card">
+      <h3>Binary Result <span class="tag">THRESHOLD</span></h3>
+      <div class="canvas-wrap"><canvas id="c-otsu-res" width="320" height="256"></canvas></div>
+      <div class="controls">
+        <label>t <span class="value-badge" id="otsu-t-val">128</span>
+          <input type="range" id="otsu-t" min="0" max="255" value="128" oninput="applyOtsu()">
+        </label>
+        <button class="btn primary" onclick="autoOtsu()">Auto Otsu</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">t*</div><div class="stat-value" id="os-t">—</div></div>
+        <div class="stat"><div class="stat-label">σ²B</div><div class="stat-value" id="os-var">—</div></div>
+        <div class="stat"><div class="stat-label">ω₀</div><div class="stat-value" id="os-w0">—</div></div>
+        <div class="stat"><div class="stat-label">ω₁</div><div class="stat-value" id="os-w1">—</div></div>
+      </div>
+      <div style="margin-top:10px"><div class="canvas-wrap"><canvas id="c-otsu-var" width="320" height="80"></canvas></div></div>
+      <div class="info-box">
+        Yellow curve = <code>σ²B(t)</code>. Green line = optimal <code>t*</code>. Red line = your slider.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGION GROWING ===== -->
+<div id="region" class="panel">
+  <p class="section-desc">
+    Click to place a seed. The region grows by adding neighbors where
+    <span class="formula">|I(q) − μ<sub>R</sub>| &lt; τ</span>.
+    Watch it expand in real-time. Try different tolerances to see leakage vs tight segmentation.
+  </p>
+  <div class="image-select" id="rg-images">
+    <button class="active" onclick="loadRGImg('cameraman',this)">Cameraman</button>
+    <button onclick="loadRGImg('coins',this)">Coins</button>
+    <button onclick="loadRGImg('phantom',this)">Shepp-Logan</button>
+    <button onclick="loadRGImg('retina',this)">Retinal Fundus</button>
+    <button onclick="loadRGImg('xray',this)">Hand X-ray</button>
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-left:8px;color:var(--text-dim);font-size:11px">
+      Noise σ <span class="value-badge" id="rg-noise-val">0</span>
+      <input type="range" id="rg-noise" min="0" max="80" value="0" oninput="onRGNoise()">
+    </span>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Click to seed</h3>
+      <div class="canvas-wrap"><canvas id="c-rg-main" width="320" height="256"></canvas></div>
+      <div class="controls">
+        <label>τ <span class="value-badge" id="rg-tau-val">15</span>
+          <input type="range" id="rg-tau" min="1" max="80" value="15" oninput="document.getElementById('rg-tau-val').textContent=this.value">
+        </label>
+        <label>Speed
+          <select id="rg-speed">
+            <option value="0">Instant</option>
+            <option value="1" selected>Fast</option>
+            <option value="8">Medium</option>
+            <option value="30">Slow</option>
+          </select>
+        </label>
+        <label>
+          <select id="rg-conn">
+            <option value="4">4-conn</option>
+            <option value="8" selected>8-conn</option>
+          </select>
+        </label>
+        <button class="btn" onclick="resetRG()">Reset</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Seed I</div><div class="stat-value" id="rg-si">—</div></div>
+        <div class="stat"><div class="stat-label">μR</div><div class="stat-value" id="rg-mu">—</div></div>
+        <div class="stat"><div class="stat-label">Pixels</div><div class="stat-value" id="rg-n">0</div></div>
+        <div class="stat"><div class="stat-label">σR</div><div class="stat-value" id="rg-sig">—</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Mask View</h3>
+      <div class="canvas-wrap"><canvas id="c-rg-mask" width="320" height="256"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#60f0a0"></div> Region</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f0c040"></div> Frontier</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f06040"></div> Seed</div>
+      </div>
+      <div class="info-box" style="margin-top:10px">
+        Low τ → tight, homogeneous region. High τ → leakage through weak boundaries.
+        The mean <code>μR</code> updates adaptively as the region grows.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LIVE-WIRE ===== -->
+<div id="livewire" class="panel">
+  <p class="section-desc">
+    Live-wire finds the minimum-cost path via Dijkstra. The local cost between pixels p→q is:<br>
+    <span class="formula">l(p,q) = ω<sub>G</sub>·f<sub>G</sub>(q) + ω<sub>Z</sub>·f<sub>Z</sub>(q) + ω<sub>D</sub>·f<sub>D</sub>(p,q)</span><br>
+    <strong>f<sub>G</sub></strong> = inverse gradient magnitude &ensp;
+    <strong>f<sub>Z</sub></strong> = Laplacian zero-crossing &ensp;
+    <strong>f<sub>D</sub></strong> = gradient direction cost.
+    <strong>Click</strong> to place anchors. Green dashed line follows your cursor.
+  </p>
+  <div class="image-select" id="lw-images">
+    <button class="active" onclick="loadLWImg('coins',this)">Coins</button>
+    <button onclick="loadLWImg('cameraman',this)">Cameraman</button>
+    <button onclick="loadLWImg('phantom',this)">Shepp-Logan</button>
+    <button onclick="loadLWImg('retina',this)">Retinal Fundus</button>
+    <button onclick="loadLWImg('xray',this)">Hand X-ray</button>
+    <span style="display:inline-flex;align-items:center;gap:5px;margin-left:8px;color:var(--text-dim);font-size:11px">
+      Noise σ <span class="value-badge" id="lw-noise-val">0</span>
+      <input type="range" id="lw-noise" min="0" max="80" value="0" oninput="onLWNoise()">
+    </span>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Live-Wire Contour</h3>
+      <div class="canvas-wrap" style="position:relative">
+        <canvas id="c-lw-main" width="320" height="256"></canvas>
+        <div class="loading-overlay" id="lw-loading" style="display:none">Computing shortest paths…</div>
+      </div>
+      <div class="lw-status" id="lw-status">Click on the image to place the first anchor point.</div>
+
+      <div class="controls" style="margin-top:10px">
+        <label>ω<sub>G</sub> (gradient) <span class="value-badge" id="lw-wg-val">0.43</span>
+          <input type="range" id="lw-wg" min="0" max="100" value="43" oninput="onLWParamChange()">
+        </label>
+        <label>ω<sub>Z</sub> (Laplacian) <span class="value-badge" id="lw-wz-val">0.43</span>
+          <input type="range" id="lw-wz" min="0" max="100" value="43" oninput="onLWParamChange()">
+        </label>
+        <label>ω<sub>D</sub> (direction) <span class="value-badge" id="lw-wd-val">0.14</span>
+          <input type="range" id="lw-wd" min="0" max="100" value="14" oninput="onLWParamChange()">
+        </label>
+      </div>
+      <div class="controls">
+        <label>Smoothing σ <span class="value-badge" id="lw-sm-val">1.0</span>
+          <input type="range" id="lw-smooth" min="0" max="40" value="10" oninput="onLWParamChange()">
+        </label>
+        <button class="btn" onclick="undoLW()">Undo</button>
+        <button class="btn" onclick="resetLW()">Reset</button>
+        <button class="btn primary" onclick="closeLW()">Close Contour</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Anchors</div><div class="stat-value" id="lw-na">0</div></div>
+        <div class="stat"><div class="stat-label">Path len</div><div class="stat-value" id="lw-len">—</div></div>
+        <div class="stat"><div class="stat-label">Total cost</div><div class="stat-value" id="lw-cost">—</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Combined Cost Map <span class="tag">WEIGHTED</span></h3>
+      <div class="canvas-wrap"><canvas id="c-lw-cost" width="320" height="256"></canvas></div>
+      <div class="info-box">
+        Bright = high cost (path avoids). Dark = low cost (path prefers).<br>
+        <code>f<sub>G</sub> = 1 − G/max(G)</code> — low at strong edges<br>
+        <code>f<sub>Z</sub> = 0</code> at Laplacian zero-crossings, <code>1</code> elsewhere<br>
+        <code>f<sub>D</sub></code> penalizes turning away from the gradient normal direction<br>
+        Adjust ω sliders to see how each component shapes the cost map and path.
+      </div>
+      <div style="margin-top:10px">
+        <div class="canvas-wrap"><canvas id="c-lw-fg" width="100" height="80" style="margin-right:4px"></canvas></div>
+        <div class="canvas-wrap"><canvas id="c-lw-fz" width="100" height="80" style="margin-right:4px"></canvas></div>
+        <div class="canvas-wrap"><canvas id="c-lw-fd" width="100" height="80"></canvas></div>
+      </div>
+      <div class="legend" style="margin-top:6px">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> f<sub>G</sub> gradient</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent4)"></div> f<sub>Z</sub> Laplacian</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> f<sub>D</sub> direction</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EVALUATION ===== -->
+<div id="evaluation" class="panel">
+  <p class="section-desc">
+    Draw two regions to compare. Region A = ground truth, Region B = prediction.
+    Click <strong>Compute</strong> to see Dice, Jaccard, sensitivity, specificity and the overlap map.
+  </p>
+  <div class="grid-3">
+    <div class="card">
+      <h3>Region A <span class="tag" style="background:var(--accent2);color:var(--bg)">TRUTH</span></h3>
+      <div class="canvas-wrap"><canvas id="eval-a" width="250" height="250"></canvas></div>
+      <div class="controls">
+        <label>Brush <span class="value-badge" id="ev-ba">12</span>
+          <input type="range" id="eval-br-a" min="2" max="40" value="12">
+        </label>
+        <button class="btn" onclick="clearEval('a')">Clear</button>
+        <button class="btn" onclick="presetEval('a')">Preset</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Region B <span class="tag" style="background:var(--accent3);color:var(--bg)">PREDICTION</span></h3>
+      <div class="canvas-wrap"><canvas id="eval-b" width="250" height="250"></canvas></div>
+      <div class="controls">
+        <label>Brush <span class="value-badge" id="ev-bb">12</span>
+          <input type="range" id="eval-br-b" min="2" max="40" value="12">
+        </label>
+        <button class="btn" onclick="clearEval('b')">Clear</button>
+        <button class="btn" onclick="presetEval('b')">Preset</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Overlap</h3>
+      <div class="canvas-wrap"><canvas id="eval-ov" width="250" height="250"></canvas></div>
+      <button class="btn primary" style="margin-top:10px;width:100%" onclick="evalMetrics()">Compute Metrics</button>
+      <div class="stats-row" style="margin-top:10px">
+        <div class="stat"><div class="stat-label">Dice</div><div class="stat-value" id="ev-dice">—</div></div>
+        <div class="stat"><div class="stat-label">Jaccard</div><div class="stat-value" id="ev-jacc">—</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Sens</div><div class="stat-value" id="ev-sens">—</div></div>
+        <div class="stat"><div class="stat-label">Spec</div><div class="stat-value" id="ev-spec">—</div></div>
+      </div>
+      <div class="legend" style="margin-top:8px">
+        <div class="legend-item"><div class="legend-dot" style="background:#60f0a0"></div> TP</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#40c0f0"></div> FN</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f06040"></div> FP</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ======================================================================
+//  CORE UTILITIES
+// ======================================================================
+const W = 320, H = 256;
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function putGray(canvas, data) {
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(W, H);
+  for (let i = 0; i < W * H; i++) {
+    img.data[i*4] = img.data[i*4+1] = img.data[i*4+2] = data[i];
+    img.data[i*4+3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
+function hist256(data) {
+  const h = new Uint32Array(256);
+  for (let i = 0; i < data.length; i++) h[data[i]]++;
+  return h;
+}
+
+function clamp(v) { return v < 0 ? 0 : v > 255 ? 255 : v | 0; }
+
+// Seeded pseudo-random for reproducible images
+let _seed = 42;
+function srand(s) { _seed = s; }
+function rand() { _seed = (_seed * 16807 + 0) % 2147483647; return (_seed & 0x7fffffff) / 2147483647; }
+
+// Gaussian noise: add noise with standard deviation sigma to clean image
+function addNoise(clean, sigma) {
+  if (sigma <= 0) return new Uint8Array(clean);
+  const out = new Uint8Array(clean.length);
+  for (let i = 0; i < clean.length; i++) {
+    // Box-Muller transform using Math.random for noise (not seeded — different each time)
+    const u1 = Math.random() || 1e-10;
+    const u2 = Math.random();
+    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    out[i] = clamp(clean[i] + z * sigma);
+  }
+  return out;
+}
+
+// ======================================================================
+//  CLASSIC TEST IMAGE GENERATORS
+// ======================================================================
+function makeImage(name) {
+  const d = new Uint8Array(W * H);
+  const cx = W / 2, cy = H / 2;
+  srand(12345);
+
+  if (name === 'cameraman') {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const ny = y / H, nx = x / W;
+      let v = 25 + ny * 50 + (rand() - 0.5) * 10;
+      if (ny > 0.58) v = 100 + (ny - 0.58) * 180 + (rand() - 0.5) * 14;
+      const fdx = nx - 0.47, fdy = ny - 0.44;
+      if (fdx*fdx*4.5 + (fdy+0.16)*(fdy+0.16)*7 < 0.009) v = 50 + rand()*12;
+      if (Math.abs(fdx) < 0.055 && fdy > -0.09 && fdy < 0.16) v = 42 + rand()*14;
+      if (fdy > 0.01 && fdy < 0.22 && Math.abs(fdx) < 0.035 + fdy*0.38) v = 38 + rand()*16;
+      if (fdy > 0.16 && fdy < 0.40) {
+        if (Math.abs(fdx - (fdy-0.16)*0.28) < 0.011 || Math.abs(fdx + (fdy-0.16)*0.24) < 0.011 || Math.abs(fdx+0.004) < 0.007)
+          v = 32 + rand()*8;
+      }
+      if (fdy > -0.01 && fdy < 0.06 && fdx > 0.04 && fdx < 0.13) v = 58 + rand()*16;
+      for (let b = 0; b < 7; b++) {
+        const bx = 0.08 + b*0.13, bw = 0.035 + (b%3)*0.012, bh = 0.06 + (b%4)*0.025;
+        if (Math.abs(nx-bx) < bw && ny > 0.52-bh && ny < 0.58) v = 65 + b*8 + rand()*8;
+      }
+      d[y*W+x] = clamp(v);
+    }
+  }
+
+  else if (name === 'coins') {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++)
+      d[y*W+x] = clamp(28 + rand()*14);
+    const coins = [
+      {x:55,y:50,r:28},{x:155,y:45,r:33},{x:260,y:55,r:26},
+      {x:42,y:138,r:30},{x:135,y:125,r:24},{x:225,y:135,r:36},
+      {x:75,y:215,r:25},{x:180,y:205,r:31},{x:270,y:200,r:28}
+    ];
+    for (const c of coins) {
+      for (let y = Math.max(0,c.y-c.r-3); y < Math.min(H,c.y+c.r+3); y++)
+        for (let x = Math.max(0,c.x-c.r-3); x < Math.min(W,c.x+c.r+3); x++) {
+          const dist = Math.sqrt((x-c.x)**2+(y-c.y)**2);
+          if (dist < c.r - 2) {
+            const t = dist / c.r;
+            d[y*W+x] = clamp(185 + 45*(1-t) + rand()*8);
+          } else if (dist < c.r) {
+            d[y*W+x] = clamp(125 + rand()*15);
+          }
+        }
+    }
+  }
+
+  else if (name === 'phantom') {
+    const ellipses = [
+      {cx:0,cy:0,a:0.92,b:0.69,th:0,v:200},
+      {cx:0,cy:-0.01,a:0.87,b:0.65,th:0,v:170},
+      {cx:0.22,cy:0,a:0.31,b:0.11,th:-18,v:140},
+      {cx:-0.22,cy:0,a:0.41,b:0.16,th:18,v:140},
+      {cx:0,cy:0.35,a:0.25,b:0.21,th:0,v:120},
+      {cx:0,cy:0.1,a:0.046,b:0.046,th:0,v:240},
+      {cx:0,cy:-0.1,a:0.046,b:0.046,th:0,v:240},
+      {cx:-0.08,cy:-0.6,a:0.046,b:0.023,th:0,v:220},
+      {cx:0,cy:-0.6,a:0.023,b:0.023,th:0,v:220},
+      {cx:0.06,cy:-0.6,a:0.046,b:0.023,th:0,v:220},
+    ];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const nx = (x-cx)/(W*0.45), ny = (y-cy)/(H*0.45);
+      let v = 10;
+      for (const e of ellipses) {
+        const ct = Math.cos(e.th*Math.PI/180), st = Math.sin(e.th*Math.PI/180);
+        const rx = ct*(nx-e.cx)+st*(ny-e.cy), ry = -st*(nx-e.cx)+ct*(ny-e.cy);
+        if ((rx/e.a)**2+(ry/e.b)**2 <= 1) v = e.v;
+      }
+      d[y*W+x] = clamp(v + (rand()-0.5)*4);
+    }
+  }
+
+  else if (name === 'retina') {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const nx = (x-cx)/cx, ny = (y-cy)/cy;
+      const r = Math.sqrt(nx*nx+ny*ny);
+      let v = 0;
+      if (r < 0.92) {
+        v = 80 + 30*(1-r) + rand()*8;
+        const odx = nx-0.3, ody = ny+0.05;
+        if (odx*odx+ody*ody < 0.025) v = 200 + rand()*20;
+        const mdx = nx+0.1, mdy = ny+0.02;
+        if (mdx*mdx+mdy*mdy < 0.01) v = 50 + rand()*10;
+        for (let vn = 0; vn < 8; vn++) {
+          const angle = vn*Math.PI/4;
+          const vx = nx-0.3, vy = ny+0.05;
+          const along = vx*Math.cos(angle)+vy*Math.sin(angle);
+          const perp = -vx*Math.sin(angle)+vy*Math.cos(angle);
+          if (along > 0 && along < 0.9) {
+            const w2 = 0.012*(1-along*0.6);
+            const wave = Math.sin(along*12+vn)*0.02;
+            if (Math.abs(perp-wave) < w2) v = 35 + rand()*10;
+          }
+        }
+      } else v = 5 + rand()*3;
+      d[y*W+x] = clamp(v);
+    }
+  }
+
+  else if (name === 'xray') {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++)
+      d[y*W+x] = clamp(8 + rand()*6);
+    const palmCx = 0.48, palmCy = 0.62;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const nx = x/W, ny = y/H;
+      const dx2 = ((nx-palmCx)/0.18)**2, dy2 = ((ny-palmCy)/0.22)**2;
+      if (dx2+dy2 < 1) d[y*W+x] = clamp(Math.max(d[y*W+x], 80 + 60*(1-Math.sqrt(dx2+dy2)) + rand()*6));
+    }
+    const fingers = [
+      {bx:0.28,by:0.48,a:-0.45,len:0.32,w:0.030},
+      {bx:0.37,by:0.38,a:-0.15,len:0.30,w:0.024},
+      {bx:0.47,by:0.35,a:0.0,  len:0.33,w:0.025},
+      {bx:0.56,by:0.37,a:0.12, len:0.29,w:0.023},
+      {bx:0.64,by:0.42,a:0.25, len:0.24,w:0.020},
+    ];
+    for (const f of fingers) {
+      const cs = Math.cos(f.a), sn = Math.sin(f.a);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const nx = x/W, ny = y/H;
+        const lx = nx-f.bx, ly = ny-f.by;
+        const along = -lx*sn - ly*(-cs) + ly*cs; // simplified
+        const along2 = -(lx*sn) + (ly*(-cs));
+        const perp2 = lx*cs + ly*sn;
+        // Use proper rotation
+        const al = -lx*Math.sin(f.a) - ly*(-Math.cos(f.a));
+        const pr = lx*Math.cos(f.a) - ly*Math.sin(f.a);
+        const al2 = ly * (-1);
+        // Simple approach: rotate to finger frame
+        const cosA = Math.cos(-f.a - Math.PI/2), sinA = Math.sin(-f.a - Math.PI/2);
+        const fx = lx*cosA - ly*sinA;
+        const fy = lx*sinA + ly*cosA;
+        if (fy > 0 && fy < f.len && Math.abs(fx) < f.w*(1-fy*0.3)) {
+          const edge = 1 - Math.abs(fx)/(f.w*(1-fy*0.3));
+          let v = 70 + 40*edge + rand()*5;
+          const boneW = f.w*0.45*(1-fy*0.3);
+          if (Math.abs(fx) < boneW) {
+            const seg = fy/f.len;
+            const nj = Math.min(Math.abs(seg-0.35), Math.abs(seg-0.62), seg < 0.05 ? 1 : seg, seg > 0.95 ? 1 : 1-seg);
+            v = nj > 0.04 ? 180+50*(1-Math.abs(fx)/boneW)+rand()*8 : 90+rand()*10;
+          }
+          d[y*W+x] = clamp(Math.max(d[y*W+x], v));
+        }
+      }
+    }
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const nx = x/W, ny = y/H;
+      if (ny > 0.78 && ny < 0.98 && Math.abs(nx-0.48) < 0.18) {
+        const t = (ny-0.78)/0.2;
+        d[y*W+x] = clamp(Math.max(d[y*W+x], 100+80*(1-t)+rand()*8));
+      }
+    }
+  }
+
+  return d;
+}
+
+// ======================================================================
+//  OTSU
+// ======================================================================
+let oData, oClean, oImgName = 'cameraman';
+
+function loadOtsuImg(name, btn) {
+  document.querySelectorAll('#otsu-images button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  oImgName = name;
+  oClean = makeImage(name);
+  const sigma = +document.getElementById('otsu-noise').value;
+  oData = addNoise(oClean, sigma);
+  putGray(document.getElementById('c-otsu-orig'), oData);
+  applyOtsu();
+}
+
+function onOtsuNoise() {
+  const sigma = +document.getElementById('otsu-noise').value;
+  document.getElementById('otsu-noise-val').textContent = sigma;
+  if (!oClean) return;
+  oData = addNoise(oClean, sigma);
+  putGray(document.getElementById('c-otsu-orig'), oData);
+  applyOtsu();
+}
+
+function applyOtsu() {
+  if (!oData) return;
+  const t = +document.getElementById('otsu-t').value;
+  document.getElementById('otsu-t-val').textContent = t;
+  const c = document.getElementById('c-otsu-res');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  const img = ctx.createImageData(W, H);
+  for (let i = 0; i < W*H; i++) {
+    const v = oData[i] > t ? 255 : 0;
+    img.data[i*4] = img.data[i*4+1] = img.data[i*4+2] = v; img.data[i*4+3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  drawOtsuHist(t);
+  drawOtsuVar(t);
+}
+
+function drawOtsuHist(t) {
+  const h = hist256(oData);
+  const c = document.getElementById('c-otsu-hist');
+  c.width = 320; c.height = 120;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#1a1a20'; ctx.fillRect(0,0,320,120);
+  const mx = Math.max(...Array.from(h).slice(1));
+  const bw = 320/256;
+  for (let i = 0; i < 256; i++) {
+    const bh = (h[i]/mx)*104;
+    ctx.fillStyle = i <= t ? 'rgba(64,192,240,0.55)' : 'rgba(240,192,64,0.55)';
+    ctx.fillRect(i*bw, 114-bh, Math.max(bw-0.3,0.8), bh);
+  }
+  ctx.strokeStyle = '#f06040'; ctx.lineWidth = 1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(t*bw,0); ctx.lineTo(t*bw,120); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#f06040'; ctx.font = '10px DM Mono'; ctx.fillText('t='+t, t*bw+3, 12);
+}
+
+function otsuVars(data) {
+  const h = hist256(data), N = data.length;
+  const v = new Float64Array(256);
+  let best = 0, bT = 0;
+  for (let t = 0; t < 255; t++) {
+    let w0=0,s0=0,w1=0,s1=0;
+    for (let i=0;i<=t;i++){w0+=h[i];s0+=i*h[i];}
+    for (let i=t+1;i<256;i++){w1+=h[i];s1+=i*h[i];}
+    if (!w0||!w1) continue;
+    const val = (w0/N)*(w1/N)*(s0/w0-s1/w1)**2;
+    v[t] = val;
+    if (val > best) { best = val; bT = t; }
+  }
+  return {v, bT, best};
+}
+
+function drawOtsuVar(ct) {
+  const {v, bT, best} = otsuVars(oData);
+  const c = document.getElementById('c-otsu-var');
+  c.width = 320; c.height = 80;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#1a1a20'; ctx.fillRect(0,0,320,80);
+  if (!best) return;
+  ctx.strokeStyle = 'rgba(240,192,64,0.7)'; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i=0;i<255;i++){const x=(i/255)*320,y=74-(v[i]/best)*66; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.stroke();
+  const ox = (bT/255)*320;
+  ctx.strokeStyle='#60f0a0';ctx.lineWidth=1.2;ctx.setLineDash([3,2]);
+  ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,80);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#60f0a0';ctx.font='9px DM Mono';ctx.fillText('t*='+bT,ox+2,10);
+  const cx2=(ct/255)*320;
+  ctx.strokeStyle='#f06040';ctx.lineWidth=1;ctx.setLineDash([2,2]);
+  ctx.beginPath();ctx.moveTo(cx2,0);ctx.lineTo(cx2,80);ctx.stroke();ctx.setLineDash([]);
+}
+
+function autoOtsu() {
+  if (!oData) return;
+  const {bT, best} = otsuVars(oData);
+  document.getElementById('otsu-t').value = bT;
+  const h = hist256(oData), N = oData.length;
+  let w0=0; for(let i=0;i<=bT;i++) w0+=h[i];
+  document.getElementById('os-t').textContent = bT;
+  document.getElementById('os-var').textContent = best.toFixed(1);
+  document.getElementById('os-w0').textContent = (w0/N).toFixed(3);
+  document.getElementById('os-w1').textContent = ((N-w0)/N).toFixed(3);
+  applyOtsu();
+}
+
+// ======================================================================
+//  REGION GROWING
+// ======================================================================
+let rgData, rgClean, rgImgName = 'cameraman', rgMask, rgRunning = false, rgTimerId = null;
+
+function loadRGImg(name, btn) {
+  document.querySelectorAll('#rg-images button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  rgImgName = name;
+  rgClean = makeImage(name);
+  const sigma = +document.getElementById('rg-noise').value;
+  rgData = addNoise(rgClean, sigma);
+  resetRG();
+}
+
+function onRGNoise() {
+  const sigma = +document.getElementById('rg-noise').value;
+  document.getElementById('rg-noise-val').textContent = sigma;
+  if (!rgClean) return;
+  rgData = addNoise(rgClean, sigma);
+  resetRG();
+}
+
+function resetRG() {
+  if (rgTimerId != null) { clearTimeout(rgTimerId); rgTimerId = null; }
+  rgRunning = false;
+  rgMask = new Uint8Array(W*H);
+  if (rgData) {
+    putGray(document.getElementById('c-rg-main'), rgData);
+    const mc = document.getElementById('c-rg-mask'); mc.width=W; mc.height=H;
+    mc.getContext('2d').fillStyle='#16161a'; mc.getContext('2d').fillRect(0,0,W,H);
+  }
+  ['rg-si','rg-mu','rg-sig'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('rg-n').textContent='0';
+}
+
+function startRG(sx, sy) {
+  rgRunning = true;
+  rgMask = new Uint8Array(W*H);
+  const tau = +document.getElementById('rg-tau').value;
+  const conn = +document.getElementById('rg-conn').value;
+  const speed = +document.getElementById('rg-speed').value;
+  const seedV = rgData[sy*W+sx];
+  document.getElementById('rg-si').textContent = seedV;
+
+  const q = [[sx,sy]];
+  rgMask[sy*W+sx] = 1;
+  let sumI = seedV, sumI2 = seedV*seedV, cnt = 1;
+  const dx = conn===8?[1,-1,0,0,1,1,-1,-1]:[1,-1,0,0];
+  const dy = conn===8?[0,0,1,-1,1,-1,1,-1]:[0,0,1,-1];
+
+  function step() {
+    const chunk = speed===0 ? q.length : Math.max(1, Math.ceil(200/(speed+1)));
+    let done = 0;
+    while (q.length && done < chunk) {
+      const [px,py] = q.shift();
+      const mean = sumI/cnt;
+      for (let d2=0;d2<dx.length;d2++) {
+        const nx=px+dx[d2], ny2=py+dy[d2];
+        if (nx<0||nx>=W||ny2<0||ny2>=H) continue;
+        const idx=ny2*W+nx;
+        if (rgMask[idx]) continue;
+        const vv = rgData[idx];
+        if (Math.abs(vv-mean) < tau) {
+          rgMask[idx]=1; q.push([nx,ny2]);
+          sumI+=vv; sumI2+=vv*vv; cnt++;
+        } else rgMask[idx]=2;
+      }
+      done++;
+    }
+    const mean=sumI/cnt, std=Math.sqrt(Math.max(0,sumI2/cnt-mean*mean));
+    document.getElementById('rg-mu').textContent=mean.toFixed(1);
+    document.getElementById('rg-n').textContent=cnt;
+    document.getElementById('rg-sig').textContent=std.toFixed(1);
+    drawRG(sx,sy);
+    if (q.length) rgTimerId = speed===0 ? requestAnimationFrame(step) : setTimeout(step, speed*6);
+    else rgRunning = false;
+  }
+  step();
+}
+
+function drawRG(sx, sy) {
+  const c1=document.getElementById('c-rg-main'), ctx1=c1.getContext('2d'), im1=ctx1.createImageData(W,H);
+  const c2=document.getElementById('c-rg-mask'), ctx2=c2.getContext('2d'), im2=ctx2.createImageData(W,H);
+  for (let i=0;i<W*H;i++) {
+    const v=rgData[i];
+    if (rgMask[i]===1) {
+      im1.data[i*4]=clamp(v*0.4+40);im1.data[i*4+1]=clamp(v*0.4+200);im1.data[i*4+2]=clamp(v*0.4+80);
+      im2.data[i*4]=96;im2.data[i*4+1]=240;im2.data[i*4+2]=160;
+    } else if (rgMask[i]===2) {
+      im1.data[i*4]=clamp(v*0.5+180);im1.data[i*4+1]=clamp(v*0.5+150);im1.data[i*4+2]=clamp(v*0.3);
+      im2.data[i*4]=240;im2.data[i*4+1]=192;im2.data[i*4+2]=64;
+    } else {
+      im1.data[i*4]=im1.data[i*4+1]=im1.data[i*4+2]=v;
+      im2.data[i*4]=22;im2.data[i*4+1]=22;im2.data[i*4+2]=26;
+    }
+    im1.data[i*4+3]=im2.data[i*4+3]=255;
+  }
+  for (let dy=-2;dy<=2;dy++) for (let dx=-2;dx<=2;dx++) {
+    const px=sx+dx,py=sy+dy;
+    if (px>=0&&px<W&&py>=0&&py<H) {
+      const j=(py*W+px)*4;
+      im1.data[j]=240;im1.data[j+1]=96;im1.data[j+2]=64;
+      im2.data[j]=240;im2.data[j+1]=96;im2.data[j+2]=64;
+    }
+  }
+  ctx1.putImageData(im1,0,0);
+  ctx2.putImageData(im2,0,0);
+}
+
+// ======================================================================
+//  LIVE-WIRE  — Full 3-component cost: ωG·fG + ωZ·fZ + ωD·fD
+// ======================================================================
+let lwData, lwClean, lwImgName = 'coins', lwPred, lwDist;
+let lwAnchors = [], lwPaths = [], lwLive = [];
+let lwReady = false, lwClosed = false;
+
+// Pre-computed feature maps (per-pixel, not per-edge)
+let lwFG, lwFZ;          // Float32Array[W*H]  node costs fG, fZ
+let lwGradX, lwGradY;    // Float32Array[W*H]  raw Sobel components for fD
+let lwDirX, lwDirY;      // Float32Array[W*H]  D(p) = gradient-normal unit vector
+
+function loadLWImg(name, btn) {
+  document.querySelectorAll('#lw-images button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  lwImgName = name;
+  lwClean = makeImage(name);
+  const sigma = +document.getElementById('lw-noise').value;
+  lwData = addNoise(lwClean, sigma);
+  resetLW();
+  computeLWFeatures();
+  drawLWCostMap();
+  drawLWMiniMaps();
+  drawLWMain();
+}
+
+function onLWNoise() {
+  const sigma = +document.getElementById('lw-noise').value;
+  document.getElementById('lw-noise-val').textContent = sigma;
+  if (!lwClean) return;
+  lwData = addNoise(lwClean, sigma);
+  resetLW();
+  computeLWFeatures();
+  drawLWCostMap();
+  drawLWMiniMaps();
+  drawLWMain();
+}
+
+function getLWWeights() {
+  const rg = +document.getElementById('lw-wg').value;
+  const rz = +document.getElementById('lw-wz').value;
+  const rd = +document.getElementById('lw-wd').value;
+  const total = rg + rz + rd || 1;
+  return { wG: rg/total, wZ: rz/total, wD: rd/total };
+}
+
+function getLWSigma() {
+  return (+document.getElementById('lw-smooth').value) / 10;
+}
+
+function onLWParamChange() {
+  // Update readouts
+  const {wG, wZ, wD} = getLWWeights();
+  document.getElementById('lw-wg-val').textContent = wG.toFixed(2);
+  document.getElementById('lw-wz-val').textContent = wZ.toFixed(2);
+  document.getElementById('lw-wd-val').textContent = wD.toFixed(2);
+  document.getElementById('lw-sm-val').textContent = getLWSigma().toFixed(1);
+
+  if (!lwData) return;
+  computeLWFeatures();
+  drawLWCostMap();
+  drawLWMiniMaps();
+
+  // Recompute Dijkstra from last anchor if present
+  if (lwAnchors.length > 0 && !lwClosed) {
+    const last = lwAnchors[lwAnchors.length-1];
+    document.getElementById('lw-loading').style.display='flex';
+    setTimeout(()=>{
+      dijkstra(last[0],last[1]);
+      document.getElementById('lw-loading').style.display='none';
+      drawLWMain();
+    },10);
+  }
+}
+
+function computeLWFeatures() {
+  const N = W*H;
+  const rawGX = new Float32Array(N);
+  const rawGY = new Float32Array(N);
+  const rawGrad = new Float32Array(N);
+  let mxG = 0;
+
+  // Sobel
+  for (let y=1;y<H-1;y++) for (let x=1;x<W-1;x++) {
+    const gx = -lwData[(y-1)*W+(x-1)]-2*lwData[y*W+(x-1)]-lwData[(y+1)*W+(x-1)]
+               +lwData[(y-1)*W+(x+1)]+2*lwData[y*W+(x+1)]+lwData[(y+1)*W+(x+1)];
+    const gy = -lwData[(y-1)*W+(x-1)]-2*lwData[(y-1)*W+x]-lwData[(y-1)*W+(x+1)]
+               +lwData[(y+1)*W+(x-1)]+2*lwData[(y+1)*W+x]+lwData[(y+1)*W+(x+1)];
+    const idx = y*W+x;
+    rawGX[idx] = gx;
+    rawGY[idx] = gy;
+    const g = Math.sqrt(gx*gx+gy*gy);
+    rawGrad[idx] = g;
+    if (g > mxG) mxG = g;
+  }
+
+  // Optional Gaussian smoothing on gradient magnitude
+  const sigma = getLWSigma();
+  let smoothG = rawGrad;
+  if (sigma > 0.1) {
+    smoothG = gaussBlur(rawGrad, W, H, sigma);
+    mxG = 0;
+    for (let i=0;i<N;i++) if (smoothG[i]>mxG) mxG = smoothG[i];
+  }
+
+  // fG: inverse gradient magnitude (low cost where gradient is strong)
+  lwFG = new Float32Array(N);
+  for (let i=0;i<N;i++) lwFG[i] = mxG > 0 ? 1.0 - smoothG[i]/mxG : 1.0;
+
+  // fZ: Laplacian zero-crossing feature
+  // Compute Laplacian (discrete: sum of 4-neighbors minus 4*center)
+  const lap = new Float32Array(N);
+  for (let y=1;y<H-1;y++) for (let x=1;x<W-1;x++) {
+    const idx = y*W+x;
+    lap[idx] = lwData[(y-1)*W+x] + lwData[(y+1)*W+x] + lwData[y*W+(x-1)] + lwData[y*W+(x+1)] - 4*lwData[idx];
+  }
+  // fZ = 0 if Laplacian is zero or any neighbor has opposite sign (zero-crossing), else 1
+  lwFZ = new Float32Array(N).fill(1);
+  for (let y=1;y<H-1;y++) for (let x=1;x<W-1;x++) {
+    const idx = y*W+x;
+    const L = lap[idx];
+    if (Math.abs(L) < 0.5) { lwFZ[idx] = 0; continue; }
+    // Check 4-neighbors for sign change
+    const signL = L > 0 ? 1 : -1;
+    if ((lap[(y-1)*W+x] > 0 ? 1:-1) !== signL ||
+        (lap[(y+1)*W+x] > 0 ? 1:-1) !== signL ||
+        (lap[y*W+(x-1)] > 0 ? 1:-1) !== signL ||
+        (lap[y*W+(x+1)] > 0 ? 1:-1) !== signL) {
+      lwFZ[idx] = 0;
+    }
+  }
+
+  // D(p) = unit vector normal to gradient direction (rotated 90°)
+  // gradient direction = (gx, gy), normal = (-gy, gx) normalized
+  lwGradX = rawGX;
+  lwGradY = rawGY;
+  lwDirX = new Float32Array(N);
+  lwDirY = new Float32Array(N);
+  for (let i=0;i<N;i++) {
+    const gx = rawGX[i], gy = rawGY[i];
+    const mag = Math.sqrt(gx*gx+gy*gy);
+    if (mag > 0.001) {
+      lwDirX[i] = -gy / mag;
+      lwDirY[i] = gx / mag;
+    }
+  }
+}
+
+// Compute fD(p,q) — direction cost between two pixels
+function computeFD(pu, pv, qu, qv) {
+  // D(p) = gradient-normal at p
+  const pIdx = pv*W+pu, qIdx = qv*W+qu;
+  const dpx = lwDirX[pIdx], dpy = lwDirY[pIdx];
+  const dqx = lwDirX[qIdx], dqy = lwDirY[qIdx];
+
+  // L(p,q) = unit vector from p to q, oriented so D(p)·L >= 0
+  let lx = qu - pu, ly = qv - pv;
+  const lmag = Math.sqrt(lx*lx+ly*ly);
+  if (lmag < 0.001) return 0;
+  lx /= lmag; ly /= lmag;
+
+  // Flip L if D(p)·L < 0
+  if (dpx*lx + dpy*ly < 0) { lx = -lx; ly = -ly; }
+
+  // dp = D(p)·L(p,q), dq = L(p,q)·D(q)
+  const dp = dpx*lx + dpy*ly; // cos of angle between D(p) and L
+  const dq = lx*dqx + ly*dqy; // cos of angle between L and D(q)
+
+  // fD = (2/(3π)) * (arccos(dp) + arccos(dq))
+  const acos_dp = Math.acos(Math.max(-1, Math.min(1, dp)));
+  const acos_dq = Math.acos(Math.max(-1, Math.min(1, dq)));
+  return (2 / (3 * Math.PI)) * (acos_dp + acos_dq);
+}
+
+function drawLWCostMap() {
+  const {wG, wZ, wD} = getLWWeights();
+  const c=document.getElementById('c-lw-cost');
+  c.width=W; c.height=H;
+  const ctx=c.getContext('2d'), img=ctx.createImageData(W,H);
+  // Combined node cost (fD is edge-dependent, so we just show the fG+fZ node part
+  // plus an average fD contribution for display purposes)
+  for (let i=0;i<W*H;i++){
+    const combined = wG * lwFG[i] + wZ * lwFZ[i] + wD * 0.33; // avg fD for display
+    const v = (combined * 255) | 0;
+    img.data[i*4]=v; img.data[i*4+1]=v; img.data[i*4+2]=v; img.data[i*4+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+}
+
+function drawLWMiniMaps() {
+  // fG mini-map (blue tint)
+  const cG = document.getElementById('c-lw-fg');
+  cG.width=100;cG.height=80;
+  const ctxG = cG.getContext('2d'), imgG = ctxG.createImageData(100,80);
+  for (let y=0;y<80;y++) for (let x=0;x<100;x++) {
+    const sx = (x/100*W)|0, sy = (y/80*H)|0;
+    const v = lwFG[sy*W+sx];
+    const j = (y*100+x)*4;
+    imgG.data[j] = (v*100)|0; imgG.data[j+1] = (v*160)|0; imgG.data[j+2] = (v*255)|0; imgG.data[j+3]=255;
+  }
+  ctxG.putImageData(imgG,0,0);
+
+  // fZ mini-map (green tint)
+  const cZ = document.getElementById('c-lw-fz');
+  cZ.width=100;cZ.height=80;
+  const ctxZ = cZ.getContext('2d'), imgZ = ctxZ.createImageData(100,80);
+  for (let y=0;y<80;y++) for (let x=0;x<100;x++) {
+    const sx = (x/100*W)|0, sy = (y/80*H)|0;
+    const v = lwFZ[sy*W+sx];
+    const j = (y*100+x)*4;
+    imgZ.data[j] = (v*40)|0; imgZ.data[j+1] = (v*255)|0; imgZ.data[j+2] = (v*120)|0; imgZ.data[j+3]=255;
+  }
+  ctxZ.putImageData(imgZ,0,0);
+
+  // fD mini-map: show gradient normal direction as color-coded angle (orange tint)
+  const cD = document.getElementById('c-lw-fd');
+  cD.width=100;cD.height=80;
+  const ctxD = cD.getContext('2d'), imgD = ctxD.createImageData(100,80);
+  for (let y=0;y<80;y++) for (let x=0;x<100;x++) {
+    const sx = (x/100*W)|0, sy = (y/80*H)|0;
+    const idx = sy*W+sx;
+    // Magnitude of gradient (indicates where fD matters)
+    const gx = lwGradX[idx], gy = lwGradY[idx];
+    const mag = Math.sqrt(gx*gx+gy*gy);
+    const angle = (Math.atan2(gy,gx)/Math.PI + 1)*0.5; // 0..1
+    const brightness = Math.min(1, mag / 200);
+    const j = (y*100+x)*4;
+    imgD.data[j] = (brightness*240*((Math.sin(angle*6.28)+1)*0.5))|0;
+    imgD.data[j+1] = (brightness*120)|0;
+    imgD.data[j+2] = (brightness*60)|0;
+    imgD.data[j+3]=255;
+  }
+  ctxD.putImageData(imgD,0,0);
+}
+
+function gaussBlur(src, w, h, sigma) {
+  const k = Math.ceil(sigma*3) || 1;
+  const kern = []; let s=0;
+  for (let i=-k;i<=k;i++){const v=Math.exp(-i*i/(2*sigma*sigma));kern.push(v);s+=v;}
+  for (let i=0;i<kern.length;i++) kern[i]/=s;
+  const tmp=new Float32Array(w*h), out=new Float32Array(w*h);
+  for (let y=0;y<h;y++) for (let x=0;x<w;x++){
+    let v=0;for(let i=-k;i<=k;i++) v+=src[y*w+Math.min(w-1,Math.max(0,x+i))]*kern[i+k];
+    tmp[y*w+x]=v;
+  }
+  for (let y=0;y<h;y++) for (let x=0;x<w;x++){
+    let v=0;for(let i=-k;i<=k;i++) v+=tmp[Math.min(h-1,Math.max(0,y+i))*w+x]*kern[i+k];
+    out[y*w+x]=v;
+  }
+  return out;
+}
+
+function resetLW() {
+  lwAnchors=[]; lwPaths=[]; lwLive=[];
+  lwReady=false; lwClosed=false; lwPred=null; lwDist=null;
+  document.getElementById('lw-na').textContent='0';
+  document.getElementById('lw-len').textContent='—';
+  document.getElementById('lw-cost').textContent='—';
+  document.getElementById('lw-status').textContent='Click on the image to place the first anchor point.';
+  if (lwData) drawLWMain();
+}
+
+function undoLW() {
+  if (lwAnchors.length===0) return;
+  if (lwClosed) { resetLW(); return; }
+  lwAnchors.pop();
+  if (lwPaths.length) lwPaths.pop();
+  lwLive=[];
+  document.getElementById('lw-na').textContent=lwAnchors.length;
+  if (lwAnchors.length > 0) {
+    const last=lwAnchors[lwAnchors.length-1];
+    document.getElementById('lw-loading').style.display='flex';
+    setTimeout(()=>{
+      dijkstra(last[0],last[1]);
+      document.getElementById('lw-loading').style.display='none';
+      drawLWMain();
+    },10);
+    document.getElementById('lw-status').textContent='Undone. Move mouse to continue.';
+  } else {
+    lwReady=false;
+    document.getElementById('lw-status').textContent='Click to place the first anchor.';
+    drawLWMain();
+  }
+}
+
+function closeLW() {
+  if (lwAnchors.length < 2 || lwClosed) return;
+  const first = lwAnchors[0];
+  const path = traceLW(first[0], first[1]);
+  if (path.length > 1) { lwPaths.push(path); lwClosed = true; }
+  lwLive=[];
+  drawLWMain();
+  document.getElementById('lw-status').textContent='Contour closed! Press Reset to start a new one.';
+}
+
+// ---- Binary Min-Heap ----
+class MinHeap {
+  constructor(){this.h=[];}
+  push(n){this.h.push(n);this._up(this.h.length-1);}
+  pop(){const t=this.h[0];const l=this.h.pop();if(this.h.length>0){this.h[0]=l;this._down(0);}return t;}
+  get size(){return this.h.length;}
+  _up(i){while(i>0){const p=(i-1)>>1;if(this.h[p][0]<=this.h[i][0])break;[this.h[p],this.h[i]]=[this.h[i],this.h[p]];i=p;}}
+  _down(i){const n=this.h.length;while(true){let s=i;const l=2*i+1,r=2*i+2;if(l<n&&this.h[l][0]<this.h[s][0])s=l;if(r<n&&this.h[r][0]<this.h[s][0])s=r;if(s===i)break;[this.h[s],this.h[i]]=[this.h[i],this.h[s]];i=s;}}
+}
+
+function dijkstra(sx, sy) {
+  const N=W*H;
+  lwDist = new Float32Array(N).fill(Infinity);
+  lwPred = new Int32Array(N).fill(-1);
+  const vis = new Uint8Array(N);
+  const src = sy*W+sx;
+  lwDist[src] = 0;
+  const pq = new MinHeap();
+  pq.push([0, src]);
+  const dx8=[1,-1,0,0,1,1,-1,-1], dy8=[0,0,1,-1,1,-1,1,-1];
+  const S2 = Math.SQRT2;
+  const {wG, wZ, wD} = getLWWeights();
+
+  while (pq.size > 0) {
+    const [d, u] = pq.pop();
+    if (vis[u]) continue;
+    vis[u] = 1;
+    if (d > lwDist[u]) continue;
+    const ux = u%W, uy = (u/W)|0;
+
+    for (let dir=0;dir<8;dir++) {
+      const nx=ux+dx8[dir], ny=uy+dy8[dir];
+      if (nx<0||nx>=W||ny<0||ny>=H) continue;
+      const v = ny*W+nx;
+      if (vis[v]) continue;
+
+      const stepW = dir>=4 ? S2 : 1.0;
+
+      // Node costs at destination q
+      const nodeCost = wG * lwFG[v] + wZ * lwFZ[v];
+
+      // Direction cost fD(p,q) — edge-dependent
+      let dirCost = 0;
+      if (wD > 0.001) {
+        dirCost = wD * computeFD(ux, uy, nx, ny);
+      }
+
+      const ec = stepW * (nodeCost + dirCost);
+      const nd = d + ec;
+
+      if (nd < lwDist[v]) {
+        lwDist[v] = nd;
+        lwPred[v] = u;
+        pq.push([nd, v]);
+      }
+    }
+  }
+  lwReady = true;
+}
+
+function traceLW(tx, ty) {
+  if (!lwPred) return [];
+  const path = [];
+  let idx = ty*W+tx;
+  const srcIdx = lwAnchors.length>0 ? lwAnchors[lwAnchors.length-1][1]*W+lwAnchors[lwAnchors.length-1][0] : -1;
+  let safety = W*H+10;
+  while (idx >= 0 && safety-- > 0) {
+    path.push([idx%W, (idx/W)|0]);
+    if (idx === srcIdx) break;
+    const next = lwPred[idx];
+    if (next === -1 || next === idx) break;
+    idx = next;
+  }
+  return path;
+}
+
+function lwClick(e) {
+  if (!lwData || lwClosed) return;
+  const rect = e.target.getBoundingClientRect();
+  const x = ((e.clientX-rect.left)*W/rect.width)|0;
+  const y = ((e.clientY-rect.top)*H/rect.height)|0;
+  if (x<0||x>=W||y<0||y>=H) return;
+
+  if (lwAnchors.length > 0 && lwLive.length > 1) {
+    lwPaths.push([...lwLive]);
+  }
+
+  lwAnchors.push([x,y]);
+  document.getElementById('lw-na').textContent=lwAnchors.length;
+  lwLive = [];
+
+  document.getElementById('lw-loading').style.display='flex';
+  setTimeout(()=>{
+    dijkstra(x,y);
+    document.getElementById('lw-loading').style.display='none';
+    drawLWMain();
+    if (lwAnchors.length===1)
+      document.getElementById('lw-status').textContent='Move mouse to see the live-wire snapping to edges. Click for next anchor.';
+    else
+      document.getElementById('lw-status').textContent=lwAnchors.length+' anchors. Continue or Close Contour.';
+  }, 15);
+}
+
+let lwThrottle = null;
+function lwMove(e) {
+  if (!lwReady || lwAnchors.length===0 || lwClosed) return;
+  if (lwThrottle) return;
+  lwThrottle = setTimeout(()=>{lwThrottle=null;}, 30);
+
+  const rect = e.target.getBoundingClientRect();
+  const x = ((e.clientX-rect.left)*W/rect.width)|0;
+  const y = ((e.clientY-rect.top)*H/rect.height)|0;
+  if (x<0||x>=W||y<0||y>=H) return;
+
+  lwLive = traceLW(x,y);
+  drawLWMain();
+  if (lwLive.length > 0) {
+    let cost=0; for(const[px,py]of lwLive) {
+      const {wG,wZ} = getLWWeights();
+      cost += wG*lwFG[py*W+px] + wZ*lwFZ[py*W+px];
+    }
+    document.getElementById('lw-cost').textContent=cost.toFixed(1);
+    document.getElementById('lw-len').textContent=lwLive.length;
+  }
+}
+
+function drawLWMain() {
+  const c=document.getElementById('c-lw-main');
+  c.width=W;c.height=H;
+  const ctx=c.getContext('2d');
+  const img=ctx.createImageData(W,H);
+  for(let i=0;i<W*H;i++){
+    img.data[i*4]=img.data[i*4+1]=img.data[i*4+2]=lwData[i];img.data[i*4+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2; ctx.lineJoin='round';
+  for(const path of lwPaths){
+    if(path.length<2)continue;
+    ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++)ctx.lineTo(path[i][0],path[i][1]);
+    ctx.stroke();
+  }
+  if(lwLive.length>1){
+    ctx.strokeStyle='#60f0a0';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(lwLive[0][0],lwLive[0][1]);
+    for(let i=1;i<lwLive.length;i++)ctx.lineTo(lwLive[i][0],lwLive[i][1]);
+    ctx.stroke();ctx.setLineDash([]);
+  }
+  for(let i=0;i<lwAnchors.length;i++){
+    const[ax,ay]=lwAnchors[i];
+    ctx.beginPath();ctx.arc(ax,ay,4,0,Math.PI*2);
+    ctx.fillStyle=i===0?'#f06040':'#f0c040';
+    ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.stroke();
+  }
+}
+
+// ======================================================================
+//  EVALUATION
+// ======================================================================
+const evMask={a:null,b:null}, evDraw={a:false,b:false};
+
+function setupEval(id) {
+  const c=document.getElementById('eval-'+id);
+  c.width=250;c.height=250;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#16161a';ctx.fillRect(0,0,250,250);
+  evMask[id]=new Uint8Array(250*250);
+  c.addEventListener('mousedown',e=>{evDraw[id]=true;paintEv(e,id);});
+  c.addEventListener('mousemove',e=>{if(evDraw[id])paintEv(e,id);});
+  c.addEventListener('mouseup',()=>evDraw[id]=false);
+  c.addEventListener('mouseleave',()=>evDraw[id]=false);
+}
+
+function paintEv(e,id) {
+  const c=document.getElementById('eval-'+id);
+  const rect=c.getBoundingClientRect();
+  const x=((e.clientX-rect.left)*250/rect.width)|0;
+  const y=((e.clientY-rect.top)*250/rect.height)|0;
+  const br=+document.getElementById('eval-br-'+id).value;
+  document.getElementById('ev-b'+id).textContent=br;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=id==='a'?'#40c0f0':'#f06040';
+  for(let dy=-br;dy<=br;dy++)for(let dx=-br;dx<=br;dx++){
+    if(dx*dx+dy*dy>br*br)continue;
+    const px=x+dx,py=y+dy;
+    if(px>=0&&px<250&&py>=0&&py<250)evMask[id][py*250+px]=1;
+  }
+  ctx.beginPath();ctx.arc(x,y,br,0,Math.PI*2);ctx.fill();
+}
+
+function clearEval(id) {
+  const c=document.getElementById('eval-'+id);
+  c.getContext('2d').fillStyle='#16161a';
+  c.getContext('2d').fillRect(0,0,250,250);
+  evMask[id]=new Uint8Array(250*250);
+}
+
+function presetEval(id) {
+  clearEval(id);
+  const c=document.getElementById('eval-'+id);
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=id==='a'?'#40c0f0':'#f06040';
+  const cx2=id==='a'?115:135,cy2=125,r=id==='a'?65:60;
+  ctx.beginPath();ctx.arc(cx2,cy2,r,0,Math.PI*2);ctx.fill();
+  for(let y=0;y<250;y++)for(let x=0;x<250;x++)
+    if((x-cx2)**2+(y-cy2)**2<=r*r) evMask[id][y*250+x]=1;
+}
+
+function evalMetrics() {
+  const a=evMask.a,b=evMask.b;
+  let tp=0,fp=0,fn=0,tn=0;
+  for(let i=0;i<250*250;i++){
+    if(a[i]&&b[i])tp++;else if(!a[i]&&b[i])fp++;else if(a[i]&&!b[i])fn++;else tn++;
+  }
+  document.getElementById('ev-dice').textContent=(2*tp/(2*tp+fp+fn)||0).toFixed(3);
+  document.getElementById('ev-jacc').textContent=(tp/(tp+fp+fn)||0).toFixed(3);
+  document.getElementById('ev-sens').textContent=(tp/(tp+fn)||0).toFixed(3);
+  document.getElementById('ev-spec').textContent=(tn/(tn+fp)||0).toFixed(3);
+  const c=document.getElementById('eval-ov');c.width=250;c.height=250;
+  const ctx=c.getContext('2d'),img=ctx.createImageData(250,250);
+  for(let i=0;i<250*250;i++){
+    if(a[i]&&b[i]){img.data[i*4]=96;img.data[i*4+1]=240;img.data[i*4+2]=160;}
+    else if(a[i]){img.data[i*4]=64;img.data[i*4+1]=192;img.data[i*4+2]=240;}
+    else if(b[i]){img.data[i*4]=240;img.data[i*4+1]=96;img.data[i*4+2]=64;}
+    else{img.data[i*4]=22;img.data[i*4+1]=22;img.data[i*4+2]=26;}
+    img.data[i*4+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+}
+
+// ======================================================================
+//  INIT
+// ======================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('c-rg-main').addEventListener('click', e => {
+    if (!rgData||rgRunning) return;
+    const rect=e.target.getBoundingClientRect();
+    const x=((e.clientX-rect.left)*W/rect.width)|0, y=((e.clientY-rect.top)*H/rect.height)|0;
+    if(x>=0&&x<W&&y>=0&&y<H) startRG(x,y);
+  });
+
+  document.getElementById('c-lw-main').addEventListener('click', lwClick);
+  document.getElementById('c-lw-main').addEventListener('mousemove', lwMove);
+
+  setupEval('a'); setupEval('b');
+
+  loadOtsuImg('cameraman', document.querySelector('#otsu-images button.active'));
+  loadRGImg('cameraman', document.querySelector('#rg-images button.active'));
+  loadLWImg('coins', document.querySelector('#lw-images button.active'));
+  // Initialize LW weight readouts
+  onLWParamChange();
+});
+</script>
+</body>
+</html>

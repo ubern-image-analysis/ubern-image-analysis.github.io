@@ -118,7 +118,8 @@ lectures:
     date: "2026/03/25"
     instructor: "Prof. Dr. Mauricio Reyes"
     materials:
-      #       slides: "/slides/lecture6.pdf"
+      slides: "/slides/lecture6.pdf"
+      notebook: "/demos/lecture6_demo.html"
     assignments: []
 
   # Week 7 - 01/04/2026
