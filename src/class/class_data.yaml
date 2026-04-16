@@ -119,7 +119,7 @@ lectures:
     instructor: "Prof. Dr. Mauricio Reyes"
     materials:
       slides: "/slides/lecture6.pdf"
-      notebook: "/demos/lecture6_demo.html"
+      demo: "/demos/lecture6_demo.html"
     assignments: []
 
   # Week 7 - 01/04/2026
@@ -143,6 +143,7 @@ lectures:
     instructor: "Prof. Dr. Mauricio Reyes"
     materials:
       slides: "/slides/lecture8.pdf"
+      demo: "/demos/lecture8_demo.html"
     assignments: [2]
 
   # Week 10 - 22/04/2026

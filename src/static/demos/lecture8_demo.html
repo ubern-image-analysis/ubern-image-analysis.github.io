@@ -1,0 +1,3385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feature Extraction — Interactive Lecture Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0c;
+  --panel: #121218;
+  --panel-2: #191921;
+  --panel-3: #22222c;
+  --border: #2a2a36;
+  --border-bright: #3a3a4a;
+  --text: #ecebe6;
+  --text-dim: #8a8a96;
+  --text-faint: #55555f;
+  --accent: #ffb347;
+  --accent-soft: #ffb34722;
+  --accent-glow: #ffb34744;
+  --accent-2: #6ee7f0;
+  --accent-3: #ff6b6b;
+  --success: #86efac;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 400;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -20%, #1a1410 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 95% 105%, #0c1a22 0%, transparent 55%),
+    var(--bg);
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 1000;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+  position: relative;
+}
+
+/* ---------- Header ---------- */
+header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 32px;
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: end;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+
+h1.title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(38px, 5.2vw, 68px);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 144;
+}
+h1.title em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 300;
+}
+
+.subtitle {
+  margin-top: 18px;
+  color: var(--text-dim);
+  font-size: 15px;
+  max-width: 640px;
+  line-height: 1.55;
+}
+
+.header-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  text-align: right;
+  line-height: 1.8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.header-meta strong {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+/* ---------- Tabs ---------- */
+nav.tabs {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 40px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.tab {
+  padding: 16px 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  cursor: pointer;
+  text-align: left;
+  transition: all .2s ease;
+  position: relative;
+}
+.tab:last-child { border-right: none; }
+.tab:hover { background: var(--panel-2); color: var(--text); }
+.tab.active {
+  background: var(--panel-3);
+  color: var(--accent);
+}
+.tab.active::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px; right: -1px;
+  height: 2px;
+  background: var(--accent);
+}
+.tab .num {
+  display: block;
+  font-size: 9px;
+  opacity: 0.55;
+  margin-bottom: 4px;
+  letter-spacing: 0.12em;
+}
+
+/* ---------- Module frame ---------- */
+.module { display: none; animation: fadeIn .4s ease; }
+.module.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mod-header {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.mod-number {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+}
+h2.mod-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(30px, 4vw, 46px);
+  letter-spacing: -0.015em;
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+h2.mod-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.mod-lede {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 760px;
+  margin: 6px 0 30px 0;
+}
+
+/* ---------- Workspace (two columns) ---------- */
+.workspace {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .workspace { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 24px;
+  position: relative;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 10px; height: 10px;
+  border-top: 1px solid var(--accent);
+  border-left: 1px solid var(--accent);
+}
+.panel::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 10px; height: 10px;
+  border-bottom: 1px solid var(--accent);
+  border-right: 1px solid var(--accent);
+}
+
+.panel-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+}
+
+/* ---------- Controls ---------- */
+.control { margin-bottom: 20px; }
+.control:last-child { margin-bottom: 0; }
+.control label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.control label .val {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 2px;
+  background: var(--border-bright);
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px var(--accent-glow);
+}
+input[type=range]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border-bright);
+  padding: 9px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.btn.active {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.btn-row.stretch .btn { flex: 1; min-width: 0; }
+
+/* ---------- Display area ---------- */
+.display {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 26px;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+.display canvas {
+  display: block;
+  background: #050507;
+  border: 1px solid var(--border);
+}
+
+.display-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.canvas-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.canvas-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+/* ---------- Readouts ---------- */
+.readout {
+  margin-top: 18px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  padding: 14px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.readout-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--border);
+}
+.readout-row:last-child { border-bottom: none; }
+.readout-row .k {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.readout-row .v { color: var(--accent); font-weight: 500; }
+
+.readout-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.readout-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+}
+.readout-card .label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.readout-card .value {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--accent);
+  font-variation-settings: "opsz" 144;
+}
+.readout-card .bar {
+  margin-top: 8px;
+  height: 2px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.readout-card .bar > span {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: var(--accent);
+  transition: width .3s ease;
+}
+
+/* ---------- Callout ---------- */
+.callout {
+  margin-top: 22px;
+  padding: 18px 22px;
+  border-left: 2px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft) 0%, transparent 100%);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  font-weight: 300;
+  font-variation-settings: "opsz" 48;
+}
+
+/* ---------- Intro module specifics ---------- */
+.intro-triptych {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 760px) { .intro-triptych { grid-template-columns: 1fr; } }
+.intro-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.intro-cell .cell-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+/* ---------- LBP grid ---------- */
+.lbp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  gap: 3px;
+  background: var(--border);
+  padding: 3px;
+  border: 1px solid var(--border-bright);
+}
+.lbp-cell {
+  width: 64px; height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: outline .1s;
+  position: relative;
+}
+.lbp-cell.center {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  z-index: 2;
+}
+.lbp-cell:hover { filter: brightness(1.3); }
+.lbp-cell .bit {
+  position: absolute;
+  bottom: 3px; right: 4px;
+  font-size: 9px;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.lbp-flow {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.arrow {
+  font-size: 22px;
+  color: var(--text-faint);
+  font-family: var(--mono);
+}
+.big-num {
+  font-family: var(--serif);
+  font-size: 64px;
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+.big-num .unit {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-top: 6px;
+}
+
+.bit-string {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+.bit-string span {
+  display: inline-block;
+  padding: 2px 4px;
+}
+.bit-string .one { color: var(--accent); }
+.bit-string .zero { color: var(--text-faint); }
+
+/* ---------- GLCM grid ---------- */
+.glcm-grid {
+  display: grid;
+  gap: 2px;
+  background: var(--border);
+  padding: 2px;
+  border: 1px solid var(--border-bright);
+}
+.glcm-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  user-select: none;
+  transition: filter .1s;
+}
+.glcm-cell:hover { filter: brightness(1.3); }
+
+.glcm-matrix {
+  display: grid;
+  grid-template-columns: repeat(4, 42px);
+  gap: 2px;
+  background: var(--border);
+  padding: 2px;
+  border: 1px solid var(--border-bright);
+}
+.glcm-matrix .mcell {
+  width: 42px; height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* ---------- Radiomics pipeline ---------- */
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-bottom: 28px;
+}
+.pipe-step {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-right: none;
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all .2s ease;
+  position: relative;
+  text-align: left;
+}
+.pipe-step:last-child { border-right: 1px solid var(--border); }
+.pipe-step:hover {
+  background: var(--panel-2);
+}
+.pipe-step.active {
+  background: var(--panel-3);
+  border-color: var(--accent);
+  z-index: 2;
+}
+.pipe-step.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+.pipe-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.pipe-name {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.pipe-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.radiomics-content {
+  min-height: 340px;
+}
+.rad-stage { display: none; animation: fadeIn .3s ease; }
+.rad-stage.active { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
+@media (max-width: 800px) {
+  .rad-stage.active { grid-template-columns: 1fr; }
+  .pipeline { grid-template-columns: 1fr; }
+  .pipe-step { border-right: 1px solid var(--border); border-bottom: none; }
+  .pipe-step:not(:last-child) { border-bottom: none; }
+}
+
+.feature-table {
+  font-family: var(--mono);
+  font-size: 11px;
+  width: 100%;
+}
+.feature-table tr { border-bottom: 1px dotted var(--border); }
+.feature-table td { padding: 7px 6px; }
+.feature-table td:first-child {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.feature-table td:nth-child(2) { color: var(--accent); text-align: right; }
+.feature-table td:nth-child(3) {
+  color: var(--text-faint);
+  font-size: 9px;
+  text-align: right;
+}
+.feature-table .cat {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  padding-top: 14px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch {
+  width: 14px; height: 14px;
+  border: 1px solid var(--border-bright);
+}
+
+/* ---------- Sub-tabs (within a module) ---------- */
+.subtabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+.subtab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-faint);
+  padding: 12px 18px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all .15s ease;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: -1px;
+}
+.subtab:hover { color: var(--text); }
+.subtab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.subtab .step-num {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 300;
+  font-style: italic;
+  opacity: 0.7;
+}
+.subtab.active .step-num { opacity: 1; }
+.substep { display: none; }
+.substep.active { display: block; }
+
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div>
+      <div class="eyebrow">Introduction to Image Analysis · Lecture Companion</div>
+      <h1 class="title">Feature <em>Extraction</em></h1>
+      <p class="subtitle">Seven interactive demonstrations exploring how raw pixels become compact, invariant signatures — from SIFT keypoints through texture and shape descriptors to clinical radiomics.</p>
+    </div>
+    <div class="header-meta">
+      <strong>Mauricio Reyes</strong><br>
+      University of Bern<br>
+      ARTORG Center<br>
+      Medical Image Analysis
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-target="intro"><span class="num">01</span>Why features</button>
+    <button class="tab" data-target="log"><span class="num">02</span>SIFT</button>
+    <button class="tab" data-target="lbp"><span class="num">03</span>LBP</button>
+    <button class="tab" data-target="gabor"><span class="num">04</span>Gabor</button>
+    <button class="tab" data-target="glcm"><span class="num">05</span>GLCM</button>
+    <button class="tab" data-target="shape"><span class="num">06</span>Shape</button>
+    <button class="tab" data-target="radiomics"><span class="num">07</span>Radiomics</button>
+  </nav>
+
+  <main>
+
+    <!-- ============ MODULE 1: INTRO ============ -->
+    <section class="module active" data-mod="intro">
+      <div class="mod-header">
+        <div class="mod-number">01 / 07</div>
+      </div>
+      <h2 class="mod-title">Why features, <em>anyway?</em></h2>
+      <p class="mod-lede">Raw pixels are fragile — rotate an image, add noise, change the lighting, and the pixel vector changes completely. A good feature is <em>stable</em> under these transformations while still distinguishing one thing from another. Watch the pixels explode while the histogram stays calm.</p>
+
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Perturbations</div>
+          <div class="control">
+            <label>Noise level <span class="val" id="introNoiseVal">0%</span></label>
+            <input type="range" id="introNoise" min="0" max="100" value="0">
+          </div>
+          <div class="control">
+            <label>Rotation <span class="val" id="introRotVal">0°</span></label>
+            <input type="range" id="introRot" min="0" max="360" value="0">
+          </div>
+          <div class="control">
+            <label>Brightness <span class="val" id="introBriVal">0</span></label>
+            <input type="range" id="introBri" min="-60" max="60" value="0">
+          </div>
+          <div class="readout" id="introReadout">
+            <div class="readout-row"><span class="k">Pixel L2 drift</span><span class="v" id="introPix">0.00</span></div>
+            <div class="readout-row"><span class="k">Histogram drift</span><span class="v" id="introHis">0.00</span></div>
+          </div>
+          <div class="callout" style="margin-top:18px">The pixel vector changes by orders of magnitude. The histogram barely moves. That's why we extract features.</div>
+        </div>
+
+        <div class="display">
+          <div class="intro-triptych">
+            <div class="intro-cell">
+              <div class="cell-label">Original</div>
+              <canvas id="introC1" width="160" height="160"></canvas>
+              <div class="cell-label" style="color:var(--text-dim)">Histogram (feature)</div>
+              <canvas id="introH1" width="160" height="60"></canvas>
+            </div>
+            <div class="intro-cell">
+              <div class="cell-label">Transformed</div>
+              <canvas id="introC2" width="160" height="160"></canvas>
+              <div class="cell-label" style="color:var(--text-dim)">Histogram (feature)</div>
+              <canvas id="introH2" width="160" height="60"></canvas>
+            </div>
+            <div class="intro-cell">
+              <div class="cell-label">Overlay (difference)</div>
+              <canvas id="introC3" width="160" height="160"></canvas>
+              <div class="cell-label" style="color:var(--text-dim)">Histogram overlay</div>
+              <canvas id="introH3" width="160" height="60"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 2: SIFT (multi-step) ============ -->
+    <section class="module" data-mod="log">
+      <div class="mod-header"><div class="mod-number">02 / 07</div></div>
+      <h2 class="mod-title">SIFT — from <em>scale</em> to descriptor</h2>
+      <p class="mod-lede">SIFT builds an invariant feature in four stages. Step through them: detect the right scale, localize and prune keypoints, assign a canonical orientation, then build the 128-d descriptor.</p>
+
+      <div class="subtabs" id="siftSubtabs">
+        <button class="subtab active" data-sub="scale"><span class="step-num">1</span>Scale</button>
+        <button class="subtab" data-sub="local"><span class="step-num">2</span>Localization</button>
+        <button class="subtab" data-sub="orient"><span class="step-num">3</span>Orientation</button>
+        <button class="subtab" data-sub="descr"><span class="step-num">4</span>Descriptor</button>
+      </div>
+
+      <!-- ----- Sub-step 1: Scale ----- -->
+      <div class="substep active" data-sub="scale">
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Filter scale</div>
+          <div class="control">
+            <label>Sigma σ <span class="val" id="logSigVal">2.0</span></label>
+            <input type="range" id="logSig" min="1" max="14" step="0.1" value="2">
+          </div>
+          <div class="control">
+            <label style="margin-bottom:10px">Peak σ for each blob</label>
+            <div class="readout" style="margin-top:0">
+              <div class="readout-row"><span class="k">Small blob</span><span class="v">σ ≈ 3</span></div>
+              <div class="readout-row"><span class="k">Medium blob</span><span class="v">σ ≈ 5</span></div>
+              <div class="readout-row"><span class="k">Large blob</span><span class="v">σ ≈ 9</span></div>
+            </div>
+          </div>
+          <div class="control">
+            <label>Strongest response</label>
+            <div style="font-family:var(--serif); font-size:28px; font-weight:300; color:var(--accent); padding:8px 0; font-variation-settings:'opsz' 144" id="logWinner">—</div>
+          </div>
+          <div class="callout">Each blob has a preferred σ. SIFT searches extrema across all of scale-space to find the right one automatically.</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Input image</div>
+              <canvas id="logIn" width="280" height="180"></canvas>
+            </div>
+            <div class="canvas-wrap">
+              <div class="canvas-label">LoG response (|DoG|)</div>
+              <canvas id="logOut" width="280" height="180"></canvas>
+            </div>
+          </div>
+          <div style="margin-top:26px; display:flex; justify-content:center">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Response strength vs. σ (per blob)</div>
+              <canvas id="logCurve" width="600" height="140"></canvas>
+            </div>
+          </div>
+          <div class="legend" style="justify-content:center">
+            <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b"></div>Small</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#6ee7f0"></div>Medium</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#ffb347"></div>Large</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#ecebe6"></div>Current σ</div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- ----- Sub-step 2: Localization ----- -->
+      <div class="substep" data-sub="local">
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Keypoint pruning</div>
+          <div class="control">
+            <label>Contrast threshold <span class="val" id="locContrastVal">0.03</span></label>
+            <input type="range" id="locContrast" min="0" max="0.20" step="0.005" value="0.03">
+          </div>
+          <div class="control">
+            <label>Edge ratio r <span class="val" id="locEdgeVal">10.0</span></label>
+            <input type="range" id="locEdge" min="2" max="40" step="0.5" value="10">
+          </div>
+          <div class="control">
+            <label>Counts</label>
+            <div class="readout" style="margin-top:0">
+              <div class="readout-row"><span class="k">Raw extrema</span><span class="v" id="locN0">—</span></div>
+              <div class="readout-row"><span class="k">After contrast</span><span class="v" id="locN1">—</span></div>
+              <div class="readout-row"><span class="k">After edge test</span><span class="v" id="locN2">—</span></div>
+            </div>
+          </div>
+          <div class="callout">Drag <em>edge ratio</em> down: ridge points along edges vanish, leaving only corner-like keypoints. The Hessian-eigenvalue ratio test is what makes SIFT prefer corners.</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Synthetic scene</div>
+              <canvas id="locImg" width="320" height="240"></canvas>
+            </div>
+            <div class="canvas-wrap">
+              <div class="canvas-label">|DoG| + survivors</div>
+              <canvas id="locDog" width="320" height="240"></canvas>
+            </div>
+          </div>
+          <div class="legend" style="justify-content:center; margin-top:18px">
+            <div class="legend-item"><div class="legend-swatch" style="background:#55555f"></div>Rejected (low contrast)</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b"></div>Rejected (edge-like)</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#86efac"></div>Kept</div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- ----- Sub-step 3: Orientation ----- -->
+      <div class="substep" data-sub="orient">
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Canonical orientation</div>
+          <div class="control">
+            <label>Patch rotation <span class="val" id="orRotVal">0°</span></label>
+            <input type="range" id="orRot" min="0" max="360" step="5" value="0">
+          </div>
+          <div class="control">
+            <label>Patch content</label>
+            <div class="btn-row" id="orPresets">
+              <button class="btn active" data-preset="ramp">Gradient</button>
+              <button class="btn" data-preset="edge">Edge</button>
+              <button class="btn" data-preset="corner">Corner</button>
+              <button class="btn" data-preset="texture">Texture</button>
+            </div>
+          </div>
+          <div class="control">
+            <label>Dominant direction</label>
+            <div style="font-family:var(--serif); font-size:28px; font-weight:300; color:var(--accent); padding:8px 0" id="orDom">—</div>
+          </div>
+          <div class="callout"><strong>Read it like this:</strong> the small cyan arrows are local image gradients. The rose plot tallies their directions (Gauss-weighted toward the center). The biggest amber wedge is the dominant direction — SIFT then rotates the patch to that angle so the descriptor is rotation-invariant.</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Patch + gradient field + dominant arrow</div>
+              <canvas id="orPatch" width="260" height="260"></canvas>
+            </div>
+            <div class="canvas-wrap">
+              <div class="canvas-label">Gradient orientation histogram (36 bins, 10° each)</div>
+              <canvas id="orRose" width="280" height="260"></canvas>
+            </div>
+          </div>
+          <div style="margin-top:22px">
+            <div class="canvas-label" style="text-align:center; margin-bottom:8px">Invariance check — rotate the slider and watch:</div>
+            <div class="display-row">
+              <div class="canvas-wrap">
+                <div class="canvas-label" style="color:var(--accent-3)">Input patch (rotates with slider)</div>
+                <canvas id="orInput" width="200" height="200"></canvas>
+              </div>
+              <div class="canvas-wrap">
+                <div class="canvas-label" style="color:var(--success)">After canonicalization (stays put)</div>
+                <canvas id="orCanon" width="200" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- ----- Sub-step 4: Descriptor ----- -->
+      <div class="substep" data-sub="descr">
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">128-d descriptor</div>
+          <div class="control">
+            <label>Patch content</label>
+            <div class="btn-row" id="dePresets">
+              <button class="btn active" data-preset="corner">Corner</button>
+              <button class="btn" data-preset="edge">Edge</button>
+              <button class="btn" data-preset="texture">Texture</button>
+            </div>
+          </div>
+          <div class="control">
+            <label>Compare patch B (rotated)</label>
+            <input type="range" id="deRotB" min="0" max="360" step="5" value="45">
+            <div style="font-family:var(--mono); font-size:10px; color:var(--text-dim); margin-top:4px">B rotated by <span id="deRotBVal">45°</span></div>
+          </div>
+          <div class="control">
+            <label>Descriptor distance ‖A − B‖</label>
+            <div style="font-family:var(--serif); font-size:28px; font-weight:300; color:var(--accent); padding:8px 0" id="deDist">—</div>
+          </div>
+          <div class="callout">A and B are the <em>same</em> patch — B is just rotated. Each is canonicalized first, so their 128-d descriptors should be nearly identical. Watch the bars track each other as you rotate.</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Patch A — 4×4 cells, 8-bin rose plots</div>
+              <canvas id="deGridA" width="240" height="240"></canvas>
+            </div>
+            <div class="canvas-wrap">
+              <div class="canvas-label">Patch B — same content, rotated</div>
+              <canvas id="deGridB" width="240" height="240"></canvas>
+            </div>
+          </div>
+          <div style="margin-top:24px">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Descriptor A (128 bins)</div>
+              <canvas id="deBarA" width="640" height="60"></canvas>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Descriptor B (128 bins)</div>
+              <canvas id="deBarB" width="640" height="60"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+    </section>
+
+    <!-- ============ MODULE 3: LBP ============ -->
+    <section class="module" data-mod="lbp">
+      <div class="mod-header"><div class="mod-number">03 / 07</div></div>
+      <h2 class="mod-title">Local Binary <em>Patterns</em></h2>
+      <p class="mod-lede">Compare the center pixel to each of its eight neighbors. Each comparison is a single bit. Read the bits clockwise as a binary number. That's it — you've computed an LBP code. Click any cell to cycle its intensity and watch the code change in real time.</p>
+
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Presets</div>
+          <div class="btn-row" id="lbpPresets">
+            <button class="btn" data-preset="flat">Flat</button>
+            <button class="btn" data-preset="spot">Bright spot</button>
+            <button class="btn" data-preset="edgeH">Edge ‹H›</button>
+            <button class="btn" data-preset="edgeV">Edge ‹V›</button>
+            <button class="btn" data-preset="corner">Corner</button>
+            <button class="btn" data-preset="diag">Diagonal</button>
+            <button class="btn" data-preset="random">Random</button>
+          </div>
+          <div class="control" style="margin-top:22px">
+            <label>Center threshold g<sub>c</sub> <span class="val" id="lbpCenterVal">128</span></label>
+            <input type="range" id="lbpCenter" min="0" max="255" value="128">
+          </div>
+          <div class="control">
+            <label>Interpretation</label>
+            <div style="font-family:var(--serif); font-size:22px; font-weight:300; color:var(--accent); padding:6px 0 0 0; font-style:italic; font-variation-settings:'opsz' 144" id="lbpClass">—</div>
+          </div>
+          <div class="callout">LBP is invariant to <em>monotonic</em> intensity changes — if all pixels get brighter proportionally, the comparisons don't flip, and the code stays identical.</div>
+        </div>
+
+        <div class="display">
+          <div class="lbp-flow">
+            <div>
+              <div class="canvas-label" style="text-align:center; margin-bottom:10px">Neighborhood</div>
+              <div class="lbp-grid" id="lbpGrid"></div>
+              <div style="font-family:var(--mono); font-size:9px; color:var(--text-faint); margin-top:8px; text-align:center">click cells to edit</div>
+            </div>
+            <div class="arrow">→</div>
+            <div>
+              <div class="canvas-label" style="text-align:center; margin-bottom:10px">Thresholded</div>
+              <div class="lbp-grid" id="lbpThresh"></div>
+              <div style="font-family:var(--mono); font-size:9px; color:var(--text-faint); margin-top:8px; text-align:center">≥ g<sub>c</sub> → 1</div>
+            </div>
+            <div class="arrow">→</div>
+            <div style="text-align:center">
+              <div class="canvas-label" style="margin-bottom:10px">Bit sequence</div>
+              <div class="bit-string" id="lbpBits">00000000</div>
+              <div style="font-family:var(--mono); font-size:9px; color:var(--text-faint); margin-top:8px">b<sub>7</sub> b<sub>6</sub> b<sub>5</sub> b<sub>4</sub> b<sub>3</sub> b<sub>2</sub> b<sub>1</sub> b<sub>0</sub></div>
+              <div class="big-num" style="margin-top:22px" id="lbpDec">0<span class="unit">LBP code (0–255)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 4: GABOR ============ -->
+    <section class="module" data-mod="gabor">
+      <div class="mod-header"><div class="mod-number">04 / 07</div></div>
+      <h2 class="mod-title">Gabor filters — <em>frequency meets space</em></h2>
+      <p class="mod-lede">A Gabor filter is a sine wave inside a Gaussian envelope. It asks a very specific question: <em>is there a stripe pattern here, at this orientation and this spacing?</em> Rotate θ and watch the response map light up over matching textures. Change λ to probe different feature sizes.</p>
+
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Filter parameters</div>
+          <div class="control">
+            <label>Orientation θ <span class="val" id="gabThetaVal">0°</span></label>
+            <input type="range" id="gabTheta" min="0" max="180" value="0">
+          </div>
+          <div class="control">
+            <label>Wavelength λ <span class="val" id="gabLamVal">8</span></label>
+            <input type="range" id="gabLam" min="4" max="20" step="0.5" value="8">
+          </div>
+          <div class="control">
+            <label>Envelope σ <span class="val" id="gabSigVal">4</span></label>
+            <input type="range" id="gabSig" min="2" max="8" step="0.5" value="4">
+          </div>
+          <div class="control">
+            <label>Aspect γ <span class="val" id="gabGamVal">0.5</span></label>
+            <input type="range" id="gabGam" min="0.3" max="1.2" step="0.05" value="0.5">
+          </div>
+          <div class="callout">A filter bank of maybe 4 orientations × 2 scales gives 8 responses per pixel — a compact texture descriptor that's still biologically plausible (V1 neurons respond exactly like this).</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Gabor kernel</div>
+              <canvas id="gabKernel" width="120" height="120"></canvas>
+            </div>
+            <div class="canvas-wrap">
+              <div class="canvas-label">Test image (4 oriented patches)</div>
+              <canvas id="gabImg" width="200" height="200"></canvas>
+            </div>
+            <div class="canvas-wrap">
+              <div class="canvas-label">Filter response</div>
+              <canvas id="gabResp" width="200" height="200"></canvas>
+            </div>
+          </div>
+          <div class="readout-grid" style="margin-top:22px">
+            <div class="readout-card">
+              <div class="label">Strongest region</div>
+              <div class="value" id="gabWinner">—</div>
+            </div>
+            <div class="readout-card">
+              <div class="label">Mean response (feature)</div>
+              <div class="value" id="gabMean">0.00</div>
+              <div class="bar"><span id="gabBar" style="width:0%"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 5: GLCM ============ -->
+    <section class="module" data-mod="glcm">
+      <div class="mod-header"><div class="mod-number">05 / 07</div></div>
+      <h2 class="mod-title">Gray-level <em>co-occurrence</em></h2>
+      <p class="mod-lede">The GLCM answers a single question: how often does intensity <em>i</em> sit next to intensity <em>j</em>? Smooth textures concentrate values on the diagonal (<em>i ≈ j</em>). Rough textures spread them everywhere. Four Haralick statistics capture this in a handful of numbers. Click the image to edit pixels.</p>
+
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Texture presets</div>
+          <div class="btn-row" id="glcmPresets">
+            <button class="btn" data-preset="smooth">Smooth</button>
+            <button class="btn" data-preset="rough">Rough</button>
+            <button class="btn" data-preset="stripes">Stripes</button>
+            <button class="btn" data-preset="checker">Checker</button>
+            <button class="btn" data-preset="gradient">Gradient</button>
+          </div>
+          <div class="control" style="margin-top:22px">
+            <label>Distance d <span class="val" id="glcmDVal">1</span></label>
+            <input type="range" id="glcmD" min="1" max="3" value="1">
+          </div>
+          <div class="control">
+            <label>Angle θ</label>
+            <div class="btn-row" id="glcmAngles">
+              <button class="btn active" data-angle="0">0°</button>
+              <button class="btn" data-angle="45">45°</button>
+              <button class="btn" data-angle="90">90°</button>
+              <button class="btn" data-angle="135">135°</button>
+            </div>
+          </div>
+          <div class="callout">Radiomics computes GLCM features across many (d, θ) combinations, then averages them — this gives rotation-robust descriptors that physicians use to characterize tumor heterogeneity.</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div>
+              <div class="canvas-label" style="text-align:center; margin-bottom:10px">Input (4 gray levels)</div>
+              <div class="glcm-grid" id="glcmImg" style="grid-template-columns:repeat(8, 32px)"></div>
+              <div style="font-family:var(--mono); font-size:9px; color:var(--text-faint); margin-top:8px; text-align:center">click to cycle levels</div>
+            </div>
+            <div>
+              <div class="canvas-label" style="text-align:center; margin-bottom:10px">Co-occurrence P(i,j)</div>
+              <div style="display:flex; gap:8px; align-items:flex-start">
+                <div style="display:flex; flex-direction:column; justify-content:space-around; height:174px; font-family:var(--mono); font-size:9px; color:var(--text-dim); padding:4px 0">
+                  <span>i=0</span><span>i=1</span><span>i=2</span><span>i=3</span>
+                </div>
+                <div>
+                  <div class="glcm-matrix" id="glcmMat"></div>
+                  <div style="display:grid; grid-template-columns:repeat(4,42px); gap:2px; padding:4px 2px 0 2px; font-family:var(--mono); font-size:9px; color:var(--text-dim); text-align:center">
+                    <span>j=0</span><span>j=1</span><span>j=2</span><span>j=3</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="readout-grid" style="margin-top:24px">
+            <div class="readout-card"><div class="label">Contrast</div><div class="value" id="glcmContrast">0.00</div><div class="bar"><span id="glcmContrastBar"></span></div></div>
+            <div class="readout-card"><div class="label">Homogeneity</div><div class="value" id="glcmHomog">0.00</div><div class="bar"><span id="glcmHomogBar"></span></div></div>
+            <div class="readout-card"><div class="label">Energy</div><div class="value" id="glcmEnergy">0.00</div><div class="bar"><span id="glcmEnergyBar"></span></div></div>
+            <div class="readout-card"><div class="label">Correlation</div><div class="value" id="glcmCorr">0.00</div><div class="bar"><span id="glcmCorrBar"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 6: SHAPE ============ -->
+    <section class="module" data-mod="shape">
+      <div class="mod-header"><div class="mod-number">06 / 07</div></div>
+      <h2 class="mod-title">Shape <em>descriptors</em></h2>
+      <p class="mod-lede">After segmentation, the geometry of the region carries information. Compactness tells you how circle-like something is, eccentricity how elongated. Deform the shape and watch the numbers respond — a perfect circle scores 1 on compactness; anything else scores less.</p>
+
+      <div class="workspace">
+        <div class="panel controls">
+          <div class="panel-title">Shape type</div>
+          <div class="btn-row" id="shapePresets">
+            <button class="btn active" data-shape="circle">Circle</button>
+            <button class="btn" data-shape="ellipse">Ellipse</button>
+            <button class="btn" data-shape="rect">Rectangle</button>
+            <button class="btn" data-shape="star">Star</button>
+            <button class="btn" data-shape="blob">Blob</button>
+          </div>
+          <div class="control" style="margin-top:22px">
+            <label>Elongation <span class="val" id="shpElonVal">1.0</span></label>
+            <input type="range" id="shpElon" min="1" max="4" step="0.05" value="1">
+          </div>
+          <div class="control">
+            <label>Bumpiness <span class="val" id="shpBumpVal">0</span></label>
+            <input type="range" id="shpBump" min="0" max="40" value="0">
+          </div>
+          <div class="control">
+            <label>Rotation <span class="val" id="shpRotVal">0°</span></label>
+            <input type="range" id="shpRot" min="0" max="180" value="0">
+          </div>
+          <div class="callout">Hu moments combine these ideas into 7 features that are invariant to translation, scale, <em>and</em> rotation — still used today for matching after decades in production.</div>
+        </div>
+
+        <div class="display">
+          <div class="display-row">
+            <div class="canvas-wrap">
+              <div class="canvas-label">Segmented region</div>
+              <canvas id="shpCan" width="280" height="280"></canvas>
+            </div>
+          </div>
+          <div class="readout-grid" style="margin-top:20px">
+            <div class="readout-card"><div class="label">Area (px)</div><div class="value" id="shpArea">0</div></div>
+            <div class="readout-card"><div class="label">Perimeter (px)</div><div class="value" id="shpPerim">0</div></div>
+            <div class="readout-card"><div class="label">Compactness</div><div class="value" id="shpCompact">0.00</div><div class="bar"><span id="shpCompactBar"></span></div></div>
+            <div class="readout-card"><div class="label">Eccentricity</div><div class="value" id="shpEcc">0.00</div><div class="bar"><span id="shpEccBar"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 7: RADIOMICS ============ -->
+    <section class="module" data-mod="radiomics">
+      <div class="mod-header"><div class="mod-number">07 / 07</div></div>
+      <h2 class="mod-title">The radiomics <em>pipeline</em></h2>
+      <p class="mod-lede">Radiomics treats medical images as high-dimensional data. A single CT or MRI slice yields hundreds of quantitative features — first-order statistics, shape, texture — that feed machine learning models for diagnosis, prognosis, and treatment response. Click through each stage below.</p>
+
+      <div class="pipeline" id="pipeline">
+        <button class="pipe-step active" data-step="1"><div class="pipe-num">STAGE 01</div><div class="pipe-name">Acquisition</div><div class="pipe-desc">CT · MRI · PET</div></button>
+        <button class="pipe-step" data-step="2"><div class="pipe-num">STAGE 02</div><div class="pipe-name">Segmentation</div><div class="pipe-desc">Define the ROI</div></button>
+        <button class="pipe-step" data-step="3"><div class="pipe-num">STAGE 03</div><div class="pipe-name">Extraction</div><div class="pipe-desc">100s of features</div></button>
+        <button class="pipe-step" data-step="4"><div class="pipe-num">STAGE 04</div><div class="pipe-name">Selection</div><div class="pipe-desc">Keep the informative</div></button>
+        <button class="pipe-step" data-step="5"><div class="pipe-num">STAGE 05</div><div class="pipe-name">Model</div><div class="pipe-desc">Clinical decision</div></button>
+      </div>
+
+      <div class="panel radiomics-content">
+
+        <div class="rad-stage active" data-stage="1">
+          <div>
+            <div class="panel-title">What happens</div>
+            <p style="font-size:13px; line-height:1.6; color:var(--text-dim)">A medical scanner produces a 3D volume — stacked 2D slices with calibrated intensity values (Hounsfield units for CT, relaxation times for MRI, activity for PET). Quality depends on scanner model, acquisition protocol, reconstruction kernel.</p>
+            <div class="callout" style="margin-top:18px">Feature definitions are modality-independent, but the same lesion imaged on two different CT scanners can yield different feature values — standardization (IBSI) matters.</div>
+          </div>
+          <div class="canvas-wrap" style="align-items:stretch">
+            <div class="canvas-label" style="text-align:center">Simulated CT slice</div>
+            <canvas id="radC1" width="320" height="320" style="margin:0 auto"></canvas>
+          </div>
+        </div>
+
+        <div class="rad-stage" data-stage="2">
+          <div>
+            <div class="panel-title">What happens</div>
+            <p style="font-size:13px; line-height:1.6; color:var(--text-dim)">A radiologist (or an algorithm) delineates the region of interest — a tumor, an organ, a lesion. All subsequent features are computed <em>only</em> over this mask. Segmentation quality directly limits feature reproducibility.</p>
+            <div class="callout" style="margin-top:18px">Inter-observer variability in segmentation is one of the largest sources of noise in radiomics studies.</div>
+          </div>
+          <div class="canvas-wrap" style="align-items:stretch">
+            <div class="canvas-label" style="text-align:center">ROI delineation</div>
+            <canvas id="radC2" width="320" height="320" style="margin:0 auto"></canvas>
+          </div>
+        </div>
+
+        <div class="rad-stage" data-stage="3">
+          <div>
+            <div class="panel-title">What happens</div>
+            <p style="font-size:13px; line-height:1.6; color:var(--text-dim)">Hundreds of quantitative features are computed from the ROI — intensity statistics, shape geometry, and texture matrices (GLCM, GLRLM, GLSZM…). Features can also be computed from filtered versions of the image (LoG, wavelets).</p>
+            <div class="callout" style="margin-top:18px">PyRadiomics computes ~100 features per image per filter — quickly reaching 1500+ features for a single ROI.</div>
+          </div>
+          <div>
+            <div class="canvas-label" style="margin-bottom:10px">Feature vector (excerpt)</div>
+            <table class="feature-table">
+              <tr><td class="cat" colspan="3">FIRST-ORDER (8)</td></tr>
+              <tr><td>Mean intensity</td><td>1247.3</td><td>HU</td></tr>
+              <tr><td>Std deviation</td><td>183.7</td><td>HU</td></tr>
+              <tr><td>Skewness</td><td>-0.42</td><td></td></tr>
+              <tr><td>Entropy</td><td>4.18</td><td>bits</td></tr>
+              <tr><td class="cat" colspan="3">SHAPE (14)</td></tr>
+              <tr><td>Volume</td><td>3.2</td><td>cm³</td></tr>
+              <tr><td>Sphericity</td><td>0.73</td><td></td></tr>
+              <tr><td>Elongation</td><td>0.61</td><td></td></tr>
+              <tr><td class="cat" colspan="3">TEXTURE — GLCM (24)</td></tr>
+              <tr><td>Contrast</td><td>38.91</td><td></td></tr>
+              <tr><td>Homogeneity</td><td>0.44</td><td></td></tr>
+              <tr><td>Correlation</td><td>0.72</td><td></td></tr>
+              <tr><td class="cat" colspan="3">TEXTURE — GLRLM (16)</td></tr>
+              <tr><td>Short-run emphasis</td><td>0.81</td><td></td></tr>
+              <tr><td>Run-length non-uniformity</td><td>124.3</td><td></td></tr>
+              <tr><td class="cat" colspan="3">FILTERED — LoG σ=2 (+100)</td></tr>
+              <tr><td>LoG-GLCM contrast</td><td>12.7</td><td></td></tr>
+              <tr><td>…</td><td>1247 more</td><td></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="rad-stage" data-stage="4">
+          <div>
+            <div class="panel-title">What happens</div>
+            <p style="font-size:13px; line-height:1.6; color:var(--text-dim)">With 1500+ features and often fewer than 200 patients, overfitting is inevitable. Selection methods (LASSO, correlation filtering, mutual information) prune the feature set to a handful that are reproducible, non-redundant, and predictive of the clinical outcome.</p>
+            <div class="callout" style="margin-top:18px">The ratio of samples to features should comfortably exceed 10:1 — otherwise features start to "remember" patients instead of learning biology.</div>
+          </div>
+          <div>
+            <div class="canvas-label" style="margin-bottom:10px">Before &amp; after selection</div>
+            <canvas id="radC4" width="340" height="240"></canvas>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-swatch" style="background:var(--accent)"></div>Kept (8)</div>
+              <div class="legend-item"><div class="legend-swatch" style="background:var(--text-faint)"></div>Dropped (1492)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rad-stage" data-stage="5">
+          <div>
+            <div class="panel-title">What happens</div>
+            <p style="font-size:13px; line-height:1.6; color:var(--text-dim)">Selected features feed a classifier or regression model — logistic regression, random forests, gradient boosting — trained to predict diagnosis, survival, or treatment response. Performance must be validated on an external cohort before any clinical claim.</p>
+            <div class="callout" style="margin-top:18px">A radiomics signature that works only on the training scanner is a scanner signature, not a biology signature.</div>
+          </div>
+          <div>
+            <div class="canvas-label" style="margin-bottom:10px">Simulated risk score</div>
+            <canvas id="radC5" width="340" height="200"></canvas>
+            <div class="readout" style="margin-top:14px">
+              <div class="readout-row"><span class="k">Predicted 2-year survival</span><span class="v">68%</span></div>
+              <div class="readout-row"><span class="k">Model AUC (external)</span><span class="v">0.74</span></div>
+              <div class="readout-row"><span class="k">Recommendation</span><span class="v">Standard therapy</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div>Feature Extraction · Interactive Companion</div>
+    <div>Built for live lecture — all math client-side, no libraries</div>
+  </footer>
+
+</div>
+
+<script>
+/* =====================================================================
+   GLOBAL: Tab switching
+   ===================================================================== */
+const tabs = document.querySelectorAll('.tab');
+const modules = document.querySelectorAll('.module');
+tabs.forEach(t => {
+  t.addEventListener('click', () => {
+    const target = t.dataset.target;
+    tabs.forEach(x => x.classList.toggle('active', x === t));
+    modules.forEach(m => m.classList.toggle('active', m.dataset.mod === target));
+    // trigger re-render for modules that need it
+    if (target === 'log' && App.log.rendered === false) App.log.init();
+    if (target === 'gabor' && App.gabor.rendered === false) App.gabor.init();
+    if (target === 'shape' && App.shape.rendered === false) App.shape.render();
+    if (target === 'radiomics' && App.radiomics.rendered === false) App.radiomics.init();
+  });
+});
+
+// SIFT sub-tabs
+document.querySelectorAll('#siftSubtabs .subtab').forEach(st => {
+  st.addEventListener('click', () => {
+    const sub = st.dataset.sub;
+    document.querySelectorAll('#siftSubtabs .subtab').forEach(x => x.classList.toggle('active', x === st));
+    document.querySelectorAll('section[data-mod="log"] .substep').forEach(s => {
+      s.classList.toggle('active', s.dataset.sub === sub);
+    });
+    if (sub === 'local'  && App.siftLocal.rendered  === false) App.siftLocal.init();
+    if (sub === 'orient' && App.siftOrient.rendered === false) App.siftOrient.init();
+    if (sub === 'descr'  && App.siftDescr.rendered  === false) App.siftDescr.init();
+  });
+});
+
+/* =====================================================================
+   SHARED UTILS
+   ===================================================================== */
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Writes a Float32Array (values roughly 0..1) to an ImageData, with optional colormap.
+function arrayToImageData(arr, w, h, colormap) {
+  const img = new ImageData(w, h);
+  for (let i = 0; i < w * h; i++) {
+    let v = clamp(arr[i], 0, 1);
+    let r, g, b;
+    if (colormap === 'viridis') {
+      // cheap viridis-ish
+      r = clamp(v * 255 * 1.1 - 30, 0, 255);
+      g = clamp(v * 255 * 0.9 + 20, 0, 255);
+      b = clamp((1 - v) * 180 + 60, 0, 255);
+    } else if (colormap === 'hot') {
+      r = clamp(v * 3 * 255, 0, 255);
+      g = clamp((v - 0.33) * 3 * 255, 0, 255);
+      b = clamp((v - 0.66) * 3 * 255, 0, 255);
+    } else if (colormap === 'amber') {
+      const t = v;
+      r = clamp(t * 280, 0, 255);
+      g = clamp(t * 180 - 10, 0, 255);
+      b = clamp(t * 60 - 20, 0, 255);
+    } else {
+      r = g = b = v * 255;
+    }
+    img.data[i*4]   = r;
+    img.data[i*4+1] = g;
+    img.data[i*4+2] = b;
+    img.data[i*4+3] = 255;
+  }
+  return img;
+}
+
+// Separable Gaussian blur on a Float32 image
+function gaussBlur(src, w, h, sigma) {
+  const radius = Math.max(1, Math.ceil(3 * sigma));
+  const size = radius * 2 + 1;
+  const kernel = new Float32Array(size);
+  let sum = 0;
+  for (let i = 0; i < size; i++) {
+    const x = i - radius;
+    kernel[i] = Math.exp(-(x*x) / (2 * sigma * sigma));
+    sum += kernel[i];
+  }
+  for (let i = 0; i < size; i++) kernel[i] /= sum;
+
+  const tmp = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let v = 0;
+      for (let k = 0; k < size; k++) {
+        const xi = clamp(x + k - radius, 0, w - 1);
+        v += src[y*w + xi] * kernel[k];
+      }
+      tmp[y*w + x] = v;
+    }
+  }
+  const out = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let v = 0;
+      for (let k = 0; k < size; k++) {
+        const yi = clamp(y + k - radius, 0, h - 1);
+        v += tmp[yi*w + x] * kernel[k];
+      }
+      out[y*w + x] = v;
+    }
+  }
+  return out;
+}
+
+/* =====================================================================
+   APP NAMESPACE
+   ===================================================================== */
+const App = {};
+
+/* ---------- Module 1: Intro ---------- */
+App.intro = {
+  W: 160, H: 160,
+  baseImg: null,
+
+  init() {
+    // Build a simple base image: a smooth gradient with a circle and a square
+    const W = this.W, H = this.H;
+    const img = new Float32Array(W * H);
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        let v = 0.25 + 0.1 * Math.sin(x * 0.04) * Math.cos(y * 0.04);
+        // circle
+        const dx = x - 55, dy = y - 60;
+        if (dx*dx + dy*dy < 28*28) v = 0.75;
+        if (dx*dx + dy*dy < 18*18) v = 0.55;
+        // square
+        if (x > 90 && x < 130 && y > 85 && y < 125) v = 0.85;
+        if (x > 98 && x < 122 && y > 93 && y < 117) v = 0.35;
+        img[y*W + x] = v;
+      }
+    }
+    this.baseImg = img;
+
+    document.getElementById('introNoise').addEventListener('input', e => {
+      document.getElementById('introNoiseVal').textContent = e.target.value + '%';
+      this.render();
+    });
+    document.getElementById('introRot').addEventListener('input', e => {
+      document.getElementById('introRotVal').textContent = e.target.value + '°';
+      this.render();
+    });
+    document.getElementById('introBri').addEventListener('input', e => {
+      document.getElementById('introBriVal').textContent = e.target.value;
+      this.render();
+    });
+
+    this.render();
+  },
+
+  transform(noiseLv, rotDeg, bri) {
+    const W = this.W, H = this.H;
+    const out = new Float32Array(W * H);
+    const rot = rotDeg * Math.PI / 180;
+    const cs = Math.cos(rot), sn = Math.sin(rot);
+    const cx = W / 2, cy = H / 2;
+    const briN = bri / 255;
+
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        // inverse rotate
+        const dx = x - cx, dy = y - cy;
+        const sx = cs * dx + sn * dy + cx;
+        const sy = -sn * dx + cs * dy + cy;
+        const sxi = clamp(Math.round(sx), 0, W - 1);
+        const syi = clamp(Math.round(sy), 0, H - 1);
+        let v = this.baseImg[syi * W + sxi];
+        // brightness
+        v += briN;
+        // noise
+        if (noiseLv > 0) {
+          v += (Math.random() - 0.5) * noiseLv / 100 * 0.8;
+        }
+        out[y*W + x] = clamp(v, 0, 1);
+      }
+    }
+    return out;
+  },
+
+  histogram(img, bins = 24) {
+    const h = new Float32Array(bins);
+    for (let i = 0; i < img.length; i++) {
+      const b = Math.min(bins - 1, Math.floor(img[i] * bins));
+      h[b]++;
+    }
+    // normalize
+    let max = 0;
+    for (let i = 0; i < bins; i++) if (h[i] > max) max = h[i];
+    if (max > 0) for (let i = 0; i < bins; i++) h[i] /= max;
+    return h;
+  },
+
+  drawImage(id, img) {
+    const cv = document.getElementById(id);
+    const ctx = cv.getContext('2d');
+    const imgData = arrayToImageData(img, this.W, this.H, null);
+    ctx.putImageData(imgData, 0, 0);
+  },
+
+  drawHist(id, hist, color = '#ffb347', overlay = null, color2 = '#6ee7f0') {
+    const cv = document.getElementById(id);
+    const ctx = cv.getContext('2d');
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#050507';
+    ctx.fillRect(0, 0, w, h);
+    const bw = w / hist.length;
+    // overlay (drawn first, behind)
+    if (overlay) {
+      ctx.fillStyle = color2 + '55';
+      for (let i = 0; i < overlay.length; i++) {
+        const bh = overlay[i] * (h - 8);
+        ctx.fillRect(i * bw, h - bh - 2, bw - 1, bh);
+      }
+    }
+    ctx.fillStyle = color;
+    for (let i = 0; i < hist.length; i++) {
+      const bh = hist[i] * (h - 8);
+      ctx.fillRect(i * bw + 1, h - bh - 2, bw - 2, bh);
+    }
+  },
+
+  drawDiff(id, a, b) {
+    const cv = document.getElementById(id);
+    const ctx = cv.getContext('2d');
+    const W = this.W, H = this.H;
+    const d = new Float32Array(W * H);
+    for (let i = 0; i < W * H; i++) d[i] = Math.abs(a[i] - b[i]) * 2;
+    ctx.putImageData(arrayToImageData(d, W, H, 'amber'), 0, 0);
+  },
+
+  render() {
+    const noise = +document.getElementById('introNoise').value;
+    const rot = +document.getElementById('introRot').value;
+    const bri = +document.getElementById('introBri').value;
+
+    const orig = this.baseImg;
+    const xfm = this.transform(noise, rot, bri);
+
+    this.drawImage('introC1', orig);
+    this.drawImage('introC2', xfm);
+    this.drawDiff('introC3', orig, xfm);
+
+    const h1 = this.histogram(orig);
+    const h2 = this.histogram(xfm);
+    this.drawHist('introH1', h1);
+    this.drawHist('introH2', h2);
+    this.drawHist('introH3', h1, '#ffb347', h2, '#6ee7f0');
+
+    // metrics
+    let pixDrift = 0;
+    for (let i = 0; i < orig.length; i++) pixDrift += (orig[i] - xfm[i]) ** 2;
+    pixDrift = Math.sqrt(pixDrift / orig.length);
+
+    let hisDrift = 0;
+    for (let i = 0; i < h1.length; i++) hisDrift += (h1[i] - h2[i]) ** 2;
+    hisDrift = Math.sqrt(hisDrift / h1.length);
+
+    document.getElementById('introPix').textContent = pixDrift.toFixed(3);
+    document.getElementById('introHis').textContent = hisDrift.toFixed(3);
+  }
+};
+
+/* ---------- Module 2: LoG / Scale space ---------- */
+App.log = {
+  rendered: false,
+  W: 180, H: 120,
+  base: null,
+  blobs: [
+    { x: 40,  y: 60, r: 3,  color: '#ff6b6b', name: 'Small' },
+    { x: 90,  y: 60, r: 6,  color: '#6ee7f0', name: 'Medium' },
+    { x: 145, y: 60, r: 11, color: '#ffb347', name: 'Large' },
+  ],
+  responseCurves: null,
+  dogCache: null, // cached DoG array per sigma for instant display
+
+  init() {
+    const W = this.W, H = this.H;
+    const img = new Float32Array(W * H);
+    for (let i = 0; i < W*H; i++) img[i] = 0.08;
+    for (const b of this.blobs) {
+      const s = b.r;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const dx = x - b.x, dy = y - b.y;
+          const v = Math.exp(-(dx*dx + dy*dy) / (2 * s * s));
+          img[y*W + x] += 0.8 * v;
+        }
+      }
+    }
+    for (let i = 0; i < W*H; i++) img[i] = clamp(img[i] + (Math.random() - 0.5) * 0.04, 0, 1);
+    this.base = img;
+
+    // Precompute at integer sigmas 1..14 — 14 points, cached
+    const sigmas = [];
+    for (let s = 1; s <= 14; s += 1) sigmas.push(s);
+    this.sigmas = sigmas;
+    this.responseCurves = this.blobs.map(() => new Array(sigmas.length).fill(0));
+    this.dogCache = new Array(sigmas.length);
+
+    for (let si = 0; si < sigmas.length; si++) {
+      const sig = sigmas[si];
+      const dog = this.computeDoG(sig);
+      // DoG already approximates sigma^2 * Laplacian, so |DoG| is the
+      // scale-normalized response. No extra sigma factor needed.
+      const absDog = new Float32Array(dog.length);
+      for (let i = 0; i < dog.length; i++) absDog[i] = Math.abs(dog[i]);
+      this.dogCache[si] = absDog;
+
+      for (let bi = 0; bi < this.blobs.length; bi++) {
+        const b = this.blobs[bi];
+        // Window must be large enough to contain this blob's peak at any
+        // scale — scale with the blob's own radius.
+        const win = Math.max(8, Math.ceil(b.r * 0.8));
+        let mx = 0;
+        for (let y = Math.max(0, b.y - win); y < Math.min(H, b.y + win); y++) {
+          for (let x = Math.max(0, b.x - win); x < Math.min(W, b.x + win); x++) {
+            const v = absDog[y * W + x];
+            if (v > mx) mx = v;
+          }
+        }
+        this.responseCurves[bi][si] = mx;
+      }
+    }
+    // Normalize each curve
+    for (let bi = 0; bi < this.blobs.length; bi++) {
+      let mx = 0;
+      for (const v of this.responseCurves[bi]) if (v > mx) mx = v;
+      if (mx > 0) for (let i = 0; i < this.responseCurves[bi].length; i++) this.responseCurves[bi][i] /= mx;
+    }
+
+    document.getElementById('logSig').addEventListener('input', e => {
+      document.getElementById('logSigVal').textContent = (+e.target.value).toFixed(1);
+      this.render();
+    });
+
+    this.rendered = true;
+    this.render();
+  },
+
+  computeDoG(sigma) {
+    const k = Math.sqrt(2);
+    const a = gaussBlur(this.base, this.W, this.H, sigma);
+    const b = gaussBlur(this.base, this.W, this.H, sigma * k);
+    const out = new Float32Array(this.W * this.H);
+    for (let i = 0; i < out.length; i++) out[i] = b[i] - a[i];
+    return out;
+  },
+
+  render() {
+    const sig = +document.getElementById('logSig').value;
+    const W = this.W, H = this.H;
+
+    // Draw input
+    const cv1 = document.getElementById('logIn');
+    const ctx1 = cv1.getContext('2d');
+    const inImg = arrayToImageData(this.base, W, H, null);
+    // upscale: create tmp canvas, draw, then scale into target
+    const tmpIn = document.createElement('canvas');
+    tmpIn.width = W; tmpIn.height = H;
+    tmpIn.getContext('2d').putImageData(inImg, 0, 0);
+    ctx1.imageSmoothingEnabled = false;
+    ctx1.clearRect(0, 0, cv1.width, cv1.height);
+    ctx1.drawImage(tmpIn, 0, 0, cv1.width, cv1.height);
+
+    // Snap to nearest cached sigma for instant display
+    const si = clamp(Math.round(sig - 1), 0, this.sigmas.length - 1);
+    const absDog = this.dogCache[si];
+    // Normalize for display
+    let mx = 0;
+    for (let i = 0; i < absDog.length; i++) if (absDog[i] > mx) mx = absDog[i];
+    const resp = new Float32Array(absDog.length);
+    if (mx > 0) for (let i = 0; i < absDog.length; i++) resp[i] = absDog[i] / mx;
+
+    const cv2 = document.getElementById('logOut');
+    const ctx2 = cv2.getContext('2d');
+    const respImg = arrayToImageData(resp, W, H, 'amber');
+    const tmpR = document.createElement('canvas');
+    tmpR.width = W; tmpR.height = H;
+    tmpR.getContext('2d').putImageData(respImg, 0, 0);
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.clearRect(0, 0, cv2.width, cv2.height);
+    ctx2.drawImage(tmpR, 0, 0, cv2.width, cv2.height);
+
+    // Mark blob positions (using scaled coordinates)
+    const sx = cv2.width / W, sy = cv2.height / H;
+    ctx2.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx2.lineWidth = 1;
+    for (const b of this.blobs) {
+      ctx2.beginPath();
+      ctx2.arc(b.x * sx, b.y * sy, b.r * sx, 0, Math.PI*2);
+      ctx2.stroke();
+    }
+
+    // Winner
+    let winner = -1, wmax = 0;
+    for (let bi = 0; bi < this.blobs.length; bi++) {
+      const v = this.responseCurves[bi][si];
+      if (v > wmax) { wmax = v; winner = bi; }
+    }
+    document.getElementById('logWinner').textContent = winner >= 0 && wmax > 0.5 ? this.blobs[winner].name + ' blob' : '—';
+
+    // Draw response curves
+    const cc = document.getElementById('logCurve');
+    const cx = cc.getContext('2d');
+    const cw = cc.width, ch = cc.height;
+    cx.fillStyle = '#050507';
+    cx.fillRect(0, 0, cw, ch);
+    // grid
+    cx.strokeStyle = '#2a2a36';
+    cx.lineWidth = 1;
+    for (let g = 1; g < 4; g++) {
+      const y = (ch - 20) * g / 4 + 10;
+      cx.beginPath(); cx.moveTo(30, y); cx.lineTo(cw - 10, y); cx.stroke();
+    }
+    // axis labels
+    cx.fillStyle = '#55555f';
+    cx.font = '9px "IBM Plex Mono", monospace';
+    cx.fillText('σ →', cw - 28, ch - 2);
+    cx.fillText('|DoG|', 2, 12);
+    // sigma ticks — range 1..14
+    const sigMin = 1, sigMax = 14;
+    const xOfSig = s => 30 + (s - sigMin) / (sigMax - sigMin) * (cw - 40);
+    for (let s = 2; s <= 14; s += 2) {
+      const x = xOfSig(s);
+      cx.fillStyle = '#55555f';
+      cx.fillText(String(s), x - 4, ch - 2);
+      cx.strokeStyle = '#1a1a21';
+      cx.beginPath(); cx.moveTo(x, 10); cx.lineTo(x, ch - 12); cx.stroke();
+    }
+    // curves
+    for (let bi = 0; bi < this.blobs.length; bi++) {
+      cx.strokeStyle = this.blobs[bi].color;
+      cx.lineWidth = 2;
+      cx.beginPath();
+      for (let si2 = 0; si2 < this.sigmas.length; si2++) {
+        const x = xOfSig(this.sigmas[si2]);
+        const y = ch - 12 - this.responseCurves[bi][si2] * (ch - 22);
+        if (si2 === 0) cx.moveTo(x, y); else cx.lineTo(x, y);
+      }
+      cx.stroke();
+    }
+    // current sigma marker
+    const curX = xOfSig(sig);
+    cx.strokeStyle = '#ecebe6';
+    cx.lineWidth = 1;
+    cx.setLineDash([3, 3]);
+    cx.beginPath(); cx.moveTo(curX, 8); cx.lineTo(curX, ch - 12); cx.stroke();
+    cx.setLineDash([]);
+    // dots on current sigma
+    for (let bi = 0; bi < this.blobs.length; bi++) {
+      const y = ch - 12 - this.responseCurves[bi][si] * (ch - 22);
+      cx.fillStyle = this.blobs[bi].color;
+      cx.beginPath(); cx.arc(curX, y, 3.5, 0, Math.PI*2); cx.fill();
+    }
+  }
+};
+
+/* ---------- SIFT step 2: Localization ---------- */
+App.siftLocal = {
+  rendered: false,
+  W: 160, H: 120,
+  base: null, dog: null,
+
+  init() {
+    const W = this.W, H = this.H;
+    const img = new Float32Array(W*H);
+    for (let i=0;i<W*H;i++) img[i]=0.12;
+
+    // Scene: a blob (high contrast), a long edge (line), a corner (L), and a faint blob
+    // Strong blob — corner-like response after DoG (rotationally symmetric)
+    this.addBlob(img, W, H, 38, 50, 5, 0.85);
+    // Faint blob — should be killed by contrast threshold at moderate values
+    this.addBlob(img, W, H, 38, 95, 4, 0.18);
+    // Long edge: bright bar — DoG gives a ridge of responses, all "edge-like"
+    for (let y=20;y<100;y++) for (let x=85;x<92;x++) img[y*W+x]=0.85;
+    // Corner: L-shape — produces a corner-like (isotropic) DoG response at the joint
+    for (let y=30;y<90;y++) for (let x=120;x<127;x++) img[y*W+x]=0.85;
+    for (let x=120;x<150;x++) for (let y=83;y<90;y++) img[y*W+x]=0.85;
+
+    // small noise
+    for (let i=0;i<W*H;i++) img[i]=clamp(img[i]+(Math.random()-0.5)*0.04, 0, 1);
+    this.base = img;
+
+    // Compute DoG once at sigma~2
+    const sig = 2.0;
+    const a = gaussBlur(img, W, H, sig);
+    const b = gaussBlur(img, W, H, sig*Math.SQRT2);
+    const dog = new Float32Array(W*H);
+    for (let i=0;i<dog.length;i++) dog[i] = b[i]-a[i];
+    this.dog = dog;
+
+    // Find local extrema in 3x3 neighborhood with min absolute response
+    const cands = [];
+    for (let y=2;y<H-2;y++) for (let x=2;x<W-2;x++) {
+      const v = dog[y*W+x];
+      const av = Math.abs(v);
+      if (av < 0.005) continue;
+      let isMax = true, isMin = true;
+      for (let dy=-1;dy<=1;dy++) for (let dx=-1;dx<=1;dx++) {
+        if (dx===0 && dy===0) continue;
+        const nv = dog[(y+dy)*W+(x+dx)];
+        if (nv >= v) isMax = false;
+        if (nv <= v) isMin = false;
+      }
+      if (!isMax && !isMin) continue;
+      // Hessian at (x,y) on |dog|
+      const D = dog;
+      const Dxx = D[y*W+(x+1)] - 2*D[y*W+x] + D[y*W+(x-1)];
+      const Dyy = D[(y+1)*W+x] - 2*D[y*W+x] + D[(y-1)*W+x];
+      const Dxy = (D[(y+1)*W+(x+1)] - D[(y+1)*W+(x-1)] - D[(y-1)*W+(x+1)] + D[(y-1)*W+(x-1)]) / 4;
+      const tr = Dxx + Dyy;
+      const det = Dxx*Dyy - Dxy*Dxy;
+      // edge ratio metric: tr^2/det >= (r+1)^2/r => edge-like; smaller => corner-like
+      const ratioMetric = (det > 1e-12) ? (tr*tr) / det : Infinity;
+      cands.push({ x, y, contrast: av, edgeMetric: ratioMetric });
+    }
+    this.candidates = cands;
+
+    document.getElementById('locContrast').addEventListener('input', e => {
+      document.getElementById('locContrastVal').textContent = (+e.target.value).toFixed(3);
+      this.render();
+    });
+    document.getElementById('locEdge').addEventListener('input', e => {
+      document.getElementById('locEdgeVal').textContent = (+e.target.value).toFixed(1);
+      this.render();
+    });
+
+    this.rendered = true;
+    this.render();
+  },
+
+  addBlob(img, W, H, cx, cy, s, amp) {
+    for (let y=Math.max(0,cy-3*s);y<Math.min(H,cy+3*s);y++)
+      for (let x=Math.max(0,cx-3*s);x<Math.min(W,cx+3*s);x++) {
+        const dx=x-cx, dy=y-cy;
+        img[y*W+x] += amp*Math.exp(-(dx*dx+dy*dy)/(2*s*s));
+      }
+  },
+
+  render() {
+    const W=this.W, H=this.H;
+    const cT = +document.getElementById('locContrast').value;
+    const r  = +document.getElementById('locEdge').value;
+    const ratioThresh = (r+1)*(r+1)/r;
+
+    // Classify each candidate
+    let n0 = this.candidates.length, n1 = 0, n2 = 0;
+    const classified = this.candidates.map(c => {
+      let cls = 'kept';
+      if (c.contrast < cT) cls = 'lowc';
+      else if (c.edgeMetric > ratioThresh || c.edgeMetric < 0) cls = 'edge';
+      if (cls !== 'lowc') n1++;
+      if (cls === 'kept') n2++;
+      return { ...c, cls };
+    });
+    document.getElementById('locN0').textContent = n0;
+    document.getElementById('locN1').textContent = n1;
+    document.getElementById('locN2').textContent = n2;
+
+    // Draw input
+    const cv1 = document.getElementById('locImg');
+    const ctx1 = cv1.getContext('2d');
+    const inImg = arrayToImageData(this.base, W, H, null);
+    const tmp1 = document.createElement('canvas');
+    tmp1.width=W; tmp1.height=H;
+    tmp1.getContext('2d').putImageData(inImg, 0, 0);
+    ctx1.imageSmoothingEnabled = false;
+    ctx1.clearRect(0,0,cv1.width,cv1.height);
+    ctx1.drawImage(tmp1, 0, 0, cv1.width, cv1.height);
+
+    // Draw |DoG| with markers
+    const absDog = new Float32Array(W*H);
+    let mx = 0;
+    for (let i=0;i<W*H;i++) { absDog[i]=Math.abs(this.dog[i]); if (absDog[i]>mx) mx=absDog[i]; }
+    if (mx>0) for (let i=0;i<W*H;i++) absDog[i]/=mx;
+    const cv2 = document.getElementById('locDog');
+    const ctx2 = cv2.getContext('2d');
+    const dImg = arrayToImageData(absDog, W, H, 'amber');
+    const tmp2 = document.createElement('canvas');
+    tmp2.width=W; tmp2.height=H;
+    tmp2.getContext('2d').putImageData(dImg, 0, 0);
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.clearRect(0,0,cv2.width,cv2.height);
+    ctx2.drawImage(tmp2, 0, 0, cv2.width, cv2.height);
+
+    // Markers on both canvases
+    const sx = cv2.width / W, sy = cv2.height / H;
+    const draw = (ctx) => {
+      for (const c of classified) {
+        if (c.cls === 'lowc') ctx.strokeStyle = 'rgba(85,85,95,0.55)';
+        else if (c.cls === 'edge') ctx.strokeStyle = 'rgba(255,107,107,0.85)';
+        else ctx.strokeStyle = '#86efac';
+        ctx.lineWidth = c.cls === 'kept' ? 2 : 1;
+        ctx.beginPath();
+        ctx.arc(c.x*sx, c.y*sy, c.cls==='kept'?6:4, 0, Math.PI*2);
+        ctx.stroke();
+      }
+    };
+    draw(ctx1);
+    draw(ctx2);
+  }
+};
+
+/* ---------- SIFT step 3: Orientation ---------- */
+App.siftOrient = {
+  rendered: false,
+  S: 80, // patch size
+  preset: 'ramp',
+
+  init() {
+    document.getElementById('orRot').addEventListener('input', e => {
+      document.getElementById('orRotVal').textContent = (+e.target.value).toFixed(0) + '°';
+      this.render();
+    });
+    document.querySelectorAll('#orPresets .btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#orPresets .btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        this.preset = b.dataset.preset;
+        this.render();
+      });
+    });
+    this.rendered = true;
+    this.render();
+  },
+
+  // Generate the unrotated patch content (centered)
+  basePatch(S) {
+    const img = new Float32Array(S*S);
+    const cx = S/2, cy = S/2;
+    if (this.preset === 'ramp') {
+      // Smooth horizontal intensity ramp — gradient points uniformly to the right (0°)
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        img[y*S+x] = 0.1 + 0.8 * (x / (S-1));
+      }
+    } else if (this.preset === 'edge') {
+      // Soft step edge (sigmoid) — gradient concentrated on the boundary, pointing right
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        const t = (x - cx) / 6;
+        img[y*S+x] = 0.15 + 0.75 / (1 + Math.exp(-t));
+      }
+    } else if (this.preset === 'corner') {
+      // L-corner — two competing edges, illustrates Lowe's "secondary peak" case
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        const dx = x - cx, dy = y - cy;
+        img[y*S+x] = (dx > 0 && dy < 0) ? 0.9 : 0.15;
+      }
+    } else { // texture
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        const u = (x - cx) * 0.5 + (y - cy) * 0.3;
+        img[y*S+x] = 0.5 + 0.4 * Math.cos(u * 0.6);
+      }
+    }
+    // soft circular window (mask out corners so rotation is clean)
+    for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+      const dx = x - cx, dy = y - cy;
+      const r = Math.sqrt(dx*dx + dy*dy);
+      const w = clamp(1 - (r - S*0.40)/(S*0.10), 0, 1);
+      img[y*S+x] = lerp(0.5, img[y*S+x], w);
+    }
+    return img;
+  },
+
+  // Rotate patch around center using bilinear sampling
+  rotatePatch(src, S, angleDeg) {
+    const out = new Float32Array(S*S);
+    const cx = (S-1)/2, cy = (S-1)/2;
+    const a = -angleDeg * Math.PI / 180;
+    const cs = Math.cos(a), sn = Math.sin(a);
+    for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+      const dx = x - cx, dy = y - cy;
+      const sxf = cs*dx - sn*dy + cx;
+      const syf = sn*dx + cs*dy + cy;
+      if (sxf<0||sxf>S-1||syf<0||syf>S-1) { out[y*S+x] = 0.5; continue; }
+      const x0 = Math.floor(sxf), y0 = Math.floor(syf);
+      const fx = sxf - x0, fy = syf - y0;
+      const x1 = Math.min(S-1, x0+1), y1 = Math.min(S-1, y0+1);
+      const v00 = src[y0*S+x0], v10 = src[y0*S+x1];
+      const v01 = src[y1*S+x0], v11 = src[y1*S+x1];
+      out[y*S+x] = lerp(lerp(v00, v10, fx), lerp(v01, v11, fx), fy);
+    }
+    return out;
+  },
+
+  // Build 36-bin orientation histogram with Gaussian weighting
+  histogram(patch, S) {
+    const hist = new Float32Array(36);
+    const cx = (S-1)/2, cy = (S-1)/2;
+    const sigW = S/3;
+    for (let y=1;y<S-1;y++) for (let x=1;x<S-1;x++) {
+      const gx = patch[y*S+(x+1)] - patch[y*S+(x-1)];
+      const gy = patch[(y+1)*S+x] - patch[(y-1)*S+x];
+      const mag = Math.sqrt(gx*gx + gy*gy);
+      if (mag < 1e-4) continue;
+      let ang = Math.atan2(gy, gx) * 180 / Math.PI;
+      if (ang < 0) ang += 360;
+      const bin = Math.floor(ang / 10) % 36;
+      const dx = x - cx, dy = y - cy;
+      const w = Math.exp(-(dx*dx+dy*dy)/(2*sigW*sigW));
+      hist[bin] += mag * w;
+    }
+    return hist;
+  },
+
+  // Helper: blit a patch onto a canvas at full canvas size
+  blit(canvas, patch, S) {
+    const ctx = canvas.getContext('2d');
+    const tmp = document.createElement('canvas');
+    tmp.width = S; tmp.height = S;
+    tmp.getContext('2d').putImageData(arrayToImageData(patch, S, S, null), 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(tmp, 0, 0, canvas.width, canvas.height);
+  },
+
+  // Draw small gradient arrows on a sparse grid over the patch
+  drawGradientField(ctx, patch, S, canvasW, canvasH) {
+    const step = 8; // sample every 8 pixels in patch coords
+    const sx = canvasW / S, sy = canvasH / S;
+    // Find max gradient magnitude for normalization
+    let mxMag = 0;
+    const grads = [];
+    for (let y=step;y<S-step;y+=step) for (let x=step;x<S-step;x+=step) {
+      const gx = patch[y*S+(x+1)] - patch[y*S+(x-1)];
+      const gy = patch[(y+1)*S+x] - patch[(y-1)*S+x];
+      const mag = Math.sqrt(gx*gx + gy*gy);
+      grads.push({x, y, gx, gy, mag});
+      if (mag > mxMag) mxMag = mag;
+    }
+    if (mxMag < 1e-6) return;
+    const arrowMax = step * sx * 1.4;
+    ctx.strokeStyle = '#6ee7f0';
+    ctx.fillStyle = '#6ee7f0';
+    ctx.lineWidth = 1.2;
+    for (const g of grads) {
+      if (g.mag < mxMag * 0.08) continue; // skip near-zero gradients
+      const nrm = g.mag / mxMag;
+      const len = arrowMax * Math.min(1, nrm * 1.5);
+      const cx = g.x * sx, cy = g.y * sy;
+      const ux = g.gx / g.mag, uy = g.gy / g.mag;
+      const ex = cx + len * ux, ey = cy + len * uy;
+      ctx.globalAlpha = 0.4 + 0.6 * nrm;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+      // tiny arrowhead
+      const ah = 3;
+      const ang = Math.atan2(uy, ux);
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex - ah*Math.cos(ang - 0.5), ey - ah*Math.sin(ang - 0.5));
+      ctx.lineTo(ex - ah*Math.cos(ang + 0.5), ey - ah*Math.sin(ang + 0.5));
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  },
+
+  render() {
+    const S = this.S;
+    const angle = +document.getElementById('orRot').value;
+    const base = this.basePatch(S);
+    const rot = this.rotatePatch(base, S, angle);
+    const hist = this.histogram(rot, S);
+
+    // Find dominant bin (parabolic interpolation for sub-bin accuracy)
+    let imx = 0, vmx = 0;
+    for (let i=0;i<36;i++) if (hist[i] > vmx) { vmx = hist[i]; imx = i; }
+    let dom = imx;
+    if (vmx > 0) {
+      const hl = hist[(imx+35)%36], hr = hist[(imx+1)%36];
+      const denom = hl - 2*vmx + hr;
+      if (Math.abs(denom) > 1e-9) dom = imx + 0.5*(hl-hr)/denom;
+    }
+    const domDeg = ((dom * 10) % 360 + 360) % 360;
+    document.getElementById('orDom').textContent = domDeg.toFixed(0) + '°';
+
+    // === Main patch with gradient field + dominant arrow ===
+    const cv1 = document.getElementById('orPatch');
+    this.blit(cv1, rot, S);
+    const ctx1 = cv1.getContext('2d');
+    this.drawGradientField(ctx1, rot, S, cv1.width, cv1.height);
+    // dominant arrow (big, amber)
+    const cw = cv1.width, ch = cv1.height;
+    const ccx = cw/2, ccy = ch/2;
+    const len = cw*0.40;
+    const rad = domDeg * Math.PI / 180;
+    const ex = ccx + len*Math.cos(rad), ey = ccy + len*Math.sin(rad);
+    ctx1.strokeStyle = '#0a0a0c';
+    ctx1.lineWidth = 6;
+    ctx1.beginPath(); ctx1.moveTo(ccx, ccy); ctx1.lineTo(ex, ey); ctx1.stroke();
+    ctx1.strokeStyle = '#ffb347';
+    ctx1.lineWidth = 3.5;
+    ctx1.beginPath(); ctx1.moveTo(ccx, ccy); ctx1.lineTo(ex, ey); ctx1.stroke();
+    const ah = 11;
+    ctx1.beginPath();
+    ctx1.moveTo(ex, ey);
+    ctx1.lineTo(ex - ah*Math.cos(rad - 0.45), ey - ah*Math.sin(rad - 0.45));
+    ctx1.lineTo(ex - ah*Math.cos(rad + 0.45), ey - ah*Math.sin(rad + 0.45));
+    ctx1.closePath();
+    ctx1.fillStyle = '#ffb347';
+    ctx1.fill();
+    // center dot
+    ctx1.fillStyle = '#ffb347';
+    ctx1.beginPath(); ctx1.arc(ccx, ccy, 3, 0, Math.PI*2); ctx1.fill();
+
+    // === Rose plot ===
+    const cv2 = document.getElementById('orRose');
+    const ctx2 = cv2.getContext('2d');
+    const w2 = cv2.width, h2 = cv2.height;
+    ctx2.fillStyle = '#050507';
+    ctx2.fillRect(0,0,w2,h2);
+    const rcx = w2/2, rcy = h2/2;
+    const rmax = Math.min(w2, h2)/2 - 18;
+    let hmx = 0;
+    for (const v of hist) if (v > hmx) hmx = v;
+    // grid rings
+    ctx2.strokeStyle = '#1a1a21';
+    for (let g=1;g<=3;g++) {
+      ctx2.beginPath();
+      ctx2.arc(rcx, rcy, rmax*g/3, 0, Math.PI*2);
+      ctx2.stroke();
+    }
+    // bars
+    for (let i=0;i<36;i++) {
+      const a0 = (i*10) * Math.PI/180;
+      const a1 = ((i+1)*10) * Math.PI/180;
+      const r = hmx > 0 ? rmax * (hist[i]/hmx) : 0;
+      if (r < 1) continue;
+      const isPeak = i === imx;
+      ctx2.fillStyle = isPeak ? '#ffb347' : '#6ee7f0aa';
+      ctx2.beginPath();
+      ctx2.moveTo(rcx, rcy);
+      ctx2.arc(rcx, rcy, r, a0, a1);
+      ctx2.closePath();
+      ctx2.fill();
+    }
+    // dominant direction line (thick amber)
+    ctx2.strokeStyle = '#ffb347';
+    ctx2.lineWidth = 2;
+    ctx2.beginPath(); ctx2.moveTo(rcx, rcy);
+    ctx2.lineTo(rcx + rmax*Math.cos(rad), rcy + rmax*Math.sin(rad));
+    ctx2.stroke();
+    // axis labels
+    ctx2.fillStyle = '#7a7a85';
+    ctx2.font = '10px "IBM Plex Mono", monospace';
+    ctx2.fillText('0°',  rcx + rmax + 4, rcy + 4);
+    ctx2.fillText('90°', rcx - 10, rcy + rmax + 12);
+    ctx2.fillText('180°', rcx - rmax - 26, rcy + 4);
+    ctx2.fillText('270°', rcx - 14, rcy - rmax - 6);
+
+    // === Input panel (rotated patch, no decoration) ===
+    const cvIn = document.getElementById('orInput');
+    this.blit(cvIn, rot, S);
+    // small rotation indicator in corner
+    const ctxIn = cvIn.getContext('2d');
+    ctxIn.fillStyle = 'rgba(255,107,107,0.85)';
+    ctxIn.font = '11px "IBM Plex Mono", monospace';
+    ctxIn.fillText('rot = ' + angle.toFixed(0) + '°', 8, 16);
+
+    // === Canonicalized panel (rotated by -dominant — should look the same regardless of input rotation) ===
+    const canon = this.rotatePatch(rot, S, -domDeg);
+    const cvCa = document.getElementById('orCanon');
+    this.blit(cvCa, canon, S);
+    const ctxCa = cvCa.getContext('2d');
+    ctxCa.fillStyle = 'rgba(134,239,172,0.85)';
+    ctxCa.font = '11px "IBM Plex Mono", monospace';
+    ctxCa.fillText('un-rotated by ' + domDeg.toFixed(0) + '°', 8, 16);
+  }
+};
+
+/* ---------- SIFT step 4: Descriptor ---------- */
+App.siftDescr = {
+  rendered: false,
+  S: 64, // patch size, divided into 4x4 cells
+  preset: 'corner',
+
+  init() {
+    document.getElementById('deRotB').addEventListener('input', e => {
+      document.getElementById('deRotBVal').textContent = (+e.target.value).toFixed(0) + '°';
+      this.render();
+    });
+    document.querySelectorAll('#dePresets .btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#dePresets .btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        this.preset = b.dataset.preset;
+        this.render();
+      });
+    });
+    this.rendered = true;
+    this.render();
+  },
+
+  basePatch(S) {
+    // Same generator family as Orientation; varied content per preset
+    const img = new Float32Array(S*S);
+    const cx = S/2, cy = S/2;
+    if (this.preset === 'corner') {
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        const dx = x - cx, dy = y - cy;
+        img[y*S+x] = (dx > 0 && dy < 0) ? 0.9 : 0.15;
+      }
+    } else if (this.preset === 'edge') {
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        img[y*S+x] = (x - cx) > 0 ? 0.9 : 0.15;
+      }
+    } else { // texture
+      for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+        const u = (x - cx) * 0.5 + (y - cy) * 0.3;
+        img[y*S+x] = 0.5 + 0.4 * Math.cos(u * 0.6);
+      }
+    }
+    for (let y=0;y<S;y++) for (let x=0;x<S;x++) {
+      const dx = x - cx, dy = y - cy;
+      const r = Math.sqrt(dx*dx + dy*dy);
+      const w = clamp(1 - (r - S*0.42)/(S*0.08), 0, 1);
+      img[y*S+x] = lerp(0.5, img[y*S+x], w);
+    }
+    return img;
+  },
+
+  // Build a 128-d descriptor: 4x4 cells, 8 bins each, with canonicalization
+  descriptor(rawPatch, S) {
+    // Estimate dominant orientation (reuse same logic as orient module)
+    const hist = new Float32Array(36);
+    const cx = (S-1)/2, cy = (S-1)/2;
+    const sigW = S/3;
+    for (let y=1;y<S-1;y++) for (let x=1;x<S-1;x++) {
+      const gx = rawPatch[y*S+(x+1)] - rawPatch[y*S+(x-1)];
+      const gy = rawPatch[(y+1)*S+x] - rawPatch[(y-1)*S+x];
+      const mag = Math.sqrt(gx*gx + gy*gy);
+      if (mag < 1e-4) continue;
+      let ang = Math.atan2(gy, gx) * 180/Math.PI;
+      if (ang < 0) ang += 360;
+      const bin = Math.floor(ang/10) % 36;
+      const dx = x - cx, dy = y - cy;
+      hist[bin] += mag * Math.exp(-(dx*dx+dy*dy)/(2*sigW*sigW));
+    }
+    let imx = 0, vmx = 0;
+    for (let i=0;i<36;i++) if (hist[i] > vmx) { vmx = hist[i]; imx = i; }
+    let dom = imx;
+    if (vmx > 0) {
+      const hl = hist[(imx+35)%36], hr = hist[(imx+1)%36];
+      const denom = hl - 2*vmx + hr;
+      if (Math.abs(denom) > 1e-9) dom = imx + 0.5*(hl-hr)/denom;
+    }
+    const domDeg = ((dom * 10) % 360 + 360) % 360;
+
+    // Canonicalize patch
+    const canon = App.siftOrient.rotatePatch(rawPatch, S, -domDeg);
+
+    // 4x4 cells, 8 bins each
+    const cells = 4, bins = 8;
+    const cellSize = S / cells;
+    const desc = new Float32Array(cells * cells * bins);
+    const cxc = (S-1)/2, cyc = (S-1)/2;
+    const sigC = S/2;
+    for (let y=1;y<S-1;y++) for (let x=1;x<S-1;x++) {
+      const gx = canon[y*S+(x+1)] - canon[y*S+(x-1)];
+      const gy = canon[(y+1)*S+x] - canon[(y-1)*S+x];
+      const mag = Math.sqrt(gx*gx + gy*gy);
+      if (mag < 1e-4) continue;
+      let ang = Math.atan2(gy, gx) * 180/Math.PI;
+      // orientations now relative to canonical (already rotated)
+      if (ang < 0) ang += 360;
+      const bin = Math.floor(ang / (360/bins)) % bins;
+      const cellX = Math.min(cells-1, Math.floor(x / cellSize));
+      const cellY = Math.min(cells-1, Math.floor(y / cellSize));
+      const dx = x - cxc, dy = y - cyc;
+      const w = Math.exp(-(dx*dx+dy*dy)/(2*sigC*sigC));
+      desc[(cellY*cells + cellX)*bins + bin] += mag * w;
+    }
+    // L2 normalize, clip at 0.2, renormalize (Lowe's recipe)
+    let norm = 0;
+    for (const v of desc) norm += v*v;
+    norm = Math.sqrt(norm);
+    if (norm > 1e-9) for (let i=0;i<desc.length;i++) desc[i] /= norm;
+    for (let i=0;i<desc.length;i++) if (desc[i] > 0.2) desc[i] = 0.2;
+    norm = 0;
+    for (const v of desc) norm += v*v;
+    norm = Math.sqrt(norm);
+    if (norm > 1e-9) for (let i=0;i<desc.length;i++) desc[i] /= norm;
+    return { desc, canon, domDeg };
+  },
+
+  drawCells(canvasId, descObj, S) {
+    const cv = document.getElementById(canvasId);
+    const ctx = cv.getContext('2d');
+    const w = cv.width, h = cv.height;
+    // background = canonicalized patch faded
+    const tmp = document.createElement('canvas');
+    tmp.width = S; tmp.height = S;
+    tmp.getContext('2d').putImageData(arrayToImageData(descObj.canon, S, S, null), 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0,0,w,h);
+    ctx.globalAlpha = 0.35;
+    ctx.drawImage(tmp, 0, 0, w, h);
+    ctx.globalAlpha = 1;
+
+    const cells = 4, bins = 8;
+    const cw = w / cells, ch = h / cells;
+    // grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth = 1;
+    for (let i=1;i<cells;i++) {
+      ctx.beginPath(); ctx.moveTo(i*cw, 0); ctx.lineTo(i*cw, h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i*ch); ctx.lineTo(w, i*ch); ctx.stroke();
+    }
+    // rose plots per cell
+    for (let cy=0;cy<cells;cy++) for (let cx=0;cx<cells;cx++) {
+      const ccx = cx*cw + cw/2, ccy = cy*ch + ch/2;
+      const rmax = Math.min(cw, ch) * 0.42;
+      // find local max for this cell for normalization
+      let lm = 0;
+      for (let b=0;b<bins;b++) {
+        const v = descObj.desc[(cy*cells + cx)*bins + b];
+        if (v > lm) lm = v;
+      }
+      if (lm < 1e-6) continue;
+      for (let b=0;b<bins;b++) {
+        const v = descObj.desc[(cy*cells + cx)*bins + b];
+        const a = b * (2*Math.PI/bins);
+        const r = rmax * (v / lm);
+        ctx.strokeStyle = '#ffb347';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(ccx, ccy);
+        ctx.lineTo(ccx + r*Math.cos(a), ccy + r*Math.sin(a));
+        ctx.stroke();
+      }
+    }
+  },
+
+  drawBars(canvasId, desc, color) {
+    const cv = document.getElementById(canvasId);
+    const ctx = cv.getContext('2d');
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#050507';
+    ctx.fillRect(0, 0, w, h);
+    const bw = w / desc.length;
+    let mx = 0;
+    for (const v of desc) if (v > mx) mx = v;
+    if (mx < 1e-9) mx = 1;
+    for (let i=0;i<desc.length;i++) {
+      const bh = (desc[i] / mx) * (h - 4);
+      // tint by which 4x4 cell (16 cells -> hue shift)
+      const cellIdx = Math.floor(i / 8);
+      const hue = 30 + cellIdx * 18; // rotate around amber/cyan area
+      ctx.fillStyle = `hsl(${hue % 360}, 70%, 55%)`;
+      ctx.fillRect(i*bw, h - bh - 2, Math.max(1, bw - 0.5), bh);
+    }
+    // cell separators every 8 bins
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 1;
+    for (let c=1;c<16;c++) {
+      const x = c * 8 * bw;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+  },
+
+  render() {
+    const S = this.S;
+    const rotB = +document.getElementById('deRotB').value;
+    const baseA = this.basePatch(S);
+    const baseB = App.siftOrient.rotatePatch(baseA, S, rotB);
+
+    const dA = this.descriptor(baseA, S);
+    const dB = this.descriptor(baseB, S);
+
+    this.drawCells('deGridA', dA, S);
+    this.drawCells('deGridB', dB, S);
+    this.drawBars('deBarA', dA.desc);
+    this.drawBars('deBarB', dB.desc);
+
+    // L2 distance
+    let d = 0;
+    for (let i=0;i<dA.desc.length;i++) {
+      const t = dA.desc[i] - dB.desc[i];
+      d += t*t;
+    }
+    document.getElementById('deDist').textContent = Math.sqrt(d).toFixed(3);
+  }
+};
+
+/* ---------- Module 3: LBP ---------- */
+App.lbp = {
+  cells: [50, 50, 50, 50, 128, 50, 50, 50, 50], // 3x3 row-major, index 4 = center
+  presets: {
+    flat:   [120, 125, 122, 128, 128, 131, 127, 126, 129],
+    spot:   [60, 65, 58,  70, 200, 72, 63, 68, 61],
+    edgeH:  [200, 210, 205, 198, 128, 203, 40, 35, 45],
+    edgeV:  [200, 195, 40, 210, 128, 35, 205, 198, 45],
+    corner: [40, 35, 200, 42, 128, 205, 210, 207, 203],
+    diag:   [220, 180, 30, 190, 128, 45, 40, 35, 25],
+    random: null, // filled dynamically
+  },
+  // bit position index in raster order 0..8 (skip center=4). Clockwise from top-left.
+  // Positions: 0=tl, 1=t, 2=tr, 3=r, 4=br, 5=b, 6=bl, 7=l
+  // Raster neighbors: [0]tl [1]t [2]tr [3]l [5]r [6]bl [7]b [8]br
+  bitOrder: [0, 1, 2, 5, 8, 7, 6, 3], // raster idx for bit 0,1,2,3,4,5,6,7 clockwise
+
+  init() {
+    // Build the 3x3 grid
+    const grid = document.getElementById('lbpGrid');
+    const thresh = document.getElementById('lbpThresh');
+    grid.innerHTML = '';
+    thresh.innerHTML = '';
+    for (let i = 0; i < 9; i++) {
+      const c = document.createElement('div');
+      c.className = 'lbp-cell' + (i === 4 ? ' center' : '');
+      c.dataset.idx = i;
+      c.addEventListener('click', () => {
+        if (i === 4) return; // center edited via slider
+        this.cells[i] = (this.cells[i] + 32) % 256;
+        this.render();
+      });
+      grid.appendChild(c);
+
+      const t = document.createElement('div');
+      t.className = 'lbp-cell' + (i === 4 ? ' center' : '');
+      thresh.appendChild(t);
+    }
+
+    // Presets
+    document.querySelectorAll('#lbpPresets .btn').forEach(b => {
+      b.addEventListener('click', () => {
+        const p = b.dataset.preset;
+        let cells;
+        if (p === 'random') {
+          cells = Array.from({length: 9}, () => Math.floor(Math.random() * 256));
+        } else {
+          cells = [...this.presets[p]];
+        }
+        this.cells = cells;
+        document.getElementById('lbpCenter').value = cells[4];
+        document.getElementById('lbpCenterVal').textContent = cells[4];
+        this.render();
+      });
+    });
+
+    document.getElementById('lbpCenter').addEventListener('input', e => {
+      this.cells[4] = +e.target.value;
+      document.getElementById('lbpCenterVal').textContent = e.target.value;
+      this.render();
+    });
+
+    this.render();
+  },
+
+  computeLBP() {
+    const center = this.cells[4];
+    let code = 0;
+    const bits = [];
+    for (let b = 0; b < 8; b++) {
+      const idx = this.bitOrder[b];
+      const bit = this.cells[idx] >= center ? 1 : 0;
+      bits.push(bit);
+      code |= (bit << b);
+    }
+    return { code, bits };
+  },
+
+  classify(bits) {
+    // count transitions in cyclic bit sequence
+    let trans = 0;
+    for (let i = 0; i < 8; i++) {
+      if (bits[i] !== bits[(i + 1) % 8]) trans++;
+    }
+    const ones = bits.reduce((a, b) => a + b, 0);
+    if (ones === 0) return 'Flat / dark';
+    if (ones === 8) return 'Flat / bright';
+    if (ones === 1) return 'Dark spot';
+    if (ones === 7) return 'Bright spot';
+    if (trans === 2) {
+      if (ones >= 3 && ones <= 5) return 'Edge';
+    }
+    if (trans === 4) return 'Corner';
+    if (trans > 4) return 'Non-uniform';
+    return 'Line / ridge';
+  },
+
+  render() {
+    const grid = document.getElementById('lbpGrid').children;
+    const thresh = document.getElementById('lbpThresh').children;
+    const { code, bits } = this.computeLBP();
+
+    // render cells
+    for (let i = 0; i < 9; i++) {
+      const v = this.cells[i];
+      const bg = `rgb(${v},${v},${v})`;
+      grid[i].style.background = bg;
+      grid[i].style.color = v > 128 ? '#0a0a0c' : '#ecebe6';
+      grid[i].textContent = v;
+      // bit label
+      let bitLabel = '';
+      if (i !== 4) {
+        const bi = this.bitOrder.indexOf(i);
+        if (bi >= 0) {
+          const prev = grid[i].querySelector('.bit');
+          if (prev) prev.remove();
+          const el = document.createElement('span');
+          el.className = 'bit';
+          el.textContent = 'b' + bi;
+          grid[i].appendChild(el);
+        }
+      } else {
+        const prev = grid[i].querySelector('.bit');
+        if (prev) prev.remove();
+      }
+    }
+
+    // render threshold
+    const center = this.cells[4];
+    for (let i = 0; i < 9; i++) {
+      if (i === 4) {
+        thresh[i].style.background = '#1a1a21';
+        thresh[i].style.color = '#ffb347';
+        thresh[i].textContent = 'gc';
+      } else {
+        const on = this.cells[i] >= center;
+        thresh[i].style.background = on ? '#ffb347' : '#1a1a21';
+        thresh[i].style.color = on ? '#0a0a0c' : '#55555f';
+        thresh[i].textContent = on ? '1' : '0';
+      }
+    }
+
+    // render bit string (b7 first for visual)
+    let bitHtml = '';
+    for (let b = 7; b >= 0; b--) {
+      const cls = bits[b] ? 'one' : 'zero';
+      bitHtml += `<span class="${cls}">${bits[b]}</span>`;
+    }
+    document.getElementById('lbpBits').innerHTML = bitHtml;
+
+    // render decimal
+    document.getElementById('lbpDec').innerHTML = code + '<span class="unit">LBP code (0–255)</span>';
+
+    // classification
+    document.getElementById('lbpClass').textContent = this.classify(bits);
+  }
+};
+
+/* ---------- Module 4: Gabor ---------- */
+App.gabor = {
+  rendered: false,
+  W: 140, H: 140,
+  testImg: null,
+  _pending: false,
+
+  init() {
+    // Build test image: 4 quadrants with stripes at different orientations
+    const W = this.W, H = this.H;
+    const img = new Float32Array(W * H);
+    const freq = 0.42; // pattern frequency (tighter stripes in smaller image)
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        let theta;
+        const leftHalf = x < W/2;
+        const topHalf = y < H/2;
+        if (leftHalf && topHalf)  theta = 0;
+        else if (!leftHalf && topHalf) theta = Math.PI/4;
+        else if (leftHalf && !topHalf) theta = Math.PI/2;
+        else theta = 3*Math.PI/4;
+        const u = x * Math.cos(theta) + y * Math.sin(theta);
+        img[y*W + x] = 0.5 + 0.45 * Math.cos(u * freq);
+      }
+    }
+    // fade edges
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const cx = W/2, cy = H/2;
+        const dx = Math.abs(x - cx), dy = Math.abs(y - cy);
+        const edge = Math.min(cx - dx, cy - dy);
+        const fade = clamp(edge / 12, 0, 1);
+        img[y*W + x] = lerp(0.5, img[y*W + x], fade);
+      }
+    }
+    this.testImg = img;
+
+    // Throttle slider input via rAF so drags don't pile up
+    const throttled = () => {
+      if (this._pending) return;
+      this._pending = true;
+      requestAnimationFrame(() => {
+        this._pending = false;
+        this.update();
+      });
+    };
+    ['gabTheta', 'gabLam', 'gabSig', 'gabGam'].forEach(id => {
+      document.getElementById(id).addEventListener('input', throttled);
+    });
+
+    this.rendered = true;
+    this.update();
+  },
+
+  makeKernel(theta, lam, sigma, gamma) {
+    const radius = Math.max(5, Math.ceil(2.5 * sigma));
+    const size = radius * 2 + 1;
+    const k = new Float32Array(size * size);
+    const th = theta * Math.PI / 180;
+    const cs = Math.cos(th), sn = Math.sin(th);
+    let sum = 0;
+    for (let y = -radius; y <= radius; y++) {
+      for (let x = -radius; x <= radius; x++) {
+        const xr = x * cs + y * sn;
+        const yr = -x * sn + y * cs;
+        const env = Math.exp(-(xr*xr + gamma*gamma*yr*yr) / (2 * sigma * sigma));
+        const carrier = Math.cos(2 * Math.PI * xr / lam);
+        const v = env * carrier;
+        k[(y + radius) * size + (x + radius)] = v;
+        sum += v;
+      }
+    }
+    // zero-mean
+    const mean = sum / (size * size);
+    for (let i = 0; i < k.length; i++) k[i] -= mean;
+    return { k, size, radius };
+  },
+
+  convolve(src, w, h, kernel, ksize, kradius) {
+    const out = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        let v = 0;
+        for (let ky = -kradius; ky <= kradius; ky++) {
+          const yi = clamp(y + ky, 0, h - 1);
+          for (let kx = -kradius; kx <= kradius; kx++) {
+            const xi = clamp(x + kx, 0, w - 1);
+            v += src[yi * w + xi] * kernel[(ky + kradius) * ksize + (kx + kradius)];
+          }
+        }
+        out[y * w + x] = v;
+      }
+    }
+    return out;
+  },
+
+  update() {
+    const theta = +document.getElementById('gabTheta').value;
+    const lam = +document.getElementById('gabLam').value;
+    const sigma = +document.getElementById('gabSig').value;
+    const gamma = +document.getElementById('gabGam').value;
+    document.getElementById('gabThetaVal').textContent = theta + '°';
+    document.getElementById('gabLamVal').textContent = lam.toFixed(1);
+    document.getElementById('gabSigVal').textContent = sigma.toFixed(1);
+    document.getElementById('gabGamVal').textContent = gamma.toFixed(2);
+
+    // Build kernel
+    const { k, size, radius } = this.makeKernel(theta, lam, sigma, gamma);
+
+    // Render kernel
+    const kCan = document.getElementById('gabKernel');
+    const kCtx = kCan.getContext('2d');
+    const kw = kCan.width, kh = kCan.height;
+    // normalize for display
+    let kmn = Infinity, kmx = -Infinity;
+    for (const v of k) { if (v < kmn) kmn = v; if (v > kmx) kmx = v; }
+    const kn = new Float32Array(k.length);
+    const span = Math.max(Math.abs(kmn), Math.abs(kmx));
+    for (let i = 0; i < k.length; i++) kn[i] = 0.5 + 0.5 * k[i] / span;
+    const kImg = arrayToImageData(kn, size, size, null);
+    // scale up to canvas
+    const tmp = document.createElement('canvas');
+    tmp.width = size; tmp.height = size;
+    tmp.getContext('2d').putImageData(kImg, 0, 0);
+    kCtx.imageSmoothingEnabled = false;
+    kCtx.clearRect(0, 0, kw, kh);
+    kCtx.drawImage(tmp, 0, 0, kw, kh);
+
+    // Draw test image
+    const tCan = document.getElementById('gabImg');
+    const tCtx = tCan.getContext('2d');
+    const tw = tCan.width, th_ = tCan.height;
+    const tTmp = document.createElement('canvas');
+    tTmp.width = this.W; tTmp.height = this.H;
+    tTmp.getContext('2d').putImageData(arrayToImageData(this.testImg, this.W, this.H, null), 0, 0);
+    tCtx.imageSmoothingEnabled = false;
+    tCtx.clearRect(0, 0, tw, th_);
+    tCtx.drawImage(tTmp, 0, 0, tw, th_);
+    // overlay quadrant labels
+    tCtx.fillStyle = 'rgba(255,179,71,0.7)';
+    tCtx.font = '11px "IBM Plex Mono", monospace';
+    tCtx.fillText('0°',   tw/4 - 8,  12);
+    tCtx.fillText('45°',  3*tw/4 - 10, 12);
+    tCtx.fillText('90°',  tw/4 - 10, th_/2 + 14);
+    tCtx.fillText('135°', 3*tw/4 - 14, th_/2 + 14);
+    tCtx.strokeStyle = 'rgba(255,179,71,0.25)';
+    tCtx.beginPath(); tCtx.moveTo(tw/2, 0); tCtx.lineTo(tw/2, th_); tCtx.moveTo(0, th_/2); tCtx.lineTo(tw, th_/2); tCtx.stroke();
+
+    // Convolve (on smaller test image for speed)
+    const resp = this.convolve(this.testImg, this.W, this.H, k, size, radius);
+    // take absolute value (magnitude-like response)
+    const rabs = new Float32Array(resp.length);
+    let mx = 0;
+    for (let i = 0; i < resp.length; i++) {
+      rabs[i] = Math.abs(resp[i]);
+      if (rabs[i] > mx) mx = rabs[i];
+    }
+    if (mx > 0) for (let i = 0; i < rabs.length; i++) rabs[i] /= mx;
+
+    // Draw response
+    const rCan = document.getElementById('gabResp');
+    const rCtx = rCan.getContext('2d');
+    const rw = rCan.width, rh = rCan.height;
+    const rTmp = document.createElement('canvas');
+    rTmp.width = this.W; rTmp.height = this.H;
+    rTmp.getContext('2d').putImageData(arrayToImageData(rabs, this.W, this.H, 'amber'), 0, 0);
+    rCtx.imageSmoothingEnabled = false;
+    rCtx.clearRect(0, 0, rw, rh);
+    rCtx.drawImage(rTmp, 0, 0, rw, rh);
+
+    // Determine strongest quadrant
+    const quads = [
+      { name: '0°',   x0: 0,         y0: 0,         x1: this.W/2, y1: this.H/2 },
+      { name: '45°',  x0: this.W/2,  y0: 0,         x1: this.W,   y1: this.H/2 },
+      { name: '90°',  x0: 0,         y0: this.H/2,  x1: this.W/2, y1: this.H },
+      { name: '135°', x0: this.W/2,  y0: this.H/2,  x1: this.W,   y1: this.H },
+    ];
+    let bestName = '—', bestVal = 0, totalMean = 0, n = 0;
+    for (const q of quads) {
+      let s = 0, c = 0;
+      for (let y = q.y0; y < q.y1; y++) {
+        for (let x = q.x0; x < q.x1; x++) {
+          s += rabs[y * this.W + x]; c++;
+        }
+      }
+      const m = s / c;
+      totalMean += m; n++;
+      if (m > bestVal) { bestVal = m; bestName = q.name; }
+    }
+    totalMean /= n;
+    document.getElementById('gabWinner').textContent = bestName;
+    document.getElementById('gabMean').textContent = totalMean.toFixed(3);
+    document.getElementById('gabBar').style.width = (totalMean * 100) + '%';
+  }
+};
+
+/* ---------- Module 5: GLCM ---------- */
+App.glcm = {
+  W: 8, H: 8,
+  levels: 4,
+  img: null,
+  d: 1,
+  angle: 0,
+  presets: {
+    smooth: null, rough: null, stripes: null, checker: null, gradient: null
+  },
+
+  init() {
+    // Build presets
+    const W = this.W, H = this.H;
+    this.presets.smooth = new Uint8Array(W*H).fill(1).map((_, i) => {
+      const x = i % W, y = Math.floor(i / W);
+      if (x < 2 && y < 2) return 0;
+      if (x >= 5 || y >= 5) return 2;
+      return 1;
+    });
+    this.presets.rough = new Uint8Array(W*H).map(() => Math.floor(Math.random() * 4));
+    this.presets.stripes = new Uint8Array(W*H).map((_, i) => (Math.floor(i / W)) % 2 === 0 ? 0 : 3);
+    this.presets.checker = new Uint8Array(W*H).map((_, i) => {
+      const x = i % W, y = Math.floor(i / W);
+      return (x + y) % 2 === 0 ? 0 : 3;
+    });
+    this.presets.gradient = new Uint8Array(W*H).map((_, i) => Math.floor((i % W) / W * 4));
+
+    this.img = new Uint8Array(this.presets.smooth);
+
+    // Build image grid
+    const grid = document.getElementById('glcmImg');
+    grid.innerHTML = '';
+    for (let i = 0; i < W*H; i++) {
+      const c = document.createElement('div');
+      c.className = 'glcm-cell';
+      c.dataset.idx = i;
+      c.addEventListener('click', () => {
+        this.img[i] = (this.img[i] + 1) % this.levels;
+        this.render();
+      });
+      grid.appendChild(c);
+    }
+
+    // Build matrix display
+    const mat = document.getElementById('glcmMat');
+    mat.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+      const c = document.createElement('div');
+      c.className = 'mcell';
+      mat.appendChild(c);
+    }
+
+    // Presets
+    document.querySelectorAll('#glcmPresets .btn').forEach(b => {
+      b.addEventListener('click', () => {
+        this.img = new Uint8Array(this.presets[b.dataset.preset]);
+        this.render();
+      });
+    });
+
+    // Controls
+    document.getElementById('glcmD').addEventListener('input', e => {
+      this.d = +e.target.value;
+      document.getElementById('glcmDVal').textContent = e.target.value;
+      this.render();
+    });
+    document.querySelectorAll('#glcmAngles .btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#glcmAngles .btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        this.angle = +b.dataset.angle;
+        this.render();
+      });
+    });
+
+    this.render();
+  },
+
+  compute() {
+    const W = this.W, H = this.H, L = this.levels;
+    const m = new Float32Array(L * L);
+    const d = this.d;
+    const rad = this.angle * Math.PI / 180;
+    // convention: y grows downward
+    const dx = Math.round(Math.cos(rad) * d);
+    const dy = Math.round(-Math.sin(rad) * d);
+    let count = 0;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const x2 = x + dx, y2 = y + dy;
+        if (x2 < 0 || y2 < 0 || x2 >= W || y2 >= H) continue;
+        const i = this.img[y*W + x];
+        const j = this.img[y2*W + x2];
+        m[i*L + j]++;
+        m[j*L + i]++; // symmetric
+        count += 2;
+      }
+    }
+    if (count > 0) for (let k = 0; k < m.length; k++) m[k] /= count;
+    return m;
+  },
+
+  features(P) {
+    const L = this.levels;
+    let contrast = 0, homog = 0, energy = 0;
+    // means
+    let mui = 0, muj = 0;
+    for (let i = 0; i < L; i++) {
+      for (let j = 0; j < L; j++) {
+        const p = P[i*L + j];
+        mui += i * p;
+        muj += j * p;
+      }
+    }
+    // variances
+    let vari = 0, varj = 0;
+    for (let i = 0; i < L; i++) {
+      for (let j = 0; j < L; j++) {
+        const p = P[i*L + j];
+        vari += (i - mui)**2 * p;
+        varj += (j - muj)**2 * p;
+      }
+    }
+    const si = Math.sqrt(vari), sj = Math.sqrt(varj);
+    let corr = 0;
+    for (let i = 0; i < L; i++) {
+      for (let j = 0; j < L; j++) {
+        const p = P[i*L + j];
+        contrast += (i - j)**2 * p;
+        homog += p / (1 + Math.abs(i - j));
+        energy += p * p;
+        if (si > 0 && sj > 0) corr += ((i - mui) * (j - muj) * p) / (si * sj);
+      }
+    }
+    return { contrast, homog, energy, corr };
+  },
+
+  render() {
+    const W = this.W, H = this.H, L = this.levels;
+    const cells = document.getElementById('glcmImg').children;
+    for (let i = 0; i < W*H; i++) {
+      const v = this.img[i];
+      const g = Math.round(v * 255 / (L - 1));
+      cells[i].style.background = `rgb(${g},${g},${g})`;
+      cells[i].textContent = v;
+      cells[i].style.color = g > 128 ? '#0a0a0c' : '#55555f';
+    }
+
+    const P = this.compute();
+    // Matrix heatmap
+    const mcells = document.getElementById('glcmMat').children;
+    let mmx = 0;
+    for (let i = 0; i < P.length; i++) if (P[i] > mmx) mmx = P[i];
+    for (let i = 0; i < L*L; i++) {
+      const v = mmx > 0 ? P[i] / mmx : 0;
+      // amber colormap
+      const r = Math.round(clamp(v * 280, 10, 255));
+      const g = Math.round(clamp(v * 180 - 10, 10, 200));
+      const b = Math.round(clamp(v * 60 - 20, 15, 80));
+      mcells[i].style.background = `rgb(${r},${g},${b})`;
+      mcells[i].textContent = (P[i] * 100).toFixed(0);
+      mcells[i].style.color = v > 0.4 ? '#0a0a0c' : '#8a8a96';
+    }
+
+    const f = this.features(P);
+    document.getElementById('glcmContrast').textContent = f.contrast.toFixed(3);
+    document.getElementById('glcmHomog').textContent = f.homog.toFixed(3);
+    document.getElementById('glcmEnergy').textContent = f.energy.toFixed(3);
+    document.getElementById('glcmCorr').textContent = f.corr.toFixed(3);
+    // Bars (normalized to reasonable ranges)
+    const maxContrast = (L - 1) * (L - 1); // max possible
+    document.getElementById('glcmContrastBar').style.width = clamp(f.contrast / maxContrast * 100, 0, 100) + '%';
+    document.getElementById('glcmHomogBar').style.width = clamp(f.homog * 100, 0, 100) + '%';
+    document.getElementById('glcmEnergyBar').style.width = clamp(f.energy * 100, 0, 100) + '%';
+    document.getElementById('glcmCorrBar').style.width = clamp((f.corr + 1) / 2 * 100, 0, 100) + '%';
+  }
+};
+
+/* ---------- Module 6: Shape ---------- */
+App.shape = {
+  rendered: false,
+  shape: 'circle',
+
+  render() {
+    const elong = +document.getElementById('shpElon').value;
+    const bump = +document.getElementById('shpBump').value;
+    const rot = +document.getElementById('shpRot').value * Math.PI / 180;
+    document.getElementById('shpElonVal').textContent = elong.toFixed(2);
+    document.getElementById('shpBumpVal').textContent = bump;
+    document.getElementById('shpRotVal').textContent = Math.round(rot * 180 / Math.PI) + '°';
+
+    const cv = document.getElementById('shpCan');
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    const cx = W/2, cy = H/2;
+
+    // Build polygon
+    const pts = [];
+    const N = 360;
+    for (let i = 0; i < N; i++) {
+      const a = i * 2 * Math.PI / N;
+      let r;
+      const baseR = 90;
+      switch (this.shape) {
+        case 'circle':
+          r = baseR + bump * Math.sin(a * 6);
+          // elongation via ellipse scaling applied below
+          break;
+        case 'ellipse':
+          r = baseR + bump * Math.sin(a * 6);
+          break;
+        case 'rect': {
+          // parametric rectangle
+          const ca = Math.abs(Math.cos(a)), sa = Math.abs(Math.sin(a));
+          r = baseR / Math.max(ca * 0.8, sa);
+          r += bump * Math.sin(a * 8);
+          break;
+        }
+        case 'star': {
+          r = baseR * (0.55 + 0.45 * Math.abs(Math.cos(a * 2.5)));
+          r += bump * Math.sin(a * 3);
+          break;
+        }
+        case 'blob': {
+          r = baseR + 15 * Math.sin(a * 3) + 10 * Math.cos(a * 5) + bump * Math.sin(a * 7);
+          break;
+        }
+      }
+      // apply elongation (scale x)
+      let x = r * Math.cos(a) * elong;
+      let y = r * Math.sin(a);
+      // rotate
+      const xr = x * Math.cos(rot) - y * Math.sin(rot);
+      const yr = x * Math.sin(rot) + y * Math.cos(rot);
+      pts.push([cx + xr * 0.55, cy + yr * 0.55]);
+    }
+
+    // Draw background + shape
+    ctx.fillStyle = '#050507';
+    ctx.fillRect(0, 0, W, H);
+    // subtle grid
+    ctx.strokeStyle = '#1a1a21';
+    ctx.lineWidth = 1;
+    for (let g = 0; g < W; g += 20) {
+      ctx.beginPath(); ctx.moveTo(g, 0); ctx.lineTo(g, H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, g); ctx.lineTo(W, g); ctx.stroke();
+    }
+    // filled shape
+    ctx.fillStyle = 'rgba(255,179,71,0.18)';
+    ctx.strokeStyle = '#ffb347';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Compute area (shoelace) and perimeter
+    let area = 0, perim = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[(i + 1) % pts.length];
+      area += x1 * y2 - x2 * y1;
+      perim += Math.hypot(x2 - x1, y2 - y1);
+    }
+    area = Math.abs(area) / 2;
+
+    const compact = (4 * Math.PI * area) / (perim * perim);
+
+    // Eccentricity: from covariance of boundary points
+    let mx = 0, my = 0;
+    for (const [x, y] of pts) { mx += x; my += y; }
+    mx /= pts.length; my /= pts.length;
+    let sxx = 0, syy = 0, sxy = 0;
+    for (const [x, y] of pts) {
+      const dx = x - mx, dy = y - my;
+      sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
+    }
+    sxx /= pts.length; syy /= pts.length; sxy /= pts.length;
+    const tr = sxx + syy;
+    const det = sxx * syy - sxy * sxy;
+    const disc = Math.max(0, tr * tr / 4 - det);
+    const l1 = tr / 2 + Math.sqrt(disc);
+    const l2 = tr / 2 - Math.sqrt(disc);
+    const ecc = l1 > 0 ? Math.sqrt(Math.max(0, 1 - l2 / l1)) : 0;
+
+    // Draw principal axes
+    if (l1 > 0 && l2 > 0) {
+      const theta = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+      const a_len = 2 * Math.sqrt(l1);
+      const b_len = 2 * Math.sqrt(l2);
+      ctx.strokeStyle = '#6ee7f0';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(mx - a_len * Math.cos(theta), my - a_len * Math.sin(theta));
+      ctx.lineTo(mx + a_len * Math.cos(theta), my + a_len * Math.sin(theta));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(mx - b_len * Math.sin(theta), my + b_len * Math.cos(theta));
+      ctx.lineTo(mx + b_len * Math.sin(theta), my - b_len * Math.cos(theta));
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    document.getElementById('shpArea').textContent = Math.round(area);
+    document.getElementById('shpPerim').textContent = Math.round(perim);
+    document.getElementById('shpCompact').textContent = compact.toFixed(3);
+    document.getElementById('shpEcc').textContent = ecc.toFixed(3);
+    document.getElementById('shpCompactBar').style.width = clamp(compact * 100, 0, 100) + '%';
+    document.getElementById('shpEccBar').style.width = clamp(ecc * 100, 0, 100) + '%';
+
+    this.rendered = true;
+  },
+
+  init() {
+    document.querySelectorAll('#shapePresets .btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#shapePresets .btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        this.shape = b.dataset.shape;
+        this.render();
+      });
+    });
+    ['shpElon', 'shpBump', 'shpRot'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => this.render());
+    });
+    this.render();
+  }
+};
+
+/* ---------- Module 7: Radiomics ---------- */
+App.radiomics = {
+  rendered: false,
+  currentStep: 1,
+
+  init() {
+    document.querySelectorAll('#pipeline .pipe-step').forEach(b => {
+      b.addEventListener('click', () => {
+        const s = +b.dataset.step;
+        this.currentStep = s;
+        document.querySelectorAll('#pipeline .pipe-step').forEach(x => x.classList.toggle('active', +x.dataset.step === s));
+        document.querySelectorAll('.rad-stage').forEach(x => x.classList.toggle('active', +x.dataset.stage === s));
+        this.drawStage(s);
+      });
+    });
+    this.drawStage(1);
+    this.drawStage(2);
+    this.drawStage(4);
+    this.drawStage(5);
+    this.rendered = true;
+  },
+
+  // Build a synthetic CT-like slice
+  drawSlice(canvasId, withROI) {
+    const cv = document.getElementById(canvasId);
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    const img = ctx.createImageData(W, H);
+    const cx = W/2, cy = H/2;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const dx = x - cx, dy = y - cy;
+        const r = Math.sqrt(dx*dx + dy*dy);
+        // body outline
+        let v = 0;
+        if (r < 140) {
+          // base tissue
+          v = 0.35 + 0.08 * Math.sin(x * 0.05) * Math.cos(y * 0.05);
+          // organs
+          const d1 = Math.hypot(x - cx + 40, y - cy - 20);
+          if (d1 < 40) v = 0.55 + 0.05 * Math.sin(x * 0.1);
+          const d2 = Math.hypot(x - cx - 45, y - cy - 10);
+          if (d2 < 35) v = 0.5 + 0.05 * Math.cos(y * 0.1);
+          // spine
+          if (Math.abs(x - cx) < 12 && Math.abs(y - cy - 60) < 22) v = 0.85;
+          // tumor (the ROI)
+          const dt = Math.hypot(x - cx + 15, y - cy + 40);
+          if (dt < 24) v = 0.72 + 0.12 * Math.sin(x * 0.3) * Math.cos(y * 0.3);
+          // noise
+          v += (Math.random() - 0.5) * 0.06;
+        }
+        v = clamp(v, 0, 1);
+        const g = Math.round(v * 255);
+        img.data[(y*W + x) * 4 + 0] = g;
+        img.data[(y*W + x) * 4 + 1] = g;
+        img.data[(y*W + x) * 4 + 2] = g;
+        img.data[(y*W + x) * 4 + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    if (withROI) {
+      // Draw ROI outline around tumor
+      ctx.strokeStyle = '#ffb347';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const pts = [];
+      for (let a = 0; a < 40; a++) {
+        const ang = a * 2 * Math.PI / 40;
+        const rr = 26 + 2 * Math.sin(ang * 3) + 3 * Math.cos(ang * 2);
+        pts.push([cx - 15 + rr * Math.cos(ang), cy + 40 + rr * Math.sin(ang)]);
+      }
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (const p of pts) ctx.lineTo(p[0], p[1]);
+      ctx.closePath();
+      ctx.stroke();
+      // crosshatched fill
+      ctx.fillStyle = 'rgba(255,179,71,0.15)';
+      ctx.fill();
+      ctx.font = '10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#ffb347';
+      ctx.fillText('ROI', cx + 15, cy + 42);
+    }
+  },
+
+  drawStage(s) {
+    if (s === 1) this.drawSlice('radC1', false);
+    if (s === 2) this.drawSlice('radC2', true);
+    if (s === 4) this.drawSelection();
+    if (s === 5) this.drawRisk();
+  },
+
+  drawSelection() {
+    const cv = document.getElementById('radC4');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    ctx.fillStyle = '#050507';
+    ctx.fillRect(0, 0, W, H);
+    // scatter cloud of dots — features. 8 bright ones (kept), rest dim.
+    const N = 1500;
+    for (let i = 0; i < N; i++) {
+      const x = 20 + Math.random() * (W - 40);
+      const y = 20 + Math.random() * (H - 40);
+      ctx.fillStyle = '#55555f33';
+      ctx.fillRect(x, y, 1, 1);
+    }
+    // Draw 8 kept features prominently
+    const kept = [
+      [0.15, 0.3], [0.28, 0.7], [0.42, 0.22], [0.55, 0.55],
+      [0.68, 0.38], [0.78, 0.72], [0.88, 0.45], [0.32, 0.82]
+    ];
+    for (const [fx, fy] of kept) {
+      const x = fx * W, y = fy * H;
+      ctx.fillStyle = '#ffb347';
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#ffb34744';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI*2); ctx.stroke();
+    }
+    ctx.fillStyle = '#8a8a96';
+    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.fillText('1500 features → 8 kept', 12, 16);
+  },
+
+  drawRisk() {
+    const cv = document.getElementById('radC5');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    ctx.fillStyle = '#050507';
+    ctx.fillRect(0, 0, W, H);
+    // Distribution: two peaks (low risk / high risk) with patient marker
+    ctx.strokeStyle = '#2a2a36';
+    ctx.beginPath(); ctx.moveTo(20, H - 30); ctx.lineTo(W - 20, H - 30); ctx.stroke();
+
+    function gauss(x, mu, s) { return Math.exp(-((x - mu) ** 2) / (2 * s * s)); }
+    // draw area curves
+    ctx.fillStyle = 'rgba(110,231,240,0.2)';
+    ctx.strokeStyle = '#6ee7f0';
+    ctx.beginPath();
+    ctx.moveTo(20, H - 30);
+    for (let x = 20; x < W - 20; x++) {
+      const t = (x - 20) / (W - 40);
+      const v = gauss(t, 0.3, 0.08) * 90;
+      ctx.lineTo(x, H - 30 - v);
+    }
+    ctx.lineTo(W - 20, H - 30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,107,107,0.2)';
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.beginPath();
+    ctx.moveTo(20, H - 30);
+    for (let x = 20; x < W - 20; x++) {
+      const t = (x - 20) / (W - 40);
+      const v = gauss(t, 0.72, 0.09) * 80;
+      ctx.lineTo(x, H - 30 - v);
+    }
+    ctx.lineTo(W - 20, H - 30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Patient marker
+    const px = 20 + 0.42 * (W - 40);
+    ctx.strokeStyle = '#ffb347';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(px, 15); ctx.lineTo(px, H - 30); ctx.stroke();
+    ctx.fillStyle = '#ffb347';
+    ctx.beginPath(); ctx.arc(px, 15, 4, 0, Math.PI*2); ctx.fill();
+
+    // Labels
+    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.fillStyle = '#6ee7f0';
+    ctx.fillText('LOW RISK', 30, 24);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('HIGH RISK', W - 90, 24);
+    ctx.fillStyle = '#ffb347';
+    ctx.fillText('PATIENT', px - 24, H - 14);
+    ctx.fillStyle = '#55555f';
+    ctx.fillText('risk score →', W/2 - 28, H - 14);
+  }
+};
+
+/* =====================================================================
+   INIT EVERYTHING
+   ===================================================================== */
+window.addEventListener('load', () => {
+  App.intro.init();
+  App.lbp.init();
+  App.glcm.init();
+  App.shape.init();
+  App.radiomics.init();
+  // log & gabor are lazy-initialized on first tab visit (expensive precompute)
+});
+</script>
+</body>
+</html>
