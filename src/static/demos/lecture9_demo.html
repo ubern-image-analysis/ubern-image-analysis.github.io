@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Registration Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0e13;color:#e2e4ea;font-family:system-ui,-apple-system,sans-serif}
+.hdr{padding:18px 24px 0}
+.hdr h1{font-size:1.35rem;font-weight:700;color:#7ba3ff}
+.hdr .sub{font-size:0.78rem;color:#8b8fa3;margin-top:2px}
+.tabs{display:flex;gap:4px;padding:14px 24px 0}
+.tabs button{font-family:inherit;font-size:0.8rem;font-weight:500;padding:9px 16px;
+  border:1px solid transparent;border-bottom:none;background:transparent;color:#8b8fa3;
+  cursor:pointer;border-radius:8px 8px 0 0;transition:all .2s}
+.tabs button:hover{color:#e2e4ea;background:#14171e}
+.tabs button.on{color:#5b8af5;background:#14171e;border-color:#2a2e3a}
+.pnl{display:none;background:#14171e;border:1px solid #2a2e3a;border-radius:0 8px 8px 8px;
+  margin:0 24px 24px;padding:20px}
+.pnl.on{display:flex;flex-wrap:wrap;gap:18px}
+.m{flex:1;min-width:280px;display:flex;flex-direction:column;gap:10px}
+.s{width:270px;background:#1c2029;border-radius:8px;padding:16px;display:flex;
+  flex-direction:column;gap:10px;border:1px solid #2a2e3a;overflow-y:auto;max-height:700px}
+canvas{background:#0a0c10;border-radius:6px;border:1px solid #2a2e3a;display:block}
+.tt{font-size:.95rem;font-weight:700}
+.ds{font-size:.76rem;color:#8b8fa3;line-height:1.45}
+.lb{font-size:.72rem;font-weight:500;color:#8b8fa3;display:flex;justify-content:space-between}
+.lb .v{font-family:monospace;color:#5b8af5}
+.st{font-size:.83rem;font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:#2a2e3a;border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:#5b8af5;border-radius:50%;cursor:pointer}
+.br{display:flex;gap:5px;flex-wrap:wrap}
+.b{font-family:inherit;font-size:.74rem;font-weight:500;padding:5px 11px;border:1px solid #2a2e3a;
+  background:#14171e;color:#e2e4ea;border-radius:6px;cursor:pointer}
+.b:hover{border-color:#5b8af5}
+.b.on{background:#5b8af5;color:#000;border-color:#5b8af5}
+.bp{font-family:inherit;font-size:.74rem;padding:5px 11px;border:1px solid #5b8af5;
+  background:#5b8af5;color:#000;border-radius:6px;cursor:pointer;font-weight:600}
+.bp:hover{background:#7ba3ff}
+.rd{display:flex;justify-content:space-between;align-items:center;padding:4px 9px;
+  background:#0a0c10;border-radius:6px;border:1px solid #2a2e3a;font-size:.76rem}
+.rd .n{color:#8b8fa3}
+.rd .vl{font-family:monospace;font-weight:500}
+.inf{background:#0a0c10;border:1px solid #2a2e3a;border-radius:6px;padding:10px 12px;
+  font-size:.74rem;color:#8b8fa3;line-height:1.5}
+.inf b{color:#e2e4ea}
+.hr{height:1px;background:#2a2e3a}
+.lg{display:flex;gap:10px;flex-wrap:wrap;font-size:.72rem;color:#8b8fa3;align-items:center}
+.ld{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.imgs{display:flex;gap:8px;align-items:flex-start}
+.imgs>div{text-align:center}
+.imgs .cap{font-size:.7rem;color:#8b8fa3;margin-bottom:3px}
+.mbox{font-family:monospace;font-size:.68rem;background:#0a0c10;border:1px solid #2a2e3a;
+  border-radius:6px;padding:8px;line-height:1.6;color:#5bf5a0;white-space:pre}
+.pair{display:flex;gap:12px}
+.pair>div{flex:1;text-align:center}
+@media(max-width:800px){.pnl.on{flex-direction:column}.s{width:100%}.imgs{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <h1>Image Registration</h1>
+  <div class="sub">Interactive Demonstrator &middot; Medical Image Analysis &middot; Uni Bern</div>
+</div>
+<div class="tabs">
+  <button class="on" id="tb0" onclick="go(0)"><span style="font-family:monospace;font-size:.66rem;opacity:.5;margin-right:5px">01</span>Registration Explorer</button>
+  <button id="tb1" onclick="go(1)"><span style="font-family:monospace;font-size:.66rem;opacity:.5;margin-right:5px">02</span>ICP</button>
+  <button id="tb2" onclick="go(2)"><span style="font-family:monospace;font-size:.66rem;opacity:.5;margin-right:5px">03</span>Interpolation</button>
+</div>
+
+<!-- === PANEL 0: REGISTRATION EXPLORER === -->
+<div class="pnl on" id="p0">
+  <div class="m">
+    <div><div class="tt">Registration Explorer</div>
+    <div class="ds">Apply transforms to the moving image and watch similarity metrics respond in real time. Try aligning the images to maximize NCC / MI, or minimize SSD.</div></div>
+    <div class="imgs" id="imgRow">
+      <div><div class="cap">Fixed I</div><canvas id="cF" width="180" height="180"></canvas></div>
+      <div><div class="cap">Moving T(J)</div><canvas id="cMov" width="180" height="180"></canvas></div>
+      <div><div class="cap">Checkerboard</div><canvas id="cChk" width="180" height="180"></canvas></div>
+      <div><div class="cap">|I - T(J)|</div><canvas id="cDif" width="180" height="180"></canvas></div>
+    </div>
+    <canvas id="cMetric" width="760" height="175"></canvas>
+    <div class="lg">
+      <span><span class="ld" style="background:#f55b5b"></span>SSD (lower=better)</span>
+      <span><span class="ld" style="background:#5bf5a0"></span>NCC (higher=better)</span>
+      <span><span class="ld" style="background:#f55b8a"></span>MI (higher=better)</span>
+      <span style="color:#666">| dashed = current</span>
+    </div>
+  </div>
+  <div class="s">
+    <div class="st">Modality</div>
+    <div class="br">
+      <button class="b on" id="bMono" onclick="setMod('mono')">Mono-modal</button>
+      <button class="b" id="bMulti" onclick="setMod('multi')">Multi-modal</button>
+    </div>
+    <div class="hr"></div>
+    <div class="st">Transform</div>
+    <div class="br">
+      <button class="b on" id="bRig" onclick="setTT('rigid')">Rigid</button>
+      <button class="b" id="bSim" onclick="setTT('sim')">Similarity</button>
+      <button class="b" id="bAff" onclick="setTT('aff')">Affine</button>
+    </div>
+    <div class="hr"></div>
+    <div class="lb">Translate X <span class="v" id="vTx">0</span></div>
+    <input type="range" id="sTx" min="-30" max="30" value="0" oninput="drawReg()">
+    <div class="lb">Translate Y <span class="v" id="vTy">0</span></div>
+    <input type="range" id="sTy" min="-30" max="30" value="0" oninput="drawReg()">
+    <div class="lb">Rotation <span class="v" id="vRot">0</span></div>
+    <input type="range" id="sRot" min="-180" max="180" value="0" oninput="drawReg()">
+    <div id="wSc" style="display:none">
+      <div class="lb">Scale <span class="v" id="vSc">1.00</span></div>
+      <input type="range" id="sSc" min="50" max="200" value="100" oninput="drawReg()">
+    </div>
+    <div id="wSx" style="display:none">
+      <div class="lb">Scale X <span class="v" id="vSx">1.00</span></div>
+      <input type="range" id="sSx" min="50" max="200" value="100" oninput="drawReg()">
+    </div>
+    <div id="wSy" style="display:none">
+      <div class="lb">Scale Y <span class="v" id="vSy">1.00</span></div>
+      <input type="range" id="sSy" min="50" max="200" value="100" oninput="drawReg()">
+    </div>
+    <div id="wSh" style="display:none">
+      <div class="lb">Shear <span class="v" id="vSh">0.00</span></div>
+      <input type="range" id="sSh" min="-80" max="80" value="0" oninput="drawReg()">
+    </div>
+    <div class="br">
+      <button class="b" onclick="resetT()">Reset sliders</button>
+      <button class="b" onclick="misalign()">Misalign</button>
+    </div>
+    <div class="hr"></div>
+    <div class="st">Metrics</div>
+    <div class="rd"><span class="n">SSD &darr;</span><span class="vl" id="rSSD" style="color:#f55b5b">0</span></div>
+    <div class="rd"><span class="n">NCC &uarr;</span><span class="vl" id="rNCC" style="color:#5bf5a0">0</span></div>
+    <div class="rd"><span class="n">MI &uarr;</span><span class="vl" id="rMI" style="color:#f55b8a">0</span></div>
+    <div class="hr"></div>
+    <div class="st">Matrix</div>
+    <div class="mbox" id="matD"></div>
+    <div class="inf">
+      <b>Mono-modal</b>: identical contrast. SSD/NCC/MI all find the optimum.<br><br>
+      <b>Multi-modal</b>: inverted contrast (like CT vs MRI). Only <b>MI</b> finds the correct alignment &mdash; SSD has no useful minimum.<br><br>
+      Try <b>Misalign</b>, then use sliders to re-align. Which metric guides you best?
+    </div>
+  </div>
+</div>
+
+<!-- === PANEL 1: ICP === -->
+<div class="pnl" id="p1">
+  <div class="m">
+    <div><div class="tt">Iterative Closest Point (ICP)</div>
+    <div class="ds">Step through ICP: find correspondences, solve Procrustes, update. Watch the cost decrease.</div></div>
+    <canvas id="cI" width="760" height="420"></canvas>
+    <div class="lg">
+      <span><span class="ld" style="background:#5b8af5"></span>Target Y</span>
+      <span><span class="ld" style="background:#f5a05b"></span>Source X</span>
+      <span><span class="ld" style="background:rgba(255,255,255,.3)"></span>Correspondences</span>
+    </div>
+  </div>
+  <div class="s">
+    <div class="st">Controls</div>
+    <div class="br">
+      <button class="bp" onclick="icpStep()">Step</button>
+      <button class="bp" onclick="icpAuto()" id="bAuto">Auto-run</button>
+      <button class="b" onclick="icpReset()">Reset</button>
+    </div>
+    <div class="hr"></div>
+    <div class="st">Initialization</div>
+    <div class="br">
+      <button class="b on" id="bIG" onclick="icpSetInit('good')">Good init</button>
+      <button class="b" id="bIB" onclick="icpSetInit('bad')">Bad init</button>
+    </div>
+    <div class="hr"></div>
+    <div class="rd"><span class="n">Iteration</span><span class="vl" id="rIt" style="color:#5b8af5">0</span></div>
+    <div class="rd"><span class="n">Mean Error</span><span class="vl" id="rErr" style="color:#f5a05b">--</span></div>
+    <div class="hr"></div>
+    <div class="st">Convergence</div>
+    <canvas id="cIC" width="238" height="90"></canvas>
+    <div class="inf"><b>ICP</b> alternates nearest-neighbor matching with Procrustes.<br><br>
+    Cost decreases monotonically but may hit a <b>local minimum</b> with poor init. Try it!</div>
+  </div>
+</div>
+
+<!-- === PANEL 2: INTERPOLATION === -->
+<div class="pnl" id="p2">
+  <div class="m">
+    <div><div class="tt">Interpolation Viewer</div>
+    <div class="ds">Rotate a pattern and compare Nearest Neighbor vs Bilinear side by side. Zoom in to see artifacts.</div></div>
+    <div class="pair">
+      <div><div class="ds" style="margin-bottom:4px">Nearest Neighbor</div>
+        <canvas id="cNN" width="370" height="370"></canvas></div>
+      <div><div class="ds" style="margin-bottom:4px">Bilinear</div>
+        <canvas id="cBL" width="370" height="370"></canvas></div>
+    </div>
+  </div>
+  <div class="s">
+    <div class="st">Controls</div>
+    <div class="lb">Rotation <span class="v" id="vIR">15</span></div>
+    <input type="range" id="sIR" min="0" max="90" value="15" oninput="drawInterp()">
+    <div class="lb">Zoom <span class="v" id="vZm">3x</span></div>
+    <input type="range" id="sZm" min="1" max="8" value="3" oninput="drawInterp()">
+    <div class="hr"></div>
+    <div class="st">Pattern</div>
+    <div class="br">
+      <button class="b on" id="bPC" onclick="setPat('checker')">Checker</button>
+      <button class="b" id="bPX" onclick="setPat('cross')">Cross</button>
+      <button class="b" id="bPB" onclick="setPat('brain')">Brain</button>
+    </div>
+    <div class="hr"></div>
+    <div class="inf"><b>Nearest neighbor</b>: picks closest pixel. Blocky. Good for label maps.<br><br>
+    <b>Bilinear</b>: blends 4 neighbors. Smooth. Default for intensity images.<br><br>
+    Increase rotation and zoom to see artifacts clearly.</div>
+  </div>
+</div>
+
+<script>
+// =========== TABS ===========
+function go(i){
+  for(var k=0;k<3;k++){
+    document.getElementById('tb'+k).className=(k===i)?'on':'';
+    document.getElementById('p'+k).className=(k===i)?'pnl on':'pnl';
+  }
+  if(i===0)drawReg();
+  if(i===1)drawICP();
+  if(i===2)drawInterp();
+}
+
+// =========== SYNTHETIC IMAGES ===========
+var IMG_SZ = 64;
+var imgFixed = null, imgMoving = null;
+var modality = 'mono';
+
+// Deterministic pseudo-random
+function prand(n) {
+  var x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+function makeBrainImage(sz, seed) {
+  var img = [];
+  for (var j = 0; j < sz; j++) {
+    for (var i = 0; i < sz; i++) {
+      var x = (i - sz/2) / (sz/2);
+      var y = (j - sz/2) / (sz/2);
+      var r = Math.sqrt(x*x + y*y);
+      var v = 0;
+      if (r >= 0.88) v = 0.05;
+      else if (r >= 0.75) v = 0.85;
+      else if (r >= 0.68) v = 0.2;
+      else if (r >= 0.55) v = 0.55;
+      else v = 0.75;
+      // Ventricles
+      var vl = Math.sqrt((x+0.18)*(x+0.18)*4 + y*y*1.2);
+      var vr = Math.sqrt((x-0.18)*(x-0.18)*4 + y*y*1.2);
+      if (vl < 0.28 || vr < 0.28) v = 0.15;
+      // Central structure
+      var cc = Math.sqrt(x*x*12 + (y+0.05)*(y+0.05)*80);
+      if (cc < 0.4) v = 0.9;
+      // Falx
+      if (Math.abs(x) < 0.025 && r < 0.75) v = 0.65;
+      // Sulci pattern
+      var ang = Math.atan2(y, x);
+      if (r > 0.55 && r < 0.68) v += 0.08 * Math.sin(ang * 7 + seed);
+      // Noise
+      v += (prand(i * 1000 + j + seed * 7777) - 0.5) * 0.03;
+      v = Math.max(0, Math.min(1, v));
+      img.push(v);
+    }
+  }
+  return img;
+}
+
+function genImages() {
+  imgFixed = makeBrainImage(IMG_SZ, 1);
+  if (modality === 'mono') {
+    // SAME image for mono-modal: SSD will be exactly 0 at identity
+    imgMoving = [];
+    for (var i = 0; i < imgFixed.length; i++) imgMoving.push(imgFixed[i]);
+  } else {
+    // Multi-modal: nonlinear intensity transform (CT-like from MRI-like)
+    imgMoving = [];
+    for (var i = 0; i < imgFixed.length; i++) {
+      var v = imgFixed[i];
+      var ct;
+      if (v > 0.8) ct = 0.95;       // bone/skull bright in CT
+      else if (v < 0.2) ct = 0.05;   // CSF dark in both
+      else ct = 1.0 - Math.pow(v, 0.7); // soft tissue inverts
+      ct += (prand(i * 3333 + 42) - 0.5) * 0.02;
+      imgMoving.push(Math.max(0, Math.min(1, ct)));
+    }
+  }
+}
+
+function sampleImg(img, sz, fx, fy) {
+  var x0 = Math.floor(fx), y0 = Math.floor(fy);
+  var x1 = x0+1, y1 = y0+1;
+  var wx = fx - x0, wy = fy - y0;
+  function g(ix,iy){ if(ix<0||ix>=sz||iy<0||iy>=sz) return 0; return img[iy*sz+ix]; }
+  return g(x0,y0)*(1-wx)*(1-wy) + g(x1,y0)*wx*(1-wy) + g(x0,y1)*(1-wx)*wy + g(x1,y1)*wx*wy;
+}
+
+function drawImg(canvasId, img, sz) {
+  var cv = document.getElementById(canvasId);
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+  var id = ctx.createImageData(W, H);
+  var px = id.data;
+  for (var py = 0; py < H; py++) {
+    for (var ppx = 0; ppx < W; ppx++) {
+      var v = sampleImg(img, sz, ppx/W*sz, py/H*sz);
+      var idx = (py * W + ppx) * 4;
+      px[idx] = Math.floor(v * 255);
+      px[idx+1] = Math.floor(v * 255);
+      px[idx+2] = Math.floor(v * 255);
+      px[idx+3] = 255;
+    }
+  }
+  ctx.putImageData(id, 0, 0);
+}
+
+function getTransformedImg(img, sz, m00,m01,m10,m11,tx,ty) {
+  var out = [];
+  var cx = sz/2, cy = sz/2;
+  var det = m00*m11 - m01*m10;
+  if (Math.abs(det)<1e-10) det = 1;
+  var inv00=m11/det, inv01=-m01/det, inv10=-m10/det, inv11=m00/det;
+  for (var j = 0; j < sz; j++) {
+    for (var i = 0; i < sz; i++) {
+      var dx = i - cx - tx, dy = j - cy - ty;
+      var sx = inv00*dx+inv01*dy+cx;
+      var sy = inv10*dx+inv11*dy+cy;
+      out.push(sampleImg(img, sz, sx, sy));
+    }
+  }
+  return out;
+}
+
+function drawTransformedImg(canvasId, img, sz, m00,m01,m10,m11,tx,ty) {
+  var tImg = getTransformedImg(img, sz, m00,m01,m10,m11,tx,ty);
+  drawImg(canvasId, tImg, sz);
+}
+
+// =========== METRICS ===========
+function calcSSD(a, b) {
+  var sum = 0, n = a.length;
+  for (var i = 0; i < n; i++) sum += (a[i]-b[i])*(a[i]-b[i]);
+  return sum / n;
+}
+
+function calcNCC(a, b) {
+  var n = a.length, sa = 0, sb = 0;
+  for (var i = 0; i < n; i++) { sa += a[i]; sb += b[i]; }
+  var ma = sa/n, mb = sb/n;
+  var num = 0, da = 0, db = 0;
+  for (var i = 0; i < n; i++) {
+    num += (a[i]-ma)*(b[i]-mb);
+    da += (a[i]-ma)*(a[i]-ma);
+    db += (b[i]-mb)*(b[i]-mb);
+  }
+  var den = Math.sqrt(da*db);
+  return den > 1e-10 ? num/den : 0;
+}
+
+function calcMI(a, b) {
+  var bins = 16, n = a.length;
+  var joint = [], margA = [], margB = [];
+  for (var x = 0; x < bins; x++) {
+    joint[x] = [];
+    for (var y = 0; y < bins; y++) joint[x][y] = 0;
+    margA[x] = 0; margB[x] = 0;
+  }
+  for (var i = 0; i < n; i++) {
+    var ba = Math.min(bins-1, Math.max(0, Math.floor(a[i]*bins)));
+    var bb = Math.min(bins-1, Math.max(0, Math.floor(b[i]*bins)));
+    joint[ba][bb]++; margA[ba]++; margB[bb]++;
+  }
+  var mi = 0;
+  for (var x = 0; x < bins; x++) for (var y = 0; y < bins; y++) {
+    var pxy = joint[x][y]/n, px = margA[x]/n, py = margB[y]/n;
+    if (pxy > 1e-10 && px > 1e-10 && py > 1e-10) mi += pxy * Math.log(pxy/(px*py));
+  }
+  return mi;
+}
+
+// =========== REGISTRATION EXPLORER ===========
+var tType = 'rigid';
+
+function setTT(t) {
+  tType = t;
+  document.getElementById('bRig').className = (t==='rigid')?'b on':'b';
+  document.getElementById('bSim').className = (t==='sim')?'b on':'b';
+  document.getElementById('bAff').className = (t==='aff')?'b on':'b';
+  document.getElementById('wSc').style.display = (t==='sim')?'':'none';
+  document.getElementById('wSx').style.display = (t==='aff')?'':'none';
+  document.getElementById('wSy').style.display = (t==='aff')?'':'none';
+  document.getElementById('wSh').style.display = (t==='aff')?'':'none';
+  if(t!=='sim') document.getElementById('sSc').value=100;
+  if(t!=='aff'){document.getElementById('sSx').value=100;document.getElementById('sSy').value=100;document.getElementById('sSh').value=0;}
+  drawReg();
+}
+
+function setMod(m) {
+  modality = m;
+  document.getElementById('bMono').className = (m==='mono')?'b on':'b';
+  document.getElementById('bMulti').className = (m==='multi')?'b on':'b';
+  genImages();
+  drawReg();
+}
+
+function resetT() {
+  document.getElementById('sTx').value=0;
+  document.getElementById('sTy').value=0;
+  document.getElementById('sRot').value=0;
+  document.getElementById('sSc').value=100;
+  document.getElementById('sSx').value=100;
+  document.getElementById('sSy').value=100;
+  document.getElementById('sSh').value=0;
+  drawReg();
+}
+
+function misalign() {
+  document.getElementById('sTx').value = Math.round((Math.random()-0.5)*20);
+  document.getElementById('sTy').value = Math.round((Math.random()-0.5)*20);
+  document.getElementById('sRot').value = Math.round((Math.random()-0.5)*40);
+  if(tType==='sim') document.getElementById('sSc').value = 80 + Math.round(Math.random()*40);
+  if(tType==='aff'){
+    document.getElementById('sSx').value = 80 + Math.round(Math.random()*40);
+    document.getElementById('sSy').value = 80 + Math.round(Math.random()*40);
+    document.getElementById('sSh').value = Math.round((Math.random()-0.5)*40);
+  }
+  drawReg();
+}
+
+function pad6(n){var s=n.toFixed(2);while(s.length<6)s=' '+s;return s;}
+function pad6f(n){var s=n.toFixed(1);while(s.length<6)s=' '+s;return s;}
+
+function getTP() {
+  var tx = +document.getElementById('sTx').value;
+  var ty = +document.getElementById('sTy').value;
+  var rot = +document.getElementById('sRot').value * Math.PI / 180;
+  var sx = 1, sy = 1, sh = 0;
+  if (tType==='sim') sx = sy = +document.getElementById('sSc').value/100;
+  else if (tType==='aff') {
+    sx = +document.getElementById('sSx').value/100;
+    sy = +document.getElementById('sSy').value/100;
+    sh = +document.getElementById('sSh').value/100;
+  }
+  var c = Math.cos(rot), s = Math.sin(rot);
+  return {tx:tx,ty:ty,rot:rot,sx:sx,sy:sy,sh:sh,
+    m00:sx*(c+sh*s), m01:sx*(-s+sh*c), m10:sy*s, m11:sy*c};
+}
+
+function drawReg() {
+  if (!imgFixed) genImages();
+  var p = getTP();
+
+  // Labels
+  document.getElementById('vTx').textContent = document.getElementById('sTx').value;
+  document.getElementById('vTy').textContent = document.getElementById('sTy').value;
+  document.getElementById('vRot').textContent = document.getElementById('sRot').value + '\u00B0';
+  document.getElementById('vSc').textContent = (document.getElementById('sSc').value/100).toFixed(2);
+  document.getElementById('vSx').textContent = p.sx.toFixed(2);
+  document.getElementById('vSy').textContent = p.sy.toFixed(2);
+  document.getElementById('vSh').textContent = p.sh.toFixed(2);
+
+  // Matrix
+  document.getElementById('matD').textContent =
+    '| '+pad6(p.m00)+'  '+pad6(p.m01)+'  '+pad6f(p.tx)+' |\n'+
+    '| '+pad6(p.m10)+'  '+pad6(p.m11)+'  '+pad6f(p.ty)+' |\n'+
+    '|      0       0     1  |';
+
+  // Fixed image
+  drawImg('cF', imgFixed, IMG_SZ);
+
+  // Transformed moving
+  var tImg = getTransformedImg(imgMoving, IMG_SZ, p.m00,p.m01,p.m10,p.m11,p.tx,p.ty);
+  drawImg('cMov', tImg, IMG_SZ);
+
+  // Checkerboard
+  var cvC = document.getElementById('cChk');
+  var ctC = cvC.getContext('2d');
+  var WC = cvC.width, HC = cvC.height;
+  var idC = ctC.createImageData(WC,HC);
+  var pxC = idC.data;
+  var blk = 20;
+  for (var py = 0; py < HC; py++) for (var ppx = 0; ppx < WC; ppx++) {
+    var bx = Math.floor(ppx/blk), by = Math.floor(py/blk);
+    var useF = ((bx+by)%2===0);
+    var ix = ppx/WC*IMG_SZ, iy = py/HC*IMG_SZ;
+    var v = useF ? sampleImg(imgFixed, IMG_SZ, ix, iy) : sampleImg(tImg, IMG_SZ, ix, iy);
+    var idx = (py*WC+ppx)*4;
+    pxC[idx] = Math.floor(v*255); pxC[idx+1] = Math.floor(v*255); pxC[idx+2] = Math.floor(v*255); pxC[idx+3] = 255;
+  }
+  ctC.putImageData(idC, 0, 0);
+  ctC.strokeStyle = 'rgba(90,138,245,0.12)'; ctC.lineWidth = 1;
+  for (var gx = 0; gx < WC; gx += blk) { ctC.beginPath(); ctC.moveTo(gx,0); ctC.lineTo(gx,HC); ctC.stroke(); }
+  for (var gy = 0; gy < HC; gy += blk) { ctC.beginPath(); ctC.moveTo(0,gy); ctC.lineTo(WC,gy); ctC.stroke(); }
+
+  // Difference image (heat colormap)
+  var cvD = document.getElementById('cDif');
+  var ctD = cvD.getContext('2d');
+  var WD = cvD.width, HD = cvD.height;
+  var idD = ctD.createImageData(WD,HD);
+  var pxD = idD.data;
+  for (var py2 = 0; py2 < HD; py2++) for (var ppx2 = 0; ppx2 < WD; ppx2++) {
+    var ix2 = ppx2/WD*IMG_SZ, iy2 = py2/HD*IMG_SZ;
+    var vf = sampleImg(imgFixed, IMG_SZ, ix2, iy2);
+    var vm = sampleImg(tImg, IMG_SZ, ix2, iy2);
+    var diff = Math.abs(vf - vm);
+    var id2 = (py2*WD+ppx2)*4;
+    if (diff < 0.25) { pxD[id2]=Math.floor(diff*4*255); pxD[id2+1]=0; pxD[id2+2]=0; }
+    else if (diff < 0.5) { pxD[id2]=255; pxD[id2+1]=Math.floor((diff-0.25)*4*255); pxD[id2+2]=0; }
+    else { pxD[id2]=255; pxD[id2+1]=255; pxD[id2+2]=Math.floor(Math.min(1,(diff-0.5)*2)*255); }
+    pxD[id2+3] = 255;
+  }
+  ctD.putImageData(idD, 0, 0);
+
+  // Metrics
+  var ssd = calcSSD(imgFixed, tImg);
+  var ncc = calcNCC(imgFixed, tImg);
+  var mi = calcMI(imgFixed, tImg);
+  document.getElementById('rSSD').textContent = ssd.toFixed(4);
+  document.getElementById('rNCC').textContent = ncc.toFixed(4);
+  document.getElementById('rMI').textContent = mi.toFixed(4);
+
+  drawSweep(p);
+}
+
+function drawSweep(curP) {
+  var cv = document.getElementById('cMetric');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  var steps = 72;
+  var allSSD=[], allNCC=[], allMI=[];
+  for (var i = 0; i <= steps; i++) {
+    var ang = (-180 + i * 360 / steps) * Math.PI / 180;
+    var c2 = Math.cos(ang), s2 = Math.sin(ang);
+    var mm00 = curP.sx*(c2+curP.sh*s2), mm01 = curP.sx*(-s2+curP.sh*c2);
+    var mm10 = curP.sy*s2, mm11 = curP.sy*c2;
+    var tI = getTransformedImg(imgMoving, IMG_SZ, mm00,mm01,mm10,mm11,curP.tx,curP.ty);
+    allSSD.push(calcSSD(imgFixed, tI));
+    allNCC.push(calcNCC(imgFixed, tI));
+    allMI.push(calcMI(imgFixed, tI));
+  }
+
+  var mp = 45, mW = W - 2*mp, mH = H - 45;
+
+  function normalize(arr) {
+    var mn=arr[0], mx=arr[0];
+    for(var i=1;i<arr.length;i++){if(arr[i]<mn)mn=arr[i];if(arr[i]>mx)mx=arr[i];}
+    var rng=mx-mn; if(rng<1e-12)rng=1;
+    var out=[];
+    for(var i=0;i<arr.length;i++) out.push((arr[i]-mn)/rng);
+    return out;
+  }
+
+  var ssdN = normalize(allSSD);
+  var nccN = normalize(allNCC);
+  var miN = normalize(allMI);
+
+  // Axes
+  ctx.strokeStyle='#2a2e3a'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(mp,8); ctx.lineTo(mp,mH+12); ctx.lineTo(W-mp,mH+12); ctx.stroke();
+  // Right axis
+  ctx.beginPath(); ctx.moveTo(W-mp,8); ctx.lineTo(W-mp,mH+12); ctx.stroke();
+
+  ctx.fillStyle='#555'; ctx.font='10px system-ui';
+  for (var d = -180; d <= 180; d += 90) {
+    var xp = mp + ((d+180)/360)*mW;
+    ctx.fillText(d+'\u00B0', xp-10, mH+28);
+    ctx.beginPath(); ctx.moveTo(xp, mH+12); ctx.lineTo(xp, mH+16); ctx.stroke();
+  }
+  ctx.fillStyle='#8b8fa3';
+  ctx.fillText('rotation sweep (other params fixed)', mp, mH+42);
+
+  // Left axis label: SSD (down=good)
+  ctx.save();
+  ctx.fillStyle='#f55b5b'; ctx.font='10px system-ui';
+  ctx.translate(12, mH/2+10);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('SSD', 0, 0);
+  ctx.restore();
+
+  // Right axis label: NCC/MI (up=good)
+  ctx.save();
+  ctx.fillStyle='#5bf5a0'; ctx.font='10px system-ui';
+  ctx.translate(W-8, mH/2+10);
+  ctx.rotate(Math.PI/2);
+  ctx.fillText('NCC / MI', 0, 0);
+  ctx.restore();
+
+  function drawCurve(data, col) {
+    ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=2;
+    for(var i=0;i<data.length;i++){
+      var x=mp+(i/(data.length-1))*mW;
+      var y=mH+8-data[i]*mH;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+
+  // SSD: plot INVERTED so that low SSD = top of chart (visually "good" is up)
+  // But label it as SSD with "valley at optimum"
+  // Actually: plot SSD as-is (high at top = bad). So the valley IS the optimum.
+  // To do this: ssdN is normalized 0-1 where 0=min, 1=max
+  // Plot it so 1=top, 0=bottom => high SSD at top, low SSD (good) at bottom = valley
+  drawCurve(ssdN, '#f55b5b');
+
+  // NCC and MI: plot as-is (high = good = top)
+  drawCurve(nccN, '#5bf5a0');
+  drawCurve(miN, '#f55b8a');
+
+  // Current rotation marker
+  var curDeg = curP.rot * 180 / Math.PI;
+  var curX = mp + ((curDeg+180)/360)*mW;
+  ctx.strokeStyle='#ffffff'; ctx.lineWidth=1;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(curX,8); ctx.lineTo(curX,mH+12); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Legend in top-right
+  ctx.font='11px system-ui';
+  ctx.fillStyle='#f55b5b'; ctx.fillText('SSD \u2193', W-mp+5, 18);
+  ctx.fillStyle='#5bf5a0'; ctx.fillText('NCC \u2191', W-mp+5, 33);
+  ctx.fillStyle='#f55b8a'; ctx.fillText('MI \u2191', W-mp+5, 48);
+}
+
+// =========== ICP ===========
+var icpTgt=null,icpSrc=null,icpIt=0,icpCosts=[],icpIntv=null,icpInitT='good';
+function mkCloud(n){var pts=[];for(var i=0;i<n;i++){var ang=-Math.PI*0.7+Math.random()*Math.PI*1.4;var r=100+(Math.random()-0.5)*15;pts.push([Math.cos(ang)*r,Math.sin(ang)*r]);}return pts;}
+function rigidPts(pts,ang,tx,ty){var c=Math.cos(ang),s=Math.sin(ang),out=[];for(var i=0;i<pts.length;i++)out.push([c*pts[i][0]-s*pts[i][1]+tx,s*pts[i][0]+c*pts[i][1]+ty]);return out;}
+function icpInit(){icpTgt=mkCloud(60);var ang=icpInitT==='good'?0.4:2.5;var tx=icpInitT==='good'?60:-150;var ty=icpInitT==='good'?-40:100;icpSrc=rigidPts(icpTgt,ang,tx,ty);for(var i=0;i<icpSrc.length;i++){icpSrc[i][0]+=(Math.random()-0.5)*8;icpSrc[i][1]+=(Math.random()-0.5)*8;}icpIt=0;icpCosts=[];}
+function icpFindCorr(){var corr=[];for(var i=0;i<icpSrc.length;i++){var best=0,bestD=1e18;for(var j=0;j<icpTgt.length;j++){var d=(icpSrc[i][0]-icpTgt[j][0])*(icpSrc[i][0]-icpTgt[j][0])+(icpSrc[i][1]-icpTgt[j][1])*(icpSrc[i][1]-icpTgt[j][1]);if(d<bestD){bestD=d;best=j;}}corr.push(best);}return corr;}
+function proc2D(src,tgt,corr){var N=src.length,sx=0,sy=0,tx=0,ty=0;for(var i=0;i<N;i++){sx+=src[i][0];sy+=src[i][1];tx+=tgt[corr[i]][0];ty+=tgt[corr[i]][1];}sx/=N;sy/=N;tx/=N;ty/=N;var h00=0,h01=0,h10=0,h11=0;for(var i=0;i<N;i++){var dx=src[i][0]-sx,dy=src[i][1]-sy;var fx=tgt[corr[i]][0]-tx,fy=tgt[corr[i]][1]-ty;h00+=dx*fx;h01+=dx*fy;h10+=dy*fx;h11+=dy*fy;}var ang=Math.atan2(h10-h01,h00+h11);var c=Math.cos(ang),s=Math.sin(ang);return{c:c,s:s,tx:tx-(c*sx-s*sy),ty:ty-(s*sx+c*sy)};}
+function icpStep(){if(!icpTgt)icpInit();var corr=icpFindCorr();var r=proc2D(icpSrc,icpTgt,corr);var ns=[];for(var i=0;i<icpSrc.length;i++)ns.push([r.c*icpSrc[i][0]-r.s*icpSrc[i][1]+r.tx,r.s*icpSrc[i][0]+r.c*icpSrc[i][1]+r.ty]);icpSrc=ns;icpIt++;var nc=icpFindCorr(),err=0;for(var i=0;i<icpSrc.length;i++){var dx=icpSrc[i][0]-icpTgt[nc[i]][0],dy=icpSrc[i][1]-icpTgt[nc[i]][1];err+=Math.sqrt(dx*dx+dy*dy);}err/=icpSrc.length;icpCosts.push(err);document.getElementById('rIt').textContent=icpIt;document.getElementById('rErr').textContent=err.toFixed(2);drawICP(corr);drawICPCost();}
+
+function drawICP(corr){
+  if(!icpTgt)icpInit();
+  var cv=document.getElementById('cI'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);var ox=W/2,oy=H/2;
+  ctx.strokeStyle='#1a1d25';ctx.lineWidth=1;
+  for(var x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(var y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  if(corr){ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;for(var i=0;i<corr.length;i++){ctx.beginPath();ctx.moveTo(ox+icpSrc[i][0],oy+icpSrc[i][1]);ctx.lineTo(ox+icpTgt[corr[i]][0],oy+icpTgt[corr[i]][1]);ctx.stroke();}}
+  ctx.fillStyle='#5b8af5';for(var i=0;i<icpTgt.length;i++){ctx.beginPath();ctx.arc(ox+icpTgt[i][0],oy+icpTgt[i][1],4,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#f5a05b';for(var i=0;i<icpSrc.length;i++){ctx.beginPath();ctx.arc(ox+icpSrc[i][0],oy+icpSrc[i][1],4,0,Math.PI*2);ctx.fill();}
+}
+
+function drawICPCost(){
+  var cv=document.getElementById('cIC'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);if(icpCosts.length<1)return;
+  ctx.fillStyle='#0a0c10';ctx.fillRect(0,0,W,H);
+  var p=8,pW=W-2*p,pH=H-2*p,mx=1;
+  for(var i=0;i<icpCosts.length;i++)if(icpCosts[i]>mx)mx=icpCosts[i];
+  ctx.strokeStyle='#2a2e3a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p,p);ctx.lineTo(p,H-p);ctx.lineTo(W-p,H-p);ctx.stroke();
+  ctx.beginPath();ctx.strokeStyle='#f5a05b';ctx.lineWidth=2;
+  for(var i=0;i<icpCosts.length;i++){var x=p+(i/Math.max(icpCosts.length-1,1))*pW;var y=H-p-(icpCosts[i]/mx)*pH;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();
+  ctx.fillStyle='#f5a05b';for(var i=0;i<icpCosts.length;i++){var x=p+(i/Math.max(icpCosts.length-1,1))*pW;var y=H-p-(icpCosts[i]/mx)*pH;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();}
+}
+
+function icpReset(){if(icpIntv){clearInterval(icpIntv);icpIntv=null;document.getElementById('bAuto').textContent='Auto-run';}icpInit();document.getElementById('rIt').textContent='0';document.getElementById('rErr').textContent='--';drawICP();document.getElementById('cIC').getContext('2d').clearRect(0,0,238,90);}
+function icpAuto(){if(icpIntv){clearInterval(icpIntv);icpIntv=null;document.getElementById('bAuto').textContent='Auto-run';return;}document.getElementById('bAuto').textContent='Pause';icpIntv=setInterval(function(){if(icpIt>=30){clearInterval(icpIntv);icpIntv=null;document.getElementById('bAuto').textContent='Auto-run';return;}icpStep();},400);}
+function icpSetInit(t){icpInitT=t;document.getElementById('bIG').className=(t==='good')?'b on':'b';document.getElementById('bIB').className=(t==='bad')?'b on':'b';icpReset();}
+
+// =========== INTERPOLATION ===========
+var iPat='checker',srcIm=null,srcSz=16;
+function genIm(){var S=srcSz;srcIm=[];if(iPat==='checker'){for(var y=0;y<S;y++)for(var x=0;x<S;x++)srcIm[y*S+x]=((x+y)%2===0)?1:0;}else if(iPat==='cross'){for(var y=0;y<S;y++)for(var x=0;x<S;x++){var cx2=Math.abs(x-S/2+.5)<2;var cy2=Math.abs(y-S/2+.5)<2;srcIm[y*S+x]=(cx2||cy2)?1:.15;}}else{for(var y=0;y<S;y++)for(var x=0;x<S;x++){var dx=(x-S/2+.5)/(S/2),dy=(y-S/2+.5)/(S/2);var r=Math.sqrt(dx*dx+dy*dy);var v=r<.85?.6:0;if(Math.sqrt((dx+.25)*(dx+.25)+dy*dy)<.2||Math.sqrt((dx-.25)*(dx-.25)+dy*dy)<.2)v=.1;if(r>.7&&r<.85)v=.9;srcIm[y*S+x]=v;}}}
+function sNNi(x,y){var ix=Math.round(x),iy=Math.round(y);if(ix<0||ix>=srcSz||iy<0||iy>=srcSz)return 0;return srcIm[iy*srcSz+ix];}
+function sBLi(x,y){var x0=Math.floor(x),y0=Math.floor(y),x1=x0+1,y1=y0+1,fx=x-x0,fy=y-y0;function g(a,b){if(a<0||a>=srcSz||b<0||b>=srcSz)return 0;return srcIm[b*srcSz+a];}return g(x0,y0)*(1-fx)*(1-fy)+g(x1,y0)*fx*(1-fy)+g(x0,y1)*(1-fx)*fy+g(x1,y1)*fx*fy;}
+function renderInt(cid,sfn){var cv=document.getElementById(cid),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);var ang=+document.getElementById('sIR').value*Math.PI/180;var zoom=+document.getElementById('sZm').value;document.getElementById('vIR').textContent=document.getElementById('sIR').value+'\u00B0';document.getElementById('vZm').textContent=zoom+'x';var S=srcSz,co=Math.cos(-ang),si=Math.sin(-ang),cS=S/2-.5;var id=ctx.createImageData(W,H),px=id.data;for(var py=0;py<H;py++)for(var ppx=0;ppx<W;ppx++){var dx2=(ppx-W/2)/(zoom*W/S),dy2=(py-H/2)/(zoom*H/S);var sx2=co*dx2-si*dy2+cS,sy2=si*dx2+co*dy2+cS;var val=sfn(sx2,sy2);var idx=(py*W+ppx)*4;px[idx]=Math.floor(val*80);px[idx+1]=Math.floor(val*200+20);px[idx+2]=Math.floor(val*255);px[idx+3]=255;}ctx.putImageData(id,0,0);}
+function drawInterp(){if(!srcIm)genIm();renderInt('cNN',sNNi);renderInt('cBL',sBLi);}
+function setPat(p){iPat=p;document.getElementById('bPC').className=(p==='checker')?'b on':'b';document.getElementById('bPX').className=(p==='cross')?'b on':'b';document.getElementById('bPB').className=(p==='brain')?'b on':'b';genIm();drawInterp();}
+
+// =========== INIT ===========
+genImages();
+icpInit();
+genIm();
+drawReg();
+</script>
+</body>
+</html>

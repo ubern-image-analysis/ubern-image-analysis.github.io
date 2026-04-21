@@ -22,7 +22,7 @@ instructors:
   - name: "Amith Kamath"
     role: "Instructor"
     email: "amith.kamath@unibe.ch"
-    lectures: [0, 1, 12, 13]
+    lectures: [ 0, 1, 12, 13 ]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -30,7 +30,7 @@ instructors:
   - name: "Dr. Hugo Guillen Ramirez"
     role: "Instructor"
     email: "hugo.guillenramirez@unibe.ch"
-    lectures: [2, 3, 4]
+    lectures: [ 2, 3, 4 ]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -38,7 +38,7 @@ instructors:
   - name: "Prof. Dr. Mauricio Reyes"
     role: "Instructor"
     email: "mauricio.reyes@unibe.ch"
-    lectures: [5, 6, 8, 9]
+    lectures: [ 5, 6, 8, 9 ]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -46,7 +46,7 @@ instructors:
   - name: "Dr. Pablo Marquez Neila"
     role: "Instructor"
     email: "pablo.marquez@unibe.ch"
-    lectures: [10, 11]
+    lectures: [ 10, 11 ]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -75,7 +75,7 @@ lectures:
     materials:
       slides: "/slides/lecture1.pdf"
       notebook: "https://github.com/ubern-image-analysis/lecture-1-elevation-analysis"
-    assignments: [0]
+    assignments: [ 0 ]
 
   # Week 2 - 25/02/2026
   - topic: "Digital Image Formation & Representation"
@@ -102,7 +102,7 @@ lectures:
     materials:
       slides: "/slides/lecture4.pdf"
       notebook: "/notebooks/lecture4_followalong.ipynb"
-    assignments: [1]
+    assignments: [ 1 ]
 
   # Week 5 - 18/03/2026
   - topic: "Edge Detection & Morphological Operations"
@@ -144,49 +144,49 @@ lectures:
     materials:
       slides: "/slides/lecture8.pdf"
       demo: "/demos/lecture8_demo.html"
-    assignments: [2]
+    assignments: [ 2 ]
 
   # Week 10 - 22/04/2026
   - topic: "Image Registration & 2D vs. 3D Analysis"
     date: "2026/04/22"
     instructor: "Prof. Dr. Mauricio Reyes"
     materials:
-      #       slides: "/slides/lecture9.pdf"
+      slides: "/slides/lecture9.pdf"
+      demo: "/demos/lecture9_demo.html"
     assignments: []
 
   # Week 11 - 29/04/2026
   - topic: "Introduction to Deep Learning for Image Analysis"
     date: "2026/04/29"
     instructor: "Dr. Pablo Marquez Neila"
-    materials:
-      #       slides: "/slides/lecture10.pdf"
-    assignments: [3]
+    materials: #       slides: "/slides/lecture10.pdf"
+    assignments: [ 3 ]
 
   # Week 12 - 06/05/2026
   - topic: "Generative Models & Advanced Architectures"
     date: "2026/05/06"
     instructor: "Dr. Pablo Marquez Neila"
-    materials:
-      #       slides: "/slides/lecture11.pdf"
+    materials: #       slides: "/slides/lecture11.pdf"
     assignments: []
 
   # Week 13 - 13/05/2026
   - topic: "Best Practices, Reproducibility & Medical Applications"
     date: "2026/05/13"
     instructor: "Amith Kamath"
-    materials:
-      #       slides: "/slides/lecture12.pdf"
+    materials: #       slides: "/slides/lecture12.pdf"
     assignments: []
 
   # Week 14 - 20/05/2026
-  - topic: "Flash Presentations of Demos — Part 1 (Individual Student Demos, 5 min each)"
+  - topic: "Flash Presentations of Demos — Part 1 (Individual Student Demos, 5 min
+      each)"
     date: "2026/05/20"
     instructor: "Amith Kamath"
     materials: {}
     assignments: []
 
   # Week 15 - 27/05/2026
-  - topic: "Flash Presentations of Demos — Part 2 (Individual Student Demos, 5 min each)"
+  - topic: "Flash Presentations of Demos — Part 2 (Individual Student Demos, 5 min
+      each)"
     date: "2026/05/27"
     instructor: "Amith Kamath"
     materials: {}
@@ -217,4 +217,6 @@ assignments:
   - name: "Assignment 3: Deep Learning vs. Classical Methods"
     due: "2026/05/20"
     points: 15
-    details: "Compare deep learning and classical methods for image classification. Implement both approaches, train models, evaluate performance, and analyze tradeoffs in interpretability and computational requirements."
+    details: "Compare deep learning and classical methods for image classification.
+      Implement both approaches, train models, evaluate performance, and analyze
+      tradeoffs in interpretability and computational requirements."
