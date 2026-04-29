@@ -159,15 +159,17 @@ lectures:
   - topic: "Introduction to Deep Learning for Image Analysis"
     date: "2026/04/29"
     instructor: "Dr. Pablo Marquez Neila"
-    materials: #       slides: "/slides/lecture10.pdf"
-    assignments: [ 3 ]
+    materials:
+      slides: "/slides/lecture10.pdf"
+      notebook: "/demos/lecture9_followalong.ipynb"
+    assignments: []
 
   # Week 12 - 06/05/2026
   - topic: "Generative Models & Advanced Architectures"
     date: "2026/05/06"
     instructor: "Dr. Pablo Marquez Neila"
     materials: #       slides: "/slides/lecture11.pdf"
-    assignments: []
+    assignments: [ 3 ]
 
   # Week 13 - 13/05/2026
   - topic: "Best Practices, Reproducibility & Medical Applications"
