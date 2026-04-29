@@ -161,7 +161,7 @@ lectures:
     instructor: "Dr. Pablo Marquez Neila"
     materials:
       slides: "/slides/lecture10.pdf"
-      notebook: "/demos/lecture9_followalong.ipynb"
+      notebook: "/notebooks/lecture9_followalong.ipynb"
     assignments: []
 
   # Week 12 - 06/05/2026
