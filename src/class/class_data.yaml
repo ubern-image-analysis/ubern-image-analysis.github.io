@@ -156,7 +156,7 @@ lectures:
     assignments: []
 
   # Week 11 - 29/04/2026
-  - topic: "Introduction to Deep Learning for Image Analysis"
+  - topic: "Introduction to Deep Learning for Image Analysis - Part I"
     date: "2026/04/29"
     instructor: "Dr. Pablo Marquez Neila"
     materials:
@@ -165,10 +165,12 @@ lectures:
     assignments: []
 
   # Week 12 - 06/05/2026
-  - topic: "Generative Models & Advanced Architectures"
+  - topic: "Introduction to Deep Learning for Image Analysis - Part II"
     date: "2026/05/06"
     instructor: "Dr. Pablo Marquez Neila"
-    materials: #       slides: "/slides/lecture11.pdf"
+    materials:
+      slides: "/slides/lecture9_10.pdf"
+      notebook: "/notebooks/lecture9_10_followalong.ipynb"
     assignments: [ 3 ]
 
   # Week 13 - 13/05/2026
