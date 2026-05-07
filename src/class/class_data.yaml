@@ -22,7 +22,7 @@ instructors:
   - name: "Amith Kamath"
     role: "Instructor"
     email: "amith.kamath@unibe.ch"
-    lectures: [ 0, 1, 12, 13 ]
+    lectures: [0, 1, 12, 13]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -30,7 +30,7 @@ instructors:
   - name: "Dr. Hugo Guillen Ramirez"
     role: "Instructor"
     email: "hugo.guillenramirez@unibe.ch"
-    lectures: [ 2, 3, 4 ]
+    lectures: [2, 3, 4]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -38,7 +38,7 @@ instructors:
   - name: "Prof. Dr. Mauricio Reyes"
     role: "Instructor"
     email: "mauricio.reyes@unibe.ch"
-    lectures: [ 5, 6, 8, 9 ]
+    lectures: [5, 6, 8, 9]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -46,7 +46,7 @@ instructors:
   - name: "Dr. Pablo Marquez Neila"
     role: "Instructor"
     email: "pablo.marquez@unibe.ch"
-    lectures: [ 10, 11 ]
+    lectures: [10, 11]
     officeHours:
       - when: "By appointment"
         where: "contact via email"
@@ -75,7 +75,7 @@ lectures:
     materials:
       slides: "/slides/lecture1.pdf"
       notebook: "https://github.com/ubern-image-analysis/lecture-1-elevation-analysis"
-    assignments: [ 0 ]
+    assignments: [0]
 
   # Week 2 - 25/02/2026
   - topic: "Digital Image Formation & Representation"
@@ -102,7 +102,7 @@ lectures:
     materials:
       slides: "/slides/lecture4.pdf"
       notebook: "/notebooks/lecture4_followalong.ipynb"
-    assignments: [ 1 ]
+    assignments: [1]
 
   # Week 5 - 18/03/2026
   - topic: "Edge Detection & Morphological Operations"
@@ -144,7 +144,7 @@ lectures:
     materials:
       slides: "/slides/lecture8.pdf"
       demo: "/demos/lecture8_demo.html"
-    assignments: [ 2 ]
+    assignments: [2]
 
   # Week 10 - 22/04/2026
   - topic: "Image Registration & 2D vs. 3D Analysis"
@@ -171,7 +171,7 @@ lectures:
     materials:
       slides: "/slides/lecture9_10.pdf"
       notebook: "/notebooks/lecture9_10_followalong.ipynb"
-    assignments: [ 3 ]
+    assignments: [3]
 
   # Week 13 - 13/05/2026
   - topic: "Best Practices, Reproducibility & Medical Applications"
@@ -181,7 +181,8 @@ lectures:
     assignments: []
 
   # Week 14 - 20/05/2026
-  - topic: "Flash Presentations of Demos — Part 1 (Individual Student Demos, 5 min
+  - topic:
+      "Flash Presentations of Demos — Part 1 (Individual Student Demos, 5 min
       each)"
     date: "2026/05/20"
     instructor: "Amith Kamath"
@@ -189,7 +190,8 @@ lectures:
     assignments: []
 
   # Week 15 - 27/05/2026
-  - topic: "Flash Presentations of Demos — Part 2 (Individual Student Demos, 5 min
+  - topic:
+      "Flash Presentations of Demos — Part 2 (Individual Student Demos, 5 min
       each)"
     date: "2026/05/27"
     instructor: "Amith Kamath"
@@ -218,9 +220,9 @@ assignments:
     materials:
       details: "/assignments/assign2"
 
-  - name: "Assignment 3: Deep Learning vs. Classical Methods"
-    due: "2026/05/20"
+  - name: "Assignment 3: Deep Learning for Medical Image Classification"
+    due: "2026/06/03"
     points: 15
-    details: "Compare deep learning and classical methods for image classification.
-      Implement both approaches, train models, evaluate performance, and analyze
-      tradeoffs in interpretability and computational requirements."
+    materials:
+      github: "https://classroom.github.com/a/Tj1RlgK1"
+      details: "/assignments/assign3"

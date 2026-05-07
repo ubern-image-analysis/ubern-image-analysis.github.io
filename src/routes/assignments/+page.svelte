@@ -14,8 +14,7 @@
 
 <p>
   All assignments are due at {class_data.assignment_due_time} on the specified date.
-  Assignment 0 is available on GitHub Classroom. Links for subsequent assignments
-  will be released closer to their due dates.
+  Assignments 0, 1, and 3 are available on GitHub Classroom.
 </p>
 
 <!-- Generates assignment details from the yaml -->
