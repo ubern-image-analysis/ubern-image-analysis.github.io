@@ -73,7 +73,13 @@
                     target="_blank">Assignment {assignment}</a
                   >
                 {:else if assignment === 2}
-                  <a href={fixupLink('/assignments/assign2')}>Assignment {assignment}</a>
+                  <a href={fixupLink("/assignments/assign2")}
+                    >Assignment {assignment}</a
+                  >
+                {:else if assignment === 3}
+                  <a href={fixupLink("/assignments/assign3")}
+                    >Assignment {assignment}</a
+                  >
                 {:else}
                   <span>Assignment {assignment}</span>
                 {/if}

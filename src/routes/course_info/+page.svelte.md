@@ -82,9 +82,9 @@ Installation instructions will be provided in the first week of class.
 ### Assignments
 
 - **Assignment 0 (5%)**: Introduction to Python programming and environment setup – available on [GitHub Classroom](https://classroom.github.com/a/uYEGH1wE)
-- **Assignment 1 (10%)**: Colorspaces, Sampling and Filtering  – available on [GitHub Classroom](https://classroom.github.com/a/Ikojcd6a)
+- **Assignment 1 (10%)**: Colorspaces, Sampling and Filtering – available on [GitHub Classroom](https://classroom.github.com/a/Ikojcd6a)
 - **Assignment 2 (10%)**: Streamlit/HuggingFace Demo (presented individually for less than 5 minutes each) — scheduled on two lecture days; details are available on the [Assignment 2 page]({base}/assignments/assign2)
-- **Assignment 3 (15%)**: Deep Learning vs. Classical Methods
+- **Assignment 3 (15%)**: Deep Learning for Medical Image Classification — train a CNN to classify breast lesions using BreastMNIST; available on [GitHub Classroom](https://classroom.github.com/a/Tj1RlgK1) and details on the [Assignment 3 page]({base}/assignments/assign3)
 
 Collaboration is permitted, but you must write your own code and acknowledge all collaborators.
 All assignments are due by {class_data.assignment_due_time} on the specified date.
