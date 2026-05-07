@@ -108,9 +108,7 @@ Runs the same tests that will run on GitHub when you push. Each of the 30 thresh
 
 ## Grading
 
-Grading is fully automated via GitHub Actions. The score formula is:
-
-$$\text{score} = \text{clamp}\!\left(5 + 10 \cdot \frac{\text{accuracy} - \text{acc}_\text{ref}}{1 - \text{acc}_\text{ref}},\; 5,\; 15\right)$$
+Grading is fully automated via GitHub Actions.
 
 When you push, GitHub Actions checks out your repository, installs dependencies, and runs `pytest tests/ -v`. The tests load `models/submission_cnn.pt`, reconstruct your model using the `BreastLesionCNN` class from `model.py`, and run inference on the BreastMNIST test set. **No training happens on the server.**
 
