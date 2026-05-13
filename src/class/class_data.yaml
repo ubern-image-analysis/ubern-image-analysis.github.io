@@ -177,7 +177,9 @@ lectures:
   - topic: "Best Practices, Reproducibility & Medical Applications"
     date: "2026/05/13"
     instructor: "Amith Kamath"
-    materials: #       slides: "/slides/lecture12.pdf"
+    materials:
+      slides: "/slides/lecture13.pdf"
+      notebook: "https://github.com/ubern-mia/bender"
     assignments: []
 
   # Week 14 - 20/05/2026
