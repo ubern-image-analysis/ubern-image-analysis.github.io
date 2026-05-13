@@ -123,7 +123,7 @@ Coding agents are encouraged, but you are expected to understand and explain sub
 
 ## Example References
 
-- Colorspaces demo: https://huggingface.co/spaces/ubern-image-analysis/colorspaces
-- Camera model projection demo: https://huggingface.co/spaces/ubern-image-analysis/camera-model-projection
+- Colorspaces demo: https://huggingface.co/spaces/ubern-introimage/colorspaces
+- Camera model projection demo: https://huggingface.co/spaces/ubern-introimage/cameramodels
 - Streamlit docs: https://docs.streamlit.io
 - Hugging Face Spaces docs: https://huggingface.co/docs/hub/spaces
