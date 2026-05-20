@@ -188,7 +188,8 @@ lectures:
       each)"
     date: "2026/05/20"
     instructor: "Amith Kamath"
-    materials: {}
+    materials:
+      upload: "https://forms.cloud.microsoft/e/QfNRz7vt6C"
     assignments: []
 
   # Week 15 - 27/05/2026
@@ -197,6 +198,7 @@ lectures:
       each)"
     date: "2026/05/27"
     instructor: "Amith Kamath"
+    location: "Hörsaal U113, Chemie, Biochemie und Pharmazie, DCBP"
     materials: {}
     assignments: []
 

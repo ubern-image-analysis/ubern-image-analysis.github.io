@@ -43,6 +43,16 @@
                 Instructor: {lecture.instructor}
               </div>
             {/if}
+            {#if lecture.location}
+              <div style="font-size: 0.85em; color: #b03a2e; margin-top: 4px;">
+                Location: {lecture.location}
+              </div>
+            {/if}
+            {#if lecture.materials && lecture.materials.upload}
+              <div style="font-size: 0.85em; color: #b03a2e; margin-top: 4px;">
+                Assignment upload due by end of day
+              </div>
+            {/if}
           </Topic>
           {#if lecture.materials}
             <Materials>

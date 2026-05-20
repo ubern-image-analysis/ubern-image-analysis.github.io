@@ -53,6 +53,8 @@ export function getBoxColor(type) {
             return '#007c41';
         case 'code':
             return '#53565a';
+        case 'upload':
+            return '#b03a2e';
         default:
             return '#767676';
     }
