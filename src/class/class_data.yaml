@@ -123,7 +123,7 @@ lectures:
     assignments: []
 
   # Week 7 - 01/04/2026
-  - topic: "Mid-term Exam (covers lectures 1–6)"
+  - topic: "Mid-term Exam (covers lectures 1–5)"
     date: "2026/04/01"
     instructor: "Prof. Dr. Mauricio Reyes"
     materials: {}
@@ -201,6 +201,34 @@ lectures:
     location: "Hörsaal U113, Chemie, Biochemie und Pharmazie, DCBP"
     materials: {}
     assignments: []
+
+  # Week 16 - 03/06/2026 - No class
+  - topic: "No Class"
+    date: "2026/06/03"
+    holiday: true
+    materials: {}
+    assignments: []
+
+  # Week 17 - 10/06/2026 - No class
+  - topic: "No Class"
+    date: "2026/06/10"
+    holiday: true
+    materials: {}
+    assignments: []
+
+  # Week 18 - 17/06/2026 - No class
+  - topic: "No Class"
+    date: "2026/06/17"
+    holiday: true
+    materials: {}
+    assignments: []
+
+  # Week 19 - 24/06/2026 - Final Exam
+  - topic: "Final Exam (covers Segmentation, Feature Extraction, Image Registration, Introduction to Deep Learning Parts I & II, and Best Practices & Reproducibility)"
+    date: "2026/06/24"
+    materials: {}
+    assignments: []
+    holiday: true
 
 # Course assignments
 assignments:

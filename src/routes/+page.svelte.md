@@ -75,8 +75,8 @@ Students should have:
   - Assignment 1 is available on [GitHub Classroom](https://classroom.github.com/a/Ikojcd6a)
   - Assignment 2 details are available on the [Assignment 2 page]({base}/assignments/assign2) (no GitHub Classroom link)
   - Assignment 3 is available on [GitHub Classroom](https://classroom.github.com/a/Tj1RlgK1) — train a CNN to classify breast lesions; details on the [Assignment 3 page]({base}/assignments/assign3)
-- **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1–6)
-- **Final Exam (30%)**: Covers lectures 7–11 (Feature Extraction, Registration, and Deep Learning content). Lectures 1–6 are assessed in the mid-term only. **Exam dates are not yet fixed.**
+- **Mid-term Exam (30%)**: Covers classical image analysis (Lectures 1–5; Segmentation was *not* included). 30 multiple choice questions, one point each, 60 minutes.
+- **Final Exam (30%)**: Same format as the mid-term — 30 multiple choice questions, one point each, 60 minutes. Questions are derived from the lectures on Segmentation (not included in the mid-term), Feature Extraction, Image Registration, Introduction to Deep Learning (Parts I and II), and Best Practices & Reproducibility. **The final exam is on 24 June 2026.**
 
 ### Academic Integrity
 

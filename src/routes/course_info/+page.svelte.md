@@ -91,8 +91,10 @@ All assignments are due by {class_data.assignment_due_time} on the specified dat
 
 ### Examinations
 
-- **Mid-term Exam (30%)**: Covers lectures 1–6 (Foundations through Segmentation)
-- **Final Exam (30%)**: Covers lectures 7–11 (Feature Extraction, Registration, and Deep Learning content). **Final exam dates are not yet fixed.**
+- **Mid-term Exam (30%)**: Covers lectures 1–5 (Foundations through Edge Detection & Morphological Operations; Segmentation was *not* included). Format: 30 multiple choice questions, one point for each correct answer, 60 minutes.
+- **Final Exam (30%)**: Same format as the mid-term — 30 multiple choice questions, one point for each correct answer, 60 minutes. The 30 questions are derived from the lectures on Segmentation (not included in the mid-term), Feature Extraction, Image Registration, Introduction to Deep Learning (Parts I and II), and Best Practices & Reproducibility. **The final exam is on 24 June 2026.**
+
+Together, the mid-term (30%), final exam (30%), and assignments (40%) make up the final grade.
 
 ## Academic Integrity
 
